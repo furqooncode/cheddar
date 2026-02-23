@@ -2,6 +2,7 @@ const colors = {
   background: "#1A1A1A",       
   container: "#2C2C2C",       
   secondaryText: "#B0B0B0",
+  primaryText: "#F0F0F0", 
   accent: "#C19A6B",
   border: "#444444",
   text: "#E0E0E0",

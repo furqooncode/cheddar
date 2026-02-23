@@ -1,33 +1,7 @@
 import Header from '../Header.jsx';
 import colors from '../colors.jsx'
 import mockup from "../assets/mockup.png"
-{/*
-
-1.
-Topic: Curated
-Description: Handpicked with intention
-Icon: fa-solid fa-hand-sparkles
-2.
-Topic: Premium Quality
-Description: Finest fabrics & finishing
-Icon: fa-solid fa-gem
-3.
-Topic: Exclusive
-Description: Limited, one-of-a-kind pieces
-Icon: fa-solid fa-crown
-4.
-Topic: Elegant
-Description: Luxurious feel & presentation
-Icon: fa-solid fa-star
-5.
-Topic: Personal
-Description: Tailored to your style
-Icon: fa-solid fa-user-tie
-6.
-Topic: Timeless
-Description: Classic meets modern trends
-Icon: fa-solid fa-clock-rotate-left
-*/}
+import test from "../assets/test.png"
 
 export function Com(){
   return(
@@ -35,19 +9,50 @@ export function Com(){
     justify-between">
   
   {/*The name*/}  
-  <div className="max-w-md h-full grid place-items-center items-center">
-   <h1 className="font-bold text-3xl text-center uppercase p-2" 
+  <div className="max-w-md h-full grid place-items-center items-center gap-2">
+    <div className="grid items-center place-items-center p-4">
+   <h1 className="font-bold text-3xl text-center uppercase" 
    style={{
         color : colors.text,
         fontFamily: "Orbitron",
-      }}>Welcome To Cheddar luxury!!</h1>
+      }}>Enter the Cheddar Drop!</h1>
+   <p style={{
+     color:colors.primaryText,
+     fontFamily:"italic"
+   }} className="text-lg font-semibold text-gray-500">..Where Rarity Meets
+   Comfort..</p>
+      <span className="text-sm font-bold text-center"
+      style={{
+        color:colors.secondaryText,
+      }}>Exclusively for the discerning gentleman.Limited-edition hoodies of superior craftsmanship, where luxury fabrics deliver refined comfort and
+      understated distinction. Curated with impeccable detail for timeless
+      elegance.</span>
+      
+  {/*button*/}
+      <div className="flex w-full p-3 flex-wrap justify-center items-center gap-2">
+      <button className="p-[10px] border-none outline-none 
+      rounded-[12px] w-[170px] font-semibold text-lg" style={{
+        backgroundColor: colors.deepAccent,
+        color:colors.text,
+      }}>Explore Now!</button>
+      
+      <button className="p-[10px] border-none outline-none w-[170px]
+      rounded-[12px] font-semibold text-lg" style={{
+        backgroundColor:colors.accent,
+        color:colors.text,
+      }}>Join Wait-List  <i className="fas fa-arrow-right"></i></button>
+      
+    </div>
+    </div>  
+    
+
   </div>
   
    {/*The Image*/}  
    <div className="relative max-w-md h-full grid place-items-center items-center
    p-2">
      
-  <div className="w-[90%] h-[70%] rounded-[50%]"
+  <div className="w-[95%] h-[70%] rounded-[50%]"
   style={{
     backgroundColor:colors.container,
   }}>
