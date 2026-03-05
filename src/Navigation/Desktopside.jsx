@@ -1,0 +1,34 @@
+import logo from '../assets/logo.png'
+import { NavLink } from 'react-router-dom'
+import colors from '../color.jsx'
+
+export default function DesktopSidebar() {
+  return (
+    <aside className="hidden lg:flex flex-col fixed top-0 left-0 h-screen w-[240px] p-4 gap-6"
+      style={{ background: colors.bg, borderRight: `1px solid ${colors.border}` }}>
+      
+      {/* Logo */}
+      <div className="w-[150px] h-[55px]">
+        <img src={logo} alt="logo" className="w-full h-full object-cover" />
+      </div>
+
+      {/* Links */}
+      <nav className="flex flex-col gap-2 flex-1">
+        {[
+          { label: 'Home', path: '/' },
+          { label: 'Shop', path: '/shop' },
+          { label: 'Cart', path: '/cart' },
+          { label: 'About', path: '/about' },
+        ].map(({ label, path }) => (
+          <NavLink key={path} to={path}
+            className={({ isActive }) =>
+              `px-4 py-3 rounded-xl text-lg transition-all ${isActive ? 'bg-white/20 font-semibold' : 'hover:bg-white/10'}`
+            }
+            style={{ color: colors.text }}>
+            {label}
+          </NavLink>
+        ))}
+      </nav>
+    </aside>
+  )
+}

@@ -1,11 +1,6 @@
-import Welcome from './Landing/welcome.jsx';
-import colors from './colors.jsx'
+import AppRoutes from './routes.jsx'
 export default function App(){
   return(
- <div style={{
-   background:colors.background,
- }}>
-   <Welcome />
- </div>
+   <AppRoutes />
     )
 }

@@ -1,4 +1,4 @@
-import colors from './colors.jsx'
+import colors from './color.jsx'
 export default function Header(){
   return(
     <div className="pb-[80px]">
