@@ -5,7 +5,7 @@ import DesktopSidebar from './Desktopside.jsx'
 
 export default function Nav() {
   const location = useLocation()
-  const isHome = location.pathname === '/'
+  const isHome = location.pathname === '/Home'
 
   return (
     <>

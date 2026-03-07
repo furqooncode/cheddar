@@ -4,13 +4,14 @@ import Footer from './Footer.jsx'
 import Home from './Component/Home.jsx'
 import Login from './Security/Login.jsx';
 import Signup from './Security/Signup.jsx';
+import Transaction from "./Wallet/Transaction.jsx";
 
 export default function AppRoutes() {
   return (
     <Routes>
       {/* No nav */}
       <Route path="/login" element={<Login />} />
-      <Route path="/" element={<Signup />} />
+      <Route path="/Signup" element={<Signup />} />
 
       {/* With nav */}
       <Route path="/*" element={
@@ -19,6 +20,9 @@ export default function AppRoutes() {
           <main className="mt-[60px] lg:mt-0 lg:ml-[240px]">
             <Routes>
         <Route path="/Home" element={<Home />} />
+        
+        <Route path="/" element={<Transaction />} />
+        
             </Routes>
           </main>
           <Footer />

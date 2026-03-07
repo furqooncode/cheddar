@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import colors from '../color.jsx';
 import { useNavigate, Link } from 'react-router-dom';
-
+import useAuth from '../Client/Auth.jsx'
 
 export default function Login() {
   const navigate = useNavigate();
-  
+  const { login, loading } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -46,14 +46,21 @@ export default function Login() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  async function handleSubmit (e) {
     e.preventDefault();
     setSubmitted(true);
     if (validateForm()) {
-      console.log('Login attempt:', formData);
-      alert('Welcome back to Cheddar Luxury! (demo)');
-      name('/Home')
-      // → Replace with real login API call
+      try{
+        await login(
+         formData.email,
+         formData.password
+          )
+        alert("LoggedIn successfully")
+         Clear()
+         navigate("/Home")
+      }catch(error){
+        alert(error.message)
+      }
     }
   };
 
@@ -152,7 +159,7 @@ export default function Login() {
             className="w-full py-4 rounded-xl font-semibold text-lg shadow-lg transition-all hover:opacity-90 active:scale-[0.98]"
             style={{ backgroundColor: colors.accent, color: '#ffffff' }}
           >
-            Sign In
+          {loading ? "Signing user..." : "SignIn"}
           </button>
         </form>
 

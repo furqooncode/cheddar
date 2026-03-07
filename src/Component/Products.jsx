@@ -79,11 +79,12 @@ export function ProductList() {
             }}
           >
             {/* Product Image + Discount Badge */}
-            <div className="relative aspect-[3/4] overflow-hidden">
+            <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
               <img
                 src={product.image}
                 alt={product.name}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover transition-transform
+                duration-500 group-hover:scale-105 rounded-2xl"
               />
 
               {/* Discount Badge (top-left) */}

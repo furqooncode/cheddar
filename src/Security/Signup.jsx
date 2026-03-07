@@ -1,17 +1,30 @@
 import { useState } from 'react';
 import colors from '../color.jsx';
 import { useNavigate, Link } from 'react-router-dom';
+import useAuth from '../Client/Auth.jsx'
 
 export default function Signup() {
+  const { signup, loading } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
+    fullName: '',
     email: '',
     phone: '',
     password: '',
     confirmPassword: '',
   });
 
+function Clear(){
+  setFormData({
+    username: '',
+    fullName: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+  })
+}
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -46,15 +59,25 @@ export default function Signup() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+async function handleSubmit (e) {
     e.preventDefault();
     setSubmitted(true);
-
     if (validateForm()) {
-      console.log('Signup data:', formData);
-      alert('Account created successfully! Welcome to Cheddar Luxury');
-      navigate('/login')
-      // → Call your backend signup API here
+     try{
+   await signup(
+      formData.email,
+      formData.password,
+      formData.username,
+      formData.fullName,
+      formData.phone
+      );
+     alert("Account created succefully")
+     Clear()
+     navigate("/login")
+     }catch(error){
+       console.log(error)
+       alert(error.message)
+     }
     }
   };
 
@@ -72,6 +95,7 @@ export default function Signup() {
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           {/* Username */}
+          
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
               <i className="fas fa-user text-xl" style={{ color: colors.secondaryText }}></i>
@@ -92,6 +116,31 @@ export default function Signup() {
             />
             {errors.username && submitted && <p className="mt-2 text-sm text-red-600">{errors.username}</p>}
           </div>
+          
+          {/*fullName*/}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+              <i className="fas fa-user text-xl" style={{ color: colors.secondaryText }}></i>
+            </div>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              placeholder="FullName"
+              className="w-full pl-12 pr-4 py-4 rounded-xl border text-base focus:outline-none focus:ring-2 transition-all"
+              style={{
+                borderColor: errors.fullName && submitted ? '#ef4444' : colors.border,
+                backgroundColor: colors.container,
+                color: colors.text,
+                '--tw-ring-color': colors.accent,
+              }}
+            />
+            {errors.fullName && submitted && <p className="mt-2 text-sm
+            text-red-600">{errors.fullName}</p>}
+          </div>
+          
+          
 
           {/* Email */}
           <div className="relative">
@@ -202,7 +251,7 @@ export default function Signup() {
             style={{
             backgroundColor: colors.accent, color: '#ffffff' }}
           >
-            Create Account
+          {loading ? "Creating user.." : "Create Account"}
           </button>
         </form>
 

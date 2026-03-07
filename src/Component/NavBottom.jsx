@@ -7,9 +7,10 @@ export default function NavBottom() {
       style={{ width: 'min(90%, 420px)' }}
     >
       <div
-        className="flex items-center justify-between px-5 py-3.5 rounded-full shadow-2xl backdrop-blur-lg border border-white/20 text-white"
+        className="flex items-center justify-between px-5 py-3.5 rounded-full shadow-2xl backdrop-blur-lg border border-white/20"
         style={{
           backgroundColor: 'rgba(255, 255, 255, 0.08)',
+          color:colors.text,
         }}
       >
         {/* Home */}
@@ -33,11 +34,11 @@ export default function NavBottom() {
           }}
           aria-label="Cart"
         >
-          <i className="fas fa-shopping-cart text-2xl"></i>
-          <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold">
+          <i className="fas fa-wallet text-2xl"></i>
+          <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500  text-xs font-bold">
             3
           </span>
-          <span className="text-xs font-semibold mt-1">Cart</span>
+          <span className="text-xs font-semibold mt-1">wallet</span>
         </button>
 
         {/* Orders */}
