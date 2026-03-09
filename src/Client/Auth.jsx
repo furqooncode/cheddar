@@ -69,6 +69,7 @@ const useAuth = create((set)=> ({
         error:error.message,
         user:null
       })
+      throw new Error(error.message)
     }else{
       set({
         loading:false,
@@ -81,7 +82,7 @@ const useAuth = create((set)=> ({
   
   
   logout: async()=>{
-    await supabase.auth.signOut
+    await supabase.auth.signOut()
     set({
       user:null,
       loading:false

@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import logo from '../assets/logo.png';
 import colors from '../color.jsx';
+import useCart from '../Client/CartStorage.jsx';
 
+import { useNavigate } from 'react-router-dom'
 export default function HomeNav() {
+  const { cartItems } = useCart();
   const [scrolled, setScrolled] = useState(false);
-
+ const navigate = useNavigate()
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 10);
@@ -60,12 +63,15 @@ export default function HomeNav() {
               border: `1px solid ${colors.border}`,
               color: colors.text,
             }}
+            onClick={()=>{
+              navigate("/Cart")
+            }}
             aria-label="Shopping cart"
           >
             <i className="fas fa-shopping-cart text-2xl"></i>
             {/* Cart count badge */}
             <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-600 text-white text-xs font-bold shadow-sm">
-              0
+              {cartItems.length}
             </span>
           </button>
 

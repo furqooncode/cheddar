@@ -1,6 +1,7 @@
 import colors from '../color.jsx';
-
+import { useNavigate } from 'react-router-dom'
 export default function NavBottom() {
+  const navigate = useNavigate()
   return (
     <nav
       className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50"
@@ -14,13 +15,19 @@ export default function NavBottom() {
         }}
       >
         {/* Home */}
-        <button className="flex flex-col items-center gap-1 p-2 transition-transform active:scale-90" aria-label="Home">
+        <button className="flex flex-col items-center gap-1 p-2 transition-transform active:scale-90" aria-label="Home"
+        onClick={()=>{
+          navigate("/Home")
+        }}>
           <i className="fas fa-home text-xl"></i>
           <span className="text-xs font-medium">Home</span>
         </button>
 
         {/* Browse / Explore */}
-        <button className="flex flex-col items-center gap-1 p-2 transition-transform active:scale-90" aria-label="Browse">
+        <button className="flex flex-col items-center gap-1 p-2 transition-transform active:scale-90" aria-label="Browse"
+        onClick={()=>{
+          navigate("/Browse")
+        }}>
           <i className="fas fa-compass text-xl"></i> {/* or fa-layer-group */}
           <span className="text-xs font-medium">Browse</span>
         </button>
@@ -32,7 +39,10 @@ export default function NavBottom() {
             background: colors.accent,
             boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
           }}
-          aria-label="Cart"
+          aria-label="wallet"
+          onClick={()=>{
+          navigate("/Wallet")
+        }}
         >
           <i className="fas fa-wallet text-2xl"></i>
           <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500  text-xs font-bold">
@@ -44,11 +54,17 @@ export default function NavBottom() {
         {/* Orders */}
         <button className="flex flex-col items-center gap-1 p-2 transition-transform active:scale-90" aria-label="Orders">
           <i className="fas fa-receipt text-xl"></i>
-          <span className="text-xs font-medium">Orders</span>
+          <span className="text-xs font-medium"
+          onClick={()=>{
+          navigate("/Order")
+        }}>Orders</span>
         </button>
 
         {/* Settings */}
-        <button className="flex flex-col items-center gap-1 p-2 transition-transform active:scale-90" aria-label="Settings">
+        <button className="flex flex-col items-center gap-1 p-2 transition-transform active:scale-90" aria-label="Settings"
+        onClick={()=>{
+          navigate("/Setting")
+        }}>
           <i className="fas fa-cog text-xl"></i>
           <span className="text-xs font-medium">Settings</span>
         </button>

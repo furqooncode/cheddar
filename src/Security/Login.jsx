@@ -11,6 +11,12 @@ export default function Login() {
     password: '',
   });
 
+function Clear(){
+  setFormData({
+    email: '',
+    password: '',
+  })
+}
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -57,7 +63,7 @@ export default function Login() {
           )
         alert("LoggedIn successfully")
          Clear()
-         navigate("/Home")
+         navigate("/Wallet")
       }catch(error){
         alert(error.message)
       }
