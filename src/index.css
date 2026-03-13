@@ -1,4 +1,7 @@
-body{
-  background: #FDFBF7;
+body {
+  background: #fdfbf7;
   font-family: Sans-Serif;
+}
+html {
+  scroll-behavior: smooth;
 }

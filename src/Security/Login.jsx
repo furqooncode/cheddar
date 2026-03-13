@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import colors from '../color.jsx';
-import { useNavigate, Link } from 'react-router-dom';
-import useAuth from '../Client/Auth.jsx'
+import { useState } from "react";
+import colors from "../color.jsx";
+import { useNavigate, Link } from "react-router-dom";
+import useAuth from "../Client/Auth.jsx";
 
 export default function Login() {
   const navigate = useNavigate();
   const { login, loading } = useAuth();
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -18,13 +18,13 @@ export default function Login() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
-    
+
     if (errors[name]) {
       //clear field
       setErrors((prev) => ({
         ...prev,
-        [name]: '' 
-         }));
+        [name]: "",
+      }));
     }
   };
 
@@ -33,58 +33,64 @@ export default function Login() {
 
     // Email validation with regex
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = "Please enter a valid email address";
     }
 
     if (!formData.password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = "Password is required";
     }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  async function handleSubmit (e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setSubmitted(true);
     if (validateForm()) {
-      try{
-        await login(
-         formData.email,
-         formData.password
-          )
-        alert("LoggedIn successfully")
-         Clear()
-         navigate("/Home")
-      }catch(error){
-        alert(error.message)
+      try {
+        await login(formData.email, formData.password);
+        alert("LoggedIn successfully");
+        Clear();
+        navigate("/Home");
+      } catch (error) {
+        alert(error.message);
       }
     }
-  };
+  }
 
   const handleGoogleLogin = () => {
-//supabase google auth
-    console.log('Google login initiated');
-    alert('Google login triggered (demo)');
+    //supabase google auth
+    console.log("Google login initiated");
+    alert("Google login triggered (demo)");
   };
 
   const handleAppleLogin = () => {
-//supabase ios auth
-    console.log('Apple Sign in initiated');
-    alert('Sign in with Apple triggered (demo)');
+    //supabase ios auth
+    console.log("Apple Sign in initiated");
+    alert("Sign in with Apple triggered (demo)");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12" style={{ background: colors.background }}>
+    <div
+      className="min-h-screen flex items-center justify-center px-4 py-12"
+      style={{ background: colors.background }}
+    >
       <div className="w-full max-w-md space-y-8">
         {/* Header */}
         <div className="text-center">
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight" style={{ color: colors.primaryText }}>
+          <h2
+            className="text-3xl md:text-4xl font-bold tracking-tight"
+            style={{ color: colors.primaryText }}
+          >
             Welcome back to Cheddar Luxury
           </h2>
-          <p className="mt-3 text-base md:text-lg" style={{ color: colors.secondaryText }}>
+          <p
+            className="mt-3 text-base md:text-lg"
+            style={{ color: colors.secondaryText }}
+          >
             Sign in to access your premium wardrobe
           </p>
         </div>
@@ -94,7 +100,10 @@ export default function Login() {
           {/* Email */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <i className="fas fa-envelope text-xl" style={{ color: colors.secondaryText }}></i>
+              <i
+                className="fas fa-envelope text-xl"
+                style={{ color: colors.secondaryText }}
+              ></i>
             </div>
             <input
               type="email"
@@ -104,10 +113,11 @@ export default function Login() {
               placeholder="Email address"
               className="w-full pl-12 pr-4 py-4 rounded-xl border text-base focus:outline-none focus:ring-2 transition-all"
               style={{
-                borderColor: errors.email && submitted ? '#ef4444' : colors.border,
+                borderColor:
+                  errors.email && submitted ? "#ef4444" : colors.border,
                 backgroundColor: colors.container,
                 color: colors.text,
-                '--tw-ring-color': colors.accent,
+                "--tw-ring-color": colors.accent,
               }}
             />
             {errors.email && submitted && (
@@ -118,20 +128,24 @@ export default function Login() {
           {/* Password with show/hide */}
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <i className="fas fa-lock text-xl" style={{ color: colors.secondaryText }}></i>
+              <i
+                className="fas fa-lock text-xl"
+                style={{ color: colors.secondaryText }}
+              ></i>
             </div>
             <input
-              type={showPassword ? 'text' : 'password'}
+              type={showPassword ? "text" : "password"}
               name="password"
               value={formData.password}
               onChange={handleChange}
               placeholder="Password"
               className="w-full pl-12 pr-12 py-4 rounded-xl border text-base focus:outline-none focus:ring-2 transition-all"
               style={{
-                borderColor: errors.password && submitted ? '#ef4444' : colors.border,
+                borderColor:
+                  errors.password && submitted ? "#ef4444" : colors.border,
                 backgroundColor: colors.container,
                 color: colors.text,
-                '--tw-ring-color': colors.accent,
+                "--tw-ring-color": colors.accent,
               }}
             />
             <button
@@ -139,7 +153,10 @@ export default function Login() {
               className="absolute inset-y-0 right-0 pr-4 flex items-center"
               onClick={() => setShowPassword(!showPassword)}
             >
-              <i className={`fas ${showPassword ? 'fa-eye-slash' : 'fa-eye'} text-xl`} style={{ color: colors.secondaryText }}></i>
+              <i
+                className={`fas ${showPassword ? "fa-eye-slash" : "fa-eye"} text-xl`}
+                style={{ color: colors.secondaryText }}
+              ></i>
             </button>
             {errors.password && submitted && (
               <p className="mt-2 text-sm text-red-600">{errors.password}</p>
@@ -148,7 +165,11 @@ export default function Login() {
 
           {/* Forgot password */}
           <div className="text-right">
-            <Link to="/forgotPassword" className="text-sm font-medium hover:underline" style={{ color: colors.accent }}>
+            <Link
+              to="/forgotPassword"
+              className="text-sm font-medium hover:underline"
+              style={{ color: colors.accent }}
+            >
               Forgot password?
             </Link>
           </div>
@@ -157,16 +178,23 @@ export default function Login() {
           <button
             type="submit"
             className="w-full py-4 rounded-xl font-semibold text-lg shadow-lg transition-all hover:opacity-90 active:scale-[0.98]"
-            style={{ backgroundColor: colors.accent, color: '#ffffff' }}
+            style={{ backgroundColor: colors.accent, color: "#ffffff" }}
           >
-          {loading ? "Signing user..." : "SignIn"}
+            {loading ? "Signing user..." : "SignIn"}
           </button>
         </form>
 
         {/* Don't have account */}
-        <p className="text-center text-sm mt-6" style={{ color: colors.secondaryText }}>
-          Don't have an account?{' '}
-          <Link to="/" className="font-semibold hover:underline" style={{ color: colors.accent }}>
+        <p
+          className="text-center text-sm mt-6"
+          style={{ color: colors.secondaryText }}
+        >
+          Don't have an account?{" "}
+          <Link
+            to="/Signup"
+            className="font-semibold hover:underline"
+            style={{ color: colors.accent }}
+          >
             Create one
           </Link>
         </p>
@@ -174,12 +202,21 @@ export default function Login() {
         {/* Or divider */}
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-       <div className="w-full border-t" style={{ 
-       borderColor: colors.border
-       }}></div>
+            <div
+              className="w-full border-t"
+              style={{
+                borderColor: colors.border,
+              }}
+            ></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-4" style={{ background: colors.background, color: colors.secondaryText }}>
+            <span
+              className="px-4"
+              style={{
+                background: colors.background,
+                color: colors.secondaryText,
+              }}
+            >
               Or
             </span>
           </div>
@@ -198,7 +235,10 @@ export default function Login() {
               backgroundColor: colors.container,
             }}
           >
-            <i className="fab fa-google text-xl" style={{ color: '#4285F4' }}></i>
+            <i
+              className="fab fa-google text-xl"
+              style={{ color: "#4285F4" }}
+            ></i>
             Continue with Google
           </button>
 
@@ -208,8 +248,8 @@ export default function Login() {
             onClick={handleAppleLogin}
             className="w-full flex items-center justify-center gap-3 py-4 border rounded-xl font-medium text-lg transition-all hover:bg-gray-900/90 active:scale-[0.98] text-white"
             style={{
-              backgroundColor: '#000000',
-              borderColor: '#000000',
+              backgroundColor: "#000000",
+              borderColor: "#000000",
             }}
           >
             <i className="fab fa-apple text-2xl"></i>

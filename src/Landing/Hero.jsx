@@ -1,161 +1,371 @@
-import colors from '../color.jsx'
-import mockup from "../assets/mockup.png"
+import Header from "./Header.jsx";
+import colors from "../color.jsx";
+import mockup from "../assets/mockup.png";
+import { motion } from "framer-motion";
+import bgImage from "../assets/background.jpg";
+import { useNavigate, Link } from "react-router-dom";
+import { useState } from "react";
 
-export function Hero(){
-  return(
-    <div className="h-[85vh] w-[100%] flex flex-wrap  items-center
-    justify-between">
-  
-  {/*The name*/}  
-  <div className="max-w-md h-full grid place-items-center items-center gap-2">
-    <div className="grid items-center place-items-center p-4">
-   <h1 className="font-bold text-3xl text-center uppercase" 
-   style={{
-        color : colors.text,
-        fontFamily: "Orbitron",
-      }}>Enter the Cheddar Drop!</h1>
-   <p style={{
-     color:colors.primaryText,
-     fontFamily:"italic"
-   }} className="text-lg font-semibold text-gray-500">..Where Rarity Meets
-   Comfort..</p>
-      <span className="text-sm font-bold text-center"
-      style={{
-        color:colors.secondaryText,
-      }}>Exclusively for the discerning gentleman.Limited-edition hoodies of superior craftsmanship, where luxury fabrics deliver refined comfort and
-      understated distinction. Curated with impeccable detail for timeless
-      elegance.</span>
-      
-  {/*button*/}
-      <div className="flex w-full p-3 flex-wrap justify-center items-center gap-2">
-      <button className="p-[10px] border-none outline-none 
-      rounded-[12px] w-[170px] font-semibold text-lg" style={{
-        backgroundColor: colors.deepAccent,
-        color:colors.text,
-      }}>Explore Now!</button>
-      
-      <button className="p-[10px] border-none outline-none w-[170px]
-      rounded-[12px] font-semibold text-lg" style={{
-        backgroundColor:colors.accent,
-        color:colors.text,
-      }}>Join Wait-List  <i className="fas fa-arrow-right"></i></button>
-      
-    </div>
-    </div>  
-    
+// Generate particle positions outside component to avoid impure function calls during render
+const generateParticles = (count) => {
+  return Array.from({ length: count }, (_, i) => ({
+    id: i,
+    top: `${Math.random() * 100}%`,
+    left: `${Math.random() * 100}%`,
+    duration: 6 + Math.random() * 4,
+  }));
+};
 
-  </div>
-  
-   {/*The Image*/}  
-   <div className="relative max-w-md h-full grid place-items-center items-center
-   p-2">
-     
-  <div className="w-[95%] h-[70%] rounded-[50%]"
-  style={{
-    backgroundColor:colors.container,
-  }}>
-      <img 
-      src={mockup}
-     alt="product feel"
-     className="w-full h-full object-fit"
+const particles = generateParticles(20);
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.28,
+      delayChildren: 0.2,
+    },
+  },
+};
+
+const item = {
+  hidden: {
+    opacity: 0,
+    y: 30,
+  },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.9,
+      ease: "easeOut",
+    },
+  },
+};
+
+function FeatureCard({ icon, title, text, className }) {
+  return (
+    <motion.div
+      variants={item}
+      whileHover={{ scale: 1.05 }}
+      className={`absolute w-[100px] sm:w-[120px] h-[80px] rounded-[10px] grid gap-1 p-[6px] backdrop-blur-md border border-white/20 ${className}`}
+      style={{ backgroundColor: "rgba(255, 255, 255, 0.76)" }}
+    >
+      <div className="flex items-center gap-2">
+        <i
+          className={`fas ${icon} text-sm`}
+          style={{ color: colors.deepWhite }}
+        />
+        <p
+          className="text-sm font-medium sm:font-semibold"
+          style={{ color: colors.deepWhite }}
+        >
+          {title}
+        </p>
+      </div>
+      <span
+        className="text-xs sm:text-sm"
+        style={{ color: colors.container, fontFamily: "cursive" }}
+      >
+        {text}
+      </span>
+    </motion.div>
+  );
+}
+
+export function Com() {
+  const [hover, setHover] = useState(false);
+  const navigate = useNavigate();
+  return (
+    <section id="home" className="min-h-screen w-full">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 md:px-10 lg:px-12 py-12 sm:py-16 grid grid-cols-1 md:grid-cols-2 items-center gap-10 lg:gap-14">
+        {/* LEFT CONTENT */}
+        <motion.div
+          variants={container}
+          initial="hidden"
+          animate="show"
+          className="max-w-[520px] space-y-5"
+        >
+          <motion.h1
+            variants={item}
+            className="font-bold text-3xl sm:text-5xl uppercase text-center md:text-left"
+            style={{ color: colors.primaryText, fontFamily: "Orbitron" }}
+          >
+            Enter the Cheddar Drop!
+          </motion.h1>
+
+          <motion.p
+            variants={item}
+            className="text-lg font-semibold text-center md:text-left"
+            style={{ color: colors.text, fontStyle: "italic" }}
+          >
+            …Where Rarity Meets Comfort…
+          </motion.p>
+
+          <motion.span
+            variants={item}
+            className="text-sm sm:text-md sm:font-semibold text-center"
+            style={{ color: colors.grayText }}
+          >
+            Exclusively for the discerning gentleman.Limited-edition hoodies of
+            superior craftsmanship, where luxury fabrics deliver refined comfort
+            and understated distinction. Curated with impeccable detail for
+            timeless elegance.
+          </motion.span>
+
+          <motion.div
+            variants={item}
+            className="flex mt-3 gap-4 pt-2 justify-center md:justify-start"
+          >
+            <button
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+              className="px-4 py-3 sm:px-6 rounded-xl font-semibold cursor-pointer transition-all duration-300 hover:scale-105 hover:cursor-pointer"
+              style={{
+                backgroundColor: hover ? colors.accent : colors.primaryText,
+                color: colors.background,
+              }}
+            >
+              Explore Now
+            </button>
+
+            <button
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+              className="px-4 sm:px-6 py-3 rounded-xl font-semibold hover:cursor-pointer transition-all duration-300 hover:scale-90"
+              style={{
+                backgroundColor: hover ? colors.primaryText : colors.accent,
+                color: colors.background,
+              }}
+              onClick={() => navigate("/Signup")}
+            >
+              Join Wait-List →
+            </button>
+          </motion.div>
+        </motion.div>
+
+        {/* RIGHT IMAGE */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{
+            duration: 1.2,
+            ease: "easeOut",
+          }}
+          className="relative w-full max-w-[330px] sm:max-w-[420px] lg:max-w-[480px] h-[440px] sm:h-[480px] lg:h-[530px] mx-auto grid place-items-center"
+        >
+          <motion.div
+            animate={{
+              y: [-10, 10, -10],
+              rotate: [-2, 2, -2],
+            }}
+            transition={{
+              duration: 6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+            whileHover={{
+              scale: 1.08,
+              rotate: 0,
+            }}
+            className="w-[95%] h-[70%] rounded-full overflow-hidden shadow-2xl"
+            style={{ backgroundColor: colors.Herocard }}
+          >
+            <div
+              className="absolute w-[320px] h-[320px] rounded-full blur-[120px]"
+              style={{
+                background: "rgba(255, 179, 0, 0.28)",
+              }}
+            />
+            <img
+              src={mockup}
+              alt="product"
+              className="w-full h-full object-contain"
+            />
+          </motion.div>
+
+          {/* FLOATING FEATURE CARDS */}
+          <motion.div variants={container} initial="hidden" animate="show">
+            <FeatureCard
+              icon="fa-hand-sparkles"
+              title="Curated"
+              text="Handpicked with intention"
+              className="left-0 top-24"
+            />
+            <FeatureCard
+              icon="fa-user-tie"
+              title="Personal"
+              text="Tailored to your style"
+              className="top-6 left-1/2 -translate-x-1/2"
+            />
+            <FeatureCard
+              icon="fa-gem"
+              title="Premium"
+              text="Finest fabrics & finish"
+              className="left-0 bottom-32"
+            />
+            <FeatureCard
+              icon="fa-crown"
+              title="Exclusive"
+              text="Limited pieces"
+              className="right-0 top-24"
+            />
+            <FeatureCard
+              icon="fa-star"
+              title="Elegant"
+              text="Luxury presentation"
+              className="right-0 bottom-32"
+            />
+            <FeatureCard
+              icon="fa-clock-rotate-left"
+              title="Timeless"
+              text="Classic meets modern"
+              className="bottom-10 left-1/2 -translate-x-1/2"
+            />
+          </motion.div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+// Animation variants for background elements
+const backgroundEntry = {
+  hidden: { opacity: 0, scale: 1.1 },
+  show: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 1.5,
+      ease: "easeOut",
+    },
+  },
+};
+
+const overlayEntry = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      duration: 1,
+      delay: 0.5,
+      ease: "easeOut",
+    },
+  },
+};
+
+const glowEntry = {
+  hidden: { opacity: 0, scale: 0.8 },
+  show: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 1.2,
+      delay: 0.8,
+      ease: "easeOut",
+    },
+  },
+};
+
+const particlesEntry = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.05,
+      delayChildren: 1,
+    },
+  },
+};
+
+const singleParticle = {
+  hidden: { opacity: 0, scale: 0 },
+  show: { opacity: 0.4, scale: 1 },
+};
+
+export default function Welcome() {
+  return (
+    <div className="relative w-full overflow-hidden min-h-screen">
+      {/* BACKGROUND IMAGE - With entry animation */}
+      <motion.img
+        src={bgImage}
+        alt="background"
+        className="absolute inset-0 w-full h-full object-cover z-0"
+        variants={backgroundEntry}
+        initial="hidden"
+        animate="show"
       />
-  </div>
 
-<div className="w-full items-center justify-center">
-   <p style={{
-    color: colors.secondaryText,
-  }}>Yes thats the best  website ever i have seen , shop with us and come
-  again!!</p>
-</div>
- 
+      {/* DARK OVERLAY - With entry animation */}
+      <motion.div
+        className="absolute inset-0 z-10 bg-black/80"
+        variants={overlayEntry}
+        initial="hidden"
+        animate="show"
+      />
 
-{/* Div one - Top Left */}
-<div className="absolute left-[12px] top-[110px] w-[120px] h-[80px] z-100 rounded-[10px] grid gap-[3px] overflow-hidden p-[3px]"
-  style={{
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(255, 255, 255, 0.2)'
-  }}>
-  <div className="w-full flex items-center gap-2 text-white">
-    <i className="fas fa-hand-sparkles"></i>
-    <p className="text-sm font-semibold" style={{ color: colors.secondaryText }}>Curated</p>
-  </div>
-  <span className="text-sm" style={{ color: colors.text, fontFamily: "cursive" }}>Handpicked with intention</span>
-</div>
+      {/* LIGHT GLOW 1 - With entry animation */}
+      <motion.div
+        variants={glowEntry}
+        initial="hidden"
+        animate="show"
+        className="absolute z-10 w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] lg:w-[700px] lg:h-[700px] rounded-full blur-[120px]"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(255,180,0,0.35), transparent 60%)",
+          top: "10%",
+          left: "20%",
+        }}
+      />
 
+      {/* LIGHT GLOW 2 - With entry animation */}
+      <motion.div
+        variants={glowEntry}
+        initial="hidden"
+        animate="show"
+        className="absolute z-10 w-[600px] h-[600px] rounded-full blur-[120px]"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(120,80,255,0.35), transparent 60%)",
+          bottom: "0%",
+          right: "10%",
+        }}
+      />
 
-{/* Div one - Top Top */}
-<div className="absolute top-[45px] w-[120px] h-[80px] z-100 rounded-[10px] grid gap-[3px] overflow-hidden p-[3px]"
-  style={{
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(255, 255, 255, 0.2)'
-  }}>
-  <div className="w-full flex items-center gap-2 text-white">
-    <i className="fas fa-user-tie"></i>
-    <p className="text-sm font-semibold" style={{ color: colors.secondaryText }}>Personal</p>
-  </div>
-  <span className="text-sm" style={{ color: colors.text, fontFamily: "cursive" }}> Tailored to your style</span>
-</div>
+      {/* FLOATING PARTICLES - With entry animation */}
+      <motion.div
+        className="absolute inset-0 z-10"
+        variants={particlesEntry}
+        initial="hidden"
+        animate="show"
+      >
+        {particles.map((particle) => (
+          <motion.span
+            key={particle.id}
+            variants={singleParticle}
+            className="absolute w-[4px] h-[4px] bg-white rounded-full"
+            style={{
+              top: particle.top,
+              left: particle.left,
+            }}
+            animate={{
+              y: [-20, 20, -20],
+              opacity: [0.3, 0.8, 0.3],
+            }}
+            transition={{
+              duration: particle.duration,
+              repeat: Infinity,
+            }}
+          />
+        ))}
+      </motion.div>
 
-{/* Div two - Bottom Left */}
-<div className="absolute left-[12px] bottom-[160px] w-[120px] h-[80px] z-100 rounded-[10px] grid gap-[3px] overflow-hidden p-[3px]"
-  style={{
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(255, 255, 255, 0.2)'
-  }}>
-  <div className="w-full flex items-center gap-2 text-white">
-    <i className="fas fa-gem"></i>
-    <p className="text-sm font-semibold" style={{ color: colors.secondaryText }}>Premium</p>
-  </div>
-  <span className="text-sm" style={{ color: colors.text, fontFamily: "cursive" }}>Finest fabrics & finishing</span>
-</div>
-
-{/* Div three - Top Right */}
-<div className="absolute right-[12px] top-[110px] w-[120px] h-[80px] z-100 rounded-[10px] grid gap-[3px] overflow-hidden p-[3px]"
-  style={{
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(255, 255, 255, 0.2)'
-  }}>
-  <div className="w-full flex items-center gap-2 text-white">
-    <i className="fas fa-crown"></i>
-    <p className="text-sm font-semibold" style={{ color: colors.secondaryText }}>Exclusive</p>
-  </div>
-  <span className="text-sm" style={{ color: colors.text, fontFamily: "cursive" }}>Limited, one-of-a-kind pieces</span>
-</div>
-
-{/* Div four - Bottom Right */}
-<div className="absolute right-[12px] bottom-[160px] w-[120px] h-[80px] z-100 rounded-[10px] grid gap-[3px] overflow-hidden p-[3px]"
-  style={{
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(255, 255, 255, 0.2)'
-  }}>
-  <div className="w-full flex items-center gap-2 text-white">
-    <i className="fas fa-star"></i>
-    <p className="text-sm font-semibold" style={{ color: colors.secondaryText }}>Elegant</p>
-  </div>
-  <span className="text-sm" style={{ color: colors.text, fontFamily: "cursive" }}>Luxurious feel & presentation</span>
-</div>
-
-{/* Div four - Bottom Bottom */}
-<div className="absolute bottom-[120px] w-[120px] h-[80px] z-100 rounded-[10px] grid gap-[3px] overflow-hidden p-[3px]"
-  style={{
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    backdropFilter: 'blur(10px)',
-    border: '1px solid rgba(255, 255, 255, 0.2)'
-  }}>
-  <div className="w-full flex items-center gap-2 text-white">
-    <i className="fas fa-clock-rotate-left"></i>
-    <p className="text-sm font-semibold" style={{ color: colors.secondaryText }}>Timeless</p>
-  </div>
-  <span className="text-sm" style={{ color: colors.text, fontFamily: "cursive" }}>Classic meets modern trends</span>
-</div>
-
-
-</div>
+      {/* PAGE CONTENT - Above all backgrounds */}
+      <div className="relative z-20">
+        <Header />
+        <Com />
+      </div>
     </div>
-    )
+  );
 }
