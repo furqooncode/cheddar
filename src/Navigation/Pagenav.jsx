@@ -3,11 +3,9 @@ import colors from '../color.jsx'
 
 function getPageTitle(pathname) {
   const titles = {
-    '/cart': 'My Cart',
-    '/shop': 'Shop',
-    '/collections': 'Collections',
-    '/about': 'About',
-    '/Transaction' : 'Wallet'
+    '/Cart': 'My Cart',
+    '/Browse': 'Shop',
+    '/Wallet' : 'Wallet'
   }
   return titles[pathname] || 'Page'
 }

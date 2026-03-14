@@ -1,62 +1,69 @@
 import colors from '../color.jsx'
-
+import useCart from '../Client/CartStorage.jsx';
 const products = [
   {
+    id:1,
     name: "Oversized Black Essential Hoodie",
     description: "Heavyweight cotton fleece with dropped shoulders and ribbed cuffs for ultimate street-ready comfort.",
-    price: "₦45,000",
-    originalPrice: "₦58,500", // ~30% off example
+    price: 45000,
+    originalPrice: 58500 ,// ~30% off example
     discountPercent: 23,
     cheddarCoin: "30 CHD",
     image: "https://static.independent.co.uk/2025/01/15/13/MS-best-mens-hoodies-indybest.jpg",
   },
   {
+    id:2,
     name: "Graphic Print All-Over Hoodie",
     description: "Bold urban print on premium cotton blend, relaxed fit with kangaroo pocket and adjustable hood.",
-    price: "₦38,000",
+    price: 38000,
     cheddarCoin: "25 CHD",
     // No discount on this one
     image: "https://modaknits.com/wp-content/uploads/2023/09/ericwen_340_The_image_showcases_a_young_man_wearing_a_stylish_a_22587368-1202-4fd9-b734-5b9df8c74282.png",
   },
   {
+    id:3,
     name: "Slim Fit Chino Trousers",
     description: "Tailored stretch cotton chinos in neutral tones with clean lines, perfect for smart-casual versatility.",
-    price: "₦28,500",
+    price: 28500,
     originalPrice: "₦36,000",
     discountPercent: 21,
     cheddarCoin: "19 CHD",
     image: "https://i.ebayimg.com/images/g/CHMAAOSwoAFjCBNV/s-l1200.jpg",
   },
   {
+    id:4,
     name: "Navy Embroidered Polo Shirt",
     description: "Breathable piqué cotton polo with subtle chest embroidery and classic three-button placket.",
-    price: "₦18,000",
+    price: 18000,
     cheddarCoin: "12 CHD",
     // No discount
     image: "https://m.media-amazon.com/images/I/51a6wffhW0L.jpg_BO30,255,255,255_UF750,750_SR1910,1000,0,C_QL100_.jpg",
   },
   {
+    id:5,
     name: "Luxury Zip-Track Tracksuit Set",
     description: "Modern slim-fit tracksuit in premium cotton blend with contrast stripes, ideal for casual or active wear.",
-    price: "₦65,000",
+    price: 65000,
     originalPrice: "₦85,000",
     discountPercent: 24,
     cheddarCoin: "43 CHD",
     image: "https://m.media-amazon.com/images/S/aplus-media-library-service-media/7f800c31-a04a-4979-ad49-e73697212f03.__CR0,0,970,600_PT0_SX970_V1___.jpg",
   },
   {
+    id:6,
     name: "Relaxed Cargo Utility Pants",
     description: "Lightweight cotton cargo pants with multiple pockets, drawstring waist, and tapered leg for everyday utility.",
-    price: "₦32,000",
+    price: 32000,
     cheddarCoin: "21 CHD",
     // No discount
     image: "https://m.media-amazon.com/images/I/61tiHVAEEfL.jpg_BO30,255,255,255_UF750,750_SR1910,1000,0,C_QL100_.jpg",
   },
   {
+    id:7,
     name: "Vintage Oversized Acid Wash Tee",
     description: "Heavyweight cotton oversized tee in acid-wash finish for a timeless streetwear edge.",
-    price: "₦15,000",
-    originalPrice: "₦19,500",
+    price: 15000,
+    originalPrice: 19500,
     discountPercent: 23,
     cheddarCoin: "10 CHD",
     image: "https://m.media-amazon.com/images/I/71tRcJFCmnL._AC_UY1000_.jpg",
@@ -64,14 +71,15 @@ const products = [
 ];
 
 export function ProductList() {
+  const { addToCart } = useCart();
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 p-4 md:p-6 lg:p-8">
-      {products.map((product, index) => {
+       {products.map((product, index) => {
         const hasDiscount = product.discountPercent && product.originalPrice;
 
         return (
           <div
-            key={index}
+            key={product.id}
             className="group relative bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 border border-gray-100"
             style={{
               backgroundColor: colors.container,
@@ -143,7 +151,7 @@ export function ProductList() {
                       className="text-base font-medium"
                       style={{ color: colors.secondaryText }}
                     >
-                      {product.price}
+                      ₦{(product.price).toLocaleString()}
                     </span>
 
                     {hasDiscount && (
@@ -162,6 +170,9 @@ export function ProductList() {
                   className="w-14 h-14 rounded-full flex items-center justify-center text-white shadow-md hover:scale-110 active:scale-95 transition-transform duration-200"
                   style={{ backgroundColor: colors.accent }}
                   aria-label="Add to cart"
+                  onClick={()=>{
+                    addToCart(product)
+                  }}
                 >
                   <i className="fas fa-shopping-cart text-xl"></i>
                 </button>

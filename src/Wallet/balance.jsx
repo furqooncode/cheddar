@@ -2,30 +2,35 @@ import { useState } from 'react';
 import colors from '../color.jsx';
 import { useQuery } from '@tanstack/react-query';
 import supabase from '../lib/util.jsx'
-
+import useTheme from '../Client/Toggletheme.jsx';
 
 export default function Balance() {
-  const {data, isError, isPending, error} = useQuery({
-    queryKey:['wallet'],
-    queryFn: async()=>{
-      const res = await supabase.from("wallet");
-      return res;
+  const { data, isError, isPending, error } = useQuery({
+    queryKey: ['wallet'],
+    queryFn: async () => {
+    //This gets the currently logged in user from Supabase auth. We destructure
+   // user out of it so we have access to user.id.
+   
+      const { data: { user} } = await supabase.auth.getUser()
+        console.log(user)
+      const { data, error } = await supabase
+        .from("wallet")
+        .select("*")
+        .eq("userId", user.id)// we list all users here
+        .single()
+       console.log(data)
+      if (error){
+      throw new Error(error.message)
+      }
+       return data
     }
   });
-  
-  const account = {
-    name: "Hamzat Oladimeji",
-    number: "0123456789",
-    bank: "Sterlin Bank",
-    balance: "₦45,000.00",
-    cheddarCoin: "701",
-  };
 
   const [copied, setCopied] = useState(false);
   const [spinning, setSpinning] = useState(false);
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(account.number);
+    navigator.clipboard.writeText(data?.virtualAccountNumber);
     setCopied(true);
     setTimeout(() => setCopied(false), 1800);
   };
@@ -34,6 +39,9 @@ export default function Balance() {
     setSpinning(true);
     setTimeout(() => setSpinning(false), 600);
   };
+
+  if (isPending) return <p style={{ color: colors.text }}>Loading...</p>
+  if (isError) return <p style={{ color: colors.text }}>{error.message}</p>
 
   return (
     <div
@@ -67,7 +75,7 @@ export default function Balance() {
                 className="text-lg font-semibold tracking-wide"
                 style={{ color: colors.primaryText }}
               >
-                {account.name}
+                {data?.fullName}
               </span>
               <button
                 onClick={handleRefresh}
@@ -92,7 +100,7 @@ export default function Balance() {
                 className="text-base tracking-widest font-mono"
                 style={{ color: colors.text }}
               >
-                {account.number}
+                {data?.virtualAccountNumber}
               </span>
               <button
                 onClick={copyToClipboard}
@@ -123,7 +131,7 @@ export default function Balance() {
                 className="text-xs tracking-widest uppercase"
                 style={{ color: colors.secondaryText }}
               >
-                {account.bank}
+                {data?.bankName}
               </span>
             </div>
 
@@ -147,7 +155,7 @@ export default function Balance() {
                   className="text-2xl font-bold leading-tight"
                   style={{ color: colors.text }}
                 >
-                  {account.balance}
+                  ₦{data?.walletBalance?.toLocaleString()}.00
                 </span>
               </div>
 
@@ -169,7 +177,7 @@ export default function Balance() {
                   className="text-2xl font-bold leading-tight"
                   style={{ color: colors.accent }}
                 >
-                  {account.cheddarCoin}
+                  0.00
                 </span>
                 <span
                   className="text-xs tracking-widest uppercase"
