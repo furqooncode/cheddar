@@ -13,13 +13,18 @@ const useCart = create(
           set({
             cartItems: get().cartItems.map(item =>
               item.id === product.id
-                ? { ...item, quantity: item.quantity + 1 }
+                ? { ...item,
+                quantity: item.quantity + 1 }
                 : item
             )
           })
         } else {
           // new item — add with quantity 1
-          set({ cartItems: [...get().cartItems, { ...product, quantity: 1 }] })
+          set({ cartItems: [
+            ...get().cartItems, 
+            { ...product, quantity: 1 }
+            ]
+          })
         }
       },
 
@@ -46,7 +51,10 @@ const useCart = create(
       },
 
       clearCart: () => set({ cartItems: [] }),
+      
+      
     }),
+    
     { name: 'cheddar-cart' }
   )
 )
