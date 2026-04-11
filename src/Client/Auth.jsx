@@ -80,6 +80,32 @@ const useAuth = create((set)=> ({
   
   },
   
+  GoogleAuth: async()=>{
+  const { data, error } = await supabase.auth.signInWithOAuth({
+      provider:'google',
+      options:{
+        redirectTo:'http://localhost:5173/DropCountdown'
+      }
+    })
+    if(error){
+      throw new Error(error.message)
+    }
+  },
+  
+  getUser: async()=>{
+    const { data: { user } } = await supabase.auth.getUser();
+    if(user){
+      const isGoogle = user.app_metadata.provider === 'google';
+      set({
+        user:{
+          email: user.email,
+          username: isGoogle ? user.user_metadata.full_name : user.user_metadata.username,
+          avatar: isGoogle ? user.user_metadata.avatar_url : null,
+          phone: isGoogle ? null : user.user_metadata.phonenumber,
+        }
+      })
+    }
+  },
   
   logout: async()=>{
     await supabase.auth.signOut()
@@ -93,3 +119,4 @@ const useAuth = create((set)=> ({
 
 
 export default useAuth
+

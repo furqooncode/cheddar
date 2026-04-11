@@ -1,8 +1,10 @@
 import logo from '../assets/logo.png'
 import { NavLink } from 'react-router-dom'
-import colors from '../color.jsx'
+import useTheme from '../Client/Toggletheme.jsx'
+
 
 export default function DesktopSidebar() {
+  const { colors } = useTheme();
   return (
     <aside className="hidden lg:flex flex-col fixed top-0 left-0 h-screen w-[240px] p-4 gap-6 bg-black/80 backdrop-blur-md"
       style={{ borderRight: `1px solid ${colors.border}` }}>
@@ -15,10 +17,10 @@ export default function DesktopSidebar() {
       {/* Links */}
       <nav className="flex flex-col gap-2 flex-1">
         {[
-          { label: 'Home', path: '/' },
-          { label: 'Shop', path: '/shop' },
-          { label: 'Cart', path: '/cart' },
-          { label: 'About', path: '/about' },
+       { label: 'Home', path: '/' },
+      { label: 'Browse', path: '/Browse' },
+      { label: 'Cart', path: '/Cart' },
+       { label: 'Wallet', path: '/Wallet' },
         ].map(({ label, path }) => (
           <NavLink key={path} to={path}
             className={({ isActive }) =>

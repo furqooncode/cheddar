@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom'
-import colors from '../color.jsx'
+import useTheme from '../Client/Toggletheme.jsx'
+
 
 function getPageTitle(pathname) {
   const titles = {
@@ -13,7 +14,7 @@ function getPageTitle(pathname) {
 export default function PageNav() {
   const navigate = useNavigate()
   const location = useLocation()
-
+const { colors } = useTheme();
   return (
     <nav className="fixed top-0 left-0 flex items-center justify-start p-2 h-[60px] w-full"
       style={{ 

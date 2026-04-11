@@ -1,4 +1,5 @@
-import colors from '../color.jsx';
+import useTheme from '../Client/Toggletheme.jsx'
+
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
@@ -38,6 +39,7 @@ const announcements = [
 ];
 
 export default function Announce() {
+  const { colors } = useTheme();
   return (
     <div className="w-full px-3 py-4 md:px-6 lg:px-8">
       <Swiper

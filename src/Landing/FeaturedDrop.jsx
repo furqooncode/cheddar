@@ -7,28 +7,44 @@ const products = [
   {
     id: 1,
     name: "Cheddar Signature Hoodie",
-    price: "$120",
+    price: 85000,
+    originalPrice: 110000,
+    discountPercent: 23,
+    cheddarCoin: "57 CHD",
+    category: "Hoodie",
     image: hoodie,
   },
   {
     id: 2,
     name: "Cheddar Elite Hoodie",
-    price: "$140",
+    price: 98000,
+    originalPrice: 130000,
+    discountPercent: 25,
+    cheddarCoin: "65 CHD",
+    category: "Hoodie",
     image: hoodie,
   },
   {
     id: 3,
     name: "Cheddar Premium Street Hoodie",
-    price: "$150",
+    price: 112000,
+    originalPrice: 145000,
+    discountPercent: 23,
+    cheddarCoin: "75 CHD",
+    category: "Hoodie",
     image: hoodie,
   },
   {
     id: 4,
     name: "Cheddar Casual Street Hoodie",
-    price: "$200",
+    price: 145000,
+    originalPrice: 190000,
+    discountPercent: 24,
+    cheddarCoin: "97 CHD",
+    category: "Hoodie",
     image: hoodie,
   },
-];
+]
 
 // animation variants
 const container = {

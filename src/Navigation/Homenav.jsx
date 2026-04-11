@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import logo from '../assets/logo.png';
-import colors from '../color.jsx';
+import useTheme from '../Client/Toggletheme.jsx'
+
 import useCart from '../Client/CartStorage.jsx';
 
 import { useNavigate } from 'react-router-dom'
 export default function HomeNav() {
+  const { colors } = useTheme();
   const { cartItems } = useCart();
   const [scrolled, setScrolled] = useState(false);
  const navigate = useNavigate()

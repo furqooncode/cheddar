@@ -1,8 +1,15 @@
 import AppRoutes from './routes.jsx'
 import { useEffect } from 'react';
 import  useTheme  from './Client/Toggletheme.jsx';
-export default function App(){
+import  useAuth  from './Client/Auth.jsx';
 
+export default function App(){
+const { getUser } = useAuth();
+ const { colors } = useTheme();
+ 
+ useEffect(()=>{
+  getUser();
+},[])
 
   useEffect(() => {
     import("vconsole").then(({ default: VConsole }) => {
@@ -10,7 +17,6 @@ export default function App(){
     });
     console.log("page mounted!!");
   }, []);
-  const { colors } = useTheme();
   return(
     <div style={{
       background: colors.background,

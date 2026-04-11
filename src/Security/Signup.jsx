@@ -1,11 +1,14 @@
 import { useState } from "react";
-import colors from "../color.jsx";
+import useTheme from '../Client/Toggletheme.jsx'
+
 import { useNavigate, Link } from "react-router-dom";
 import useAuth from "../Client/Auth.jsx";
 
+
 export default function Signup() {
-  const { signup, loading } = useAuth();
+  const { signup, loading, GoogleAuth } = useAuth()
   const navigate = useNavigate();
+  const { colors } = useTheme();
   const [formData, setFormData] = useState({
     username: "",
     fullName: "",
@@ -84,6 +87,14 @@ export default function Signup() {
       }
     }
   }
+
+async function Oauth(){
+  try{
+  await GoogleAuth()
+  }catch(error){
+    alert(error.message)
+  }
+}
 
   return (
     <div
@@ -363,36 +374,13 @@ export default function Signup() {
               color: colors.primaryText,
               backgroundColor: colors.container,
             }}
-            onClick={() => {
-              // TODO: Implement Google OAuth (e.g., using Firebase, Google Identity Services, or your backend)
-              console.log("Google signup clicked");
-              alert("Google Sign-up triggered (demo)");
-            }}
+            onClick={Oauth}
           >
             <i
               className="fab fa-google text-xl"
               style={{ color: "#4285F4" }}
             ></i>
             Sign up with Google
-          </button>
-
-          {/* Apple Sign Up (iOS) */}
-          <button
-            type="button"
-            className="w-full flex items-center justify-center gap-3 py-4 border rounded-xl font-medium text-lg transition-all hover:bg-gray-50 active:scale-[0.98]"
-            style={{
-              borderColor: colors.border,
-              color: "#ffffff",
-              backgroundColor: "#000000", // Apple's black
-            }}
-            onClick={() => {
-              // TODO: Implement Sign in with Apple (requires Apple Developer account + backend verification)
-              console.log("Apple signup clicked");
-              alert("Sign in with Apple triggered (demo)");
-            }}
-          >
-            <i className="fab fa-apple text-xl"></i>
-            Sign up with Apple
           </button>
         </div>
       </div>

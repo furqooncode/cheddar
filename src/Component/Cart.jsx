@@ -1,10 +1,14 @@
 
-import colors from '../color.jsx'
+import { useState } from 'react'
+import useTheme from '../Client/Toggletheme.jsx';
+import NavBottom from './NavBottom.jsx';
+
 import useCart from '../Client/CartStorage.jsx'
+import { useNavigate } from 'react-router-dom'
 
 export function CartList() {
-  const { cartItems, decreaseQuantity, increaseQuantity, removeFromCart } = useCart()
-
+  const { cartItems, decreaseQuantity, increaseQuantity, removeFromCart, updateItemColor } = useCart()
+const { colors } = useTheme();
   return (
     <>
       {!cartItems || cartItems.length === 0 ? (
@@ -23,114 +27,151 @@ export function CartList() {
           </div>
         </div>
       ) : (
-        cartItems.map((item) => (
-          <div
-            key={item.id}
-            className="w-full rounded-2xl overflow-hidden border"
-            style={{
-              background: `linear-gradient(145deg, ${colors.container} 0%, #222222 100%)`,
-              borderColor: colors.border,
-            }}
-          >
-            <div className="flex gap-0">
+        cartItems.map((item) => {
+          const discountedPrice = item.discount > 0
+            ? item.price - (item.price * item.discount / 100)
+            : item.price
+          const chd = (discountedPrice / 1500).toFixed(2)
 
-              {/* Image */}
-              <div className="flex-shrink-0 w-28 sm:w-36" style={{ minHeight: '160px' }}>
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-full h-full object-cover"
-                  style={{ minHeight: '160px' }}
-                />
-              </div>
+          return (
+            <div
+              key={item.id}
+              className="w-full rounded-2xl overflow-hidden border"
+              style={{
+                background: `linear-gradient(145deg, ${colors.container} 0%, #222222 100%)`,
+                borderColor: colors.border,
+              }}
+            >
+              <div className="flex gap-0">
 
-              {/* Content */}
-              <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
+                {/* Image */}
+                <div className="flex-shrink-0 w-28 sm:w-36" style={{ minHeight: '160px' }}>
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover"
+                    style={{ minHeight: '160px' }}
+                  />
+                </div>
 
-                <div className="flex flex-col gap-1.5">
+                {/* Content */}
+                <div className="flex-1 p-4 flex flex-col justify-between min-w-0">
 
-                  {/* Name + delete */}
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="text-sm font-semibold leading-tight" style={{ color: colors.primaryText }}>
-                      {item.name}
+                  <div className="flex flex-col gap-1.5">
+
+                    {/* Name + delete */}
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-sm font-semibold leading-tight" style={{ color: colors.primaryText }}>
+                        {item.name}
+                      </p>
+                      <button
+                        className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-200"
+                        style={{
+                          background: 'rgba(139,47,47,0.12)',
+                          border: '1px solid rgba(139,47,47,0.25)',
+                          color: '#c97070',
+                        }}
+                        aria-label="Remove item"
+                        onClick={() => removeFromCart(item.id)}
+                      >
+                        <i className="fas fa-trash-alt" style={{ fontSize: '10px' }} />
+                      </button>
+                    </div>
+
+                    <p className="text-xs leading-relaxed line-clamp-2" style={{ color: colors.secondaryText }}>
+                      {item.description}
                     </p>
-                    <button
-                      className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-200"
-                      style={{
-                        background: 'rgba(139,47,47,0.12)',
-                        border: '1px solid rgba(139,47,47,0.25)',
-                        color: '#c97070',
-                      }}
-                      aria-label="Remove item"
-                      onClick={() => removeFromCart(item.id)}
+
+                    {/* Price + CHD */}
+                    <div className="flex items-baseline gap-2 mt-1 flex-wrap">
+                      <span className="text-sm font-light tracking-tight" style={{ color: colors.text }}>
+                        ₦{discountedPrice.toLocaleString()}
+                      </span>
+                      {item.discount > 0 && (
+                        <span className="text-xs line-through opacity-50" style={{ color: colors.secondaryText }}>
+                          ₦{item.price.toLocaleString()}
+                        </span>
+                      )}
+                      <span className="text-base font-black tracking-tight" style={{ color: colors.accent }}>
+                        {chd} CHD
+                      </span>
+                    </div>
+
+                    {/* Color selector */}
+                    {item.colorAvailable && item.colorAvailable.length > 0 && (
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-xs" style={{ color: colors.secondaryText }}>Color:</span>
+                        <div className="flex items-center gap-1.5">
+                          {item.colorAvailable.map((c, i) => (
+                            <button
+                              key={i}
+                              onClick={() => updateItemColor(item.id, c)}
+                              className="w-5 h-5 rounded-full transition-all duration-150"
+                              style={{
+                                background: c,
+                                border: item.selectedColor === c
+                                  ? `2px solid ${colors.accent}`
+                                  : '2px solid rgba(255,255,255,0.15)',
+                                transform: item.selectedColor === c ? 'scale(1.2)' : 'scale(1)',
+                              }}
+                              aria-label={`Select color ${c}`}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Quantity stepper */}
+                  <div className="flex items-center gap-3 mt-3">
+                    <div
+                      className="flex items-center rounded-xl overflow-hidden border"
+                      style={{ borderColor: colors.border }}
                     >
-                      <i className="fas fa-trash-alt" style={{ fontSize: '10px' }} />
-                    </button>
+                      <button
+                        className="w-8 h-8 flex items-center justify-center transition-all duration-150"
+                        style={{
+                          background: 'rgba(255,255,255,0.04)',
+                          color: colors.secondaryText,
+                          borderRight: `1px solid ${colors.border}`,
+                        }}
+                        disabled={item.quantity === 1}
+                        onClick={() => decreaseQuantity(item.id)}
+                      >
+                        <i className="fas fa-minus" style={{ fontSize: '9px' }} />
+                      </button>
+
+                      <span
+                        className="w-9 text-center text-sm font-semibold"
+                        style={{
+                          color: colors.primaryText,
+                          background: 'rgba(255,255,255,0.02)',
+                        }}
+                      >
+                        {item.quantity}
+                      </span>
+
+                      <button
+                        className="w-8 h-8 flex items-center justify-center transition-all duration-150"
+                        style={{
+                          background: 'rgba(255,255,255,0.04)',
+                          color: colors.secondaryText,
+                          borderLeft: `1px solid ${colors.border}`,
+                        }}
+                        onClick={() => increaseQuantity(item.id)}
+                      >
+                        <i className="fas fa-plus" style={{ fontSize: '9px' }} />
+                      </button>
+                    </div>
+
+                    <span className="text-xs" style={{ color: colors.secondaryText }}>qty</span>
                   </div>
 
-                  <p className="text-xs leading-relaxed line-clamp-2" style={{ color: colors.secondaryText }}>
-                    {item.description}
-                  </p>
-
-                  <div className="flex items-baseline gap-2 mt-1 flex-wrap">
-                    <span className="text-sm font-light tracking-tight" style={{ color: colors.text }}>
-                      ₦{(item.price).toLocaleString()}
-                    </span>
-                    <span className="text-base font-black tracking-tight" style={{ color: colors.accent }}>
-                      {((Number(item.price)) / 1500).toFixed(2)} CHD
-                    </span>
-                  </div>
                 </div>
-
-                {/* Quantity stepper */}
-                <div className="flex items-center gap-3 mt-3">
-                  <div
-                    className="flex items-center rounded-xl overflow-hidden border"
-                    style={{ borderColor: colors.border }}
-                  >
-                    <button
-                      className="w-8 h-8 flex items-center justify-center transition-all duration-150"
-                      style={{
-                        background: 'rgba(255,255,255,0.04)',
-                        color: colors.secondaryText,
-                        borderRight: `1px solid ${colors.border}`,
-                      }}
-                      disabled={item.quantity === 1}
-                      onClick={() => decreaseQuantity(item.id)}
-                    >
-                      <i className="fas fa-minus" style={{ fontSize: '9px' }} />
-                    </button>
-
-                    <span
-                      className="w-9 text-center text-sm font-semibold"
-                      style={{
-                        color: colors.primaryText,
-                        background: 'rgba(255,255,255,0.02)',
-                      }}
-                    >
-                      {item.quantity}
-                    </span>
-
-                    <button
-                      className="w-8 h-8 flex items-center justify-center transition-all duration-150"
-                      style={{
-                        background: 'rgba(255,255,255,0.04)',
-                        color: colors.secondaryText,
-                        borderLeft: `1px solid ${colors.border}`,
-                      }}
-                      onClick={() => increaseQuantity(item.id)}
-                    >
-                      <i className="fas fa-plus" style={{ fontSize: '9px' }} />
-                    </button>
-                  </div>
-
-                  <span className="text-xs" style={{ color: colors.secondaryText }}>qty</span>
-                </div>
-
               </div>
             </div>
-          </div>
-        ))
+          )
+        })
       )}
     </>
   )
@@ -138,8 +179,15 @@ export function CartList() {
 
 export function Summary() {
   const { cartItems } = useCart()
+  const { colors } = useTheme();
+const navigate = useNavigate();
+  const totalPrice = cartItems.reduce((acc, item) => {
+    const discountedPrice = item.discount > 0
+      ? item.price - (item.price * item.discount / 100)
+      : item.price
+    return acc + discountedPrice * item.quantity
+  }, 0)
 
-  const totalPrice = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
   const totalCHD = (totalPrice / 1500).toFixed(2)
 
   return (
@@ -190,6 +238,9 @@ export function Summary() {
             boxShadow: '0 4px 20px rgba(193,154,107,0.3)',
             letterSpacing: '0.2em',
           }}
+          onClick={()=>{
+            navigate("/Checkout")
+          }}
         >
           Proceed to Checkout
         </button>
@@ -200,7 +251,7 @@ export function Summary() {
 
 export default function Cart() {
   const { cartItems } = useCart()
-
+const { colors } = useTheme();
   return (
     <div
       className="w-full min-h-screen px-4 py-6"
@@ -248,8 +299,10 @@ export default function Cart() {
 
         {/* Summary */}
         <Summary />
-
+        
+        
       </div>
+       <NavBottom />
     </div>
   )
 }

@@ -1,8 +1,9 @@
-import { motion } from "framer-motion";
-import { FaGem, FaCrown, FaStar, FaLayerGroup } from "react-icons/fa";
-import colors from "../color.jsx";
 
-const About = () => {
+import { motion } from "framer-motion";
+import colors from '../color.jsx'
+
+export default function About(){
+  
   return (
     <section
       id="about"
@@ -55,7 +56,7 @@ const About = () => {
           </p>
 
           <p className="mt-4 text-sm sm:text-base">
-            At Cheddar, fashion is more than clothing — it’s identity,
+            At Cheddar, fashion is more than clothing — it's identity,
             confidence, and presence. Our mission is to redefine modern luxury
             streetwear through pieces that combine comfort, craftsmanship, and
             exclusivity.
@@ -85,13 +86,12 @@ const About = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <motion.div
             whileHover={{ y: -8 }}
-            className="bg-white/5 border border-white/10 backdrop-blur-md
-            rounded-xl p-6 text-center"
+            className="bg-white/5 border border-white/10 backdrop-blur-md rounded-xl p-6 text-center"
           >
-            <FaGem
-              className="mx-auto text-2xl mb-3"
+            <i
+              className="fa-solid fa-gem text-2xl mb-3 block"
               style={{ color: colors.accent }}
-            />
+            ></i>
             <h3 className="font-semibold mb-2">Premium Craftsmanship</h3>
             <p className="text-gray-400 text-sm">
               Each piece is built with precision using carefully selected
@@ -101,13 +101,12 @@ const About = () => {
 
           <motion.div
             whileHover={{ y: -8 }}
-            className="bg-white/5 border border-white/10 backdrop-blur-md
-            rounded-xl p-6 text-center"
+            className="bg-white/5 border border-white/10 backdrop-blur-md rounded-xl p-6 text-center"
           >
-            <FaCrown
-              className="mx-auto text-2xl mb-3"
+            <i
+              className="fa-solid fa-crown text-2xl mb-3 block"
               style={{ color: colors.accent }}
-            />
+            ></i>
             <h3 className="font-semibold mb-2">Limited Drops</h3>
             <p className="text-gray-400 text-sm">
               Exclusive collections released in limited quantities to preserve
@@ -117,13 +116,12 @@ const About = () => {
 
           <motion.div
             whileHover={{ y: -8 }}
-            className="bg-white/5 border border-white/10 backdrop-blur-md
-            rounded-xl p-6 text-center"
+            className="bg-white/5 border border-white/10 backdrop-blur-md rounded-xl p-6 text-center"
           >
-            <FaLayerGroup
-              className="mx-auto text-2xl mb-3"
+            <i
+              className="fa-solid fa-layer-group text-2xl mb-3 block"
               style={{ color: colors.accent }}
-            />
+            ></i>
             <h3 className="font-semibold mb-2">Modern Luxury</h3>
             <p className="text-gray-400 text-sm">
               A blend of luxury aesthetics and contemporary streetwear culture.
@@ -132,13 +130,12 @@ const About = () => {
 
           <motion.div
             whileHover={{ y: -8 }}
-            className="bg-white/5 border border-white/10 backdrop-blur-md
-            rounded-xl p-6 text-center"
+            className="bg-white/5 border border-white/10 backdrop-blur-md rounded-xl p-6 text-center"
           >
-            <FaStar
-              className="mx-auto text-2xl mb-3"
+            <i
+              className="fa-solid fa-star text-2xl mb-3 block"
               style={{ color: colors.accent }}
-            />
+            ></i>
             <h3 className="font-semibold mb-2">Timeless Identity</h3>
             <p className="text-gray-400 text-sm">
               Designed to remain stylish beyond trends while expressing
@@ -151,9 +148,7 @@ const About = () => {
         <div className="flex justify-center mt-16">
           <a
             href="#waitlist"
-            className="px-8 py-3 rounded-full
-             font-semibold
-            hover:scale-105 transition"
+            className="px-8 py-3 rounded-full font-semibold hover:scale-105 transition"
             style={{ backgroundColor: colors.accent, color: colors.background }}
           >
             Join the Cheddar Waitlist
@@ -164,4 +159,3 @@ const About = () => {
   );
 };
 
-export default About;

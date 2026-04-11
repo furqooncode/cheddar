@@ -1,7 +1,9 @@
 
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../Client/Toggletheme.jsx'
-import useCart from '../Client/CartStorage.jsx'
+import useCart from '../Client/CartStorage.jsx';
+import NavBottom from './NavBottom.jsx'
 
 const products = [
   {
@@ -17,9 +19,6 @@ const products = [
     colorAvailable: ["#000000", "#1a3a6b", "#8B2F2F"],
     rating: 4.5,
     reviewCount: 128,
-    isFeatured: true,
-    isNewArrival: false,
-    createdAt: "2026-01-15",
   },
   {
     id: 2,
@@ -34,9 +33,6 @@ const products = [
     colorAvailable: ["#ffffff", "#2d2d2d"],
     rating: 4.2,
     reviewCount: 64,
-    isFeatured: false,
-    isNewArrival: true,
-    createdAt: "2026-02-01",
   },
   {
     id: 3,
@@ -51,9 +47,6 @@ const products = [
     colorAvailable: ["#c2b280", "#2d2d2d", "#3d5a80"],
     rating: 4.0,
     reviewCount: 42,
-    isFeatured: false,
-    isNewArrival: false,
-    createdAt: "2026-01-20",
   },
   {
     id: 4,
@@ -68,9 +61,6 @@ const products = [
     colorAvailable: ["#1a3a6b", "#ffffff", "#000000"],
     rating: 4.7,
     reviewCount: 95,
-    isFeatured: true,
-    isNewArrival: false,
-    createdAt: "2026-01-10",
   },
   {
     id: 5,
@@ -85,9 +75,6 @@ const products = [
     colorAvailable: ["#2d2d2d", "#8B2F2F"],
     rating: 4.8,
     reviewCount: 210,
-    isFeatured: true,
-    isNewArrival: false,
-    createdAt: "2026-02-10",
   },
   {
     id: 6,
@@ -102,9 +89,6 @@ const products = [
     colorAvailable: ["#4a3728", "#2d2d2d", "#c2b280", "#1a3a6b"],
     rating: 4.3,
     reviewCount: 77,
-    isFeatured: false,
-    isNewArrival: true,
-    createdAt: "2026-02-15",
   },
   {
     id: 7,
@@ -116,18 +100,19 @@ const products = [
     image: "https://m.media-amazon.com/images/I/71tRcJFCmnL._AC_UY1000_.jpg",
     images: ["url1", "url2"],
     size: "XXL",
-    colorAvailable: ["red", "blue"],
+    colorAvailable: ["#9e9e9e", "#000000"],
     rating: 4.1,
     reviewCount: 33,
-    isFeatured: false,
-    isNewArrival: false,
-    createdAt: "2026-01-05",
   },
 ]
 
-function ProductCard({ product, onAddToCart }) {
+const categories = ["All", "Hoodie", "Trousers", "Up & Down", "Polo", "Tee"]
+
+function ProductCard({ product }) {
   const { colors } = useTheme()
+  const { addToCart } = useCart()
   const navigate = useNavigate()
+
   const hasDiscount = product.discount > 0
   const discountedPrice = hasDiscount
     ? product.price - (product.price * product.discount / 100)
@@ -144,7 +129,7 @@ function ProductCard({ product, onAddToCart }) {
       }}
       onClick={() => navigate('/details', { state: product })}
     >
-      {/* ── Image ── */}
+      {/* Image */}
       <div className="relative aspect-[3/4] overflow-hidden flex-shrink-0">
         <img
           src={product.image}
@@ -152,29 +137,22 @@ function ProductCard({ product, onAddToCart }) {
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
 
-        {/* Bottom gradient */}
         <div
           className="absolute inset-0"
           style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 55%)' }}
         />
 
-        {/* Discount badge — top left */}
         {hasDiscount && (
           <div
-            className="absolute top-3 left-3 w-11 h-11 rounded-full flex items-center justify-center text-xs font-black z-10"
-            style={{
-              background: colors.accent,
-              color: '#1A1A1A',
-              boxShadow: `0 4px 12px rgba(193,154,107,0.4)`,
-            }}
+            className="absolute top-3 left-3 w-10 h-10 rounded-full flex items-center justify-center text-xs font-black z-10"
+            style={{ background: colors.accent, color: '#1A1A1A' }}
           >
             -{product.discount}%
           </div>
         )}
 
-        {/* Category badge — top right */}
         <div
-          className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-medium tracking-wide z-10"
+          className="absolute top-3 right-3 px-2.5 py-1 rounded-full text-xs font-medium z-10"
           style={{
             background: 'rgba(0,0,0,0.55)',
             border: '1px solid rgba(255,255,255,0.15)',
@@ -185,10 +163,9 @@ function ProductCard({ product, onAddToCart }) {
           {product.category}
         </div>
 
-        {/* Quick View hover overlay */}
         <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
           <div
-            className="px-5 py-2.5 rounded-full text-xs font-semibold tracking-widest uppercase"
+            className="px-4 py-2 rounded-full text-xs font-semibold tracking-widest uppercase"
             style={{
               background: 'rgba(255,255,255,0.12)',
               border: '1px solid rgba(255,255,255,0.3)',
@@ -199,13 +176,10 @@ function ProductCard({ product, onAddToCart }) {
             Quick View
           </div>
         </div>
-
       </div>
 
-      {/* ── Info ── */}
+      {/* Info */}
       <div className="p-3 sm:p-4 flex flex-col gap-2 flex-1">
-
-        {/* Name */}
         <h3
           className="text-xs sm:text-sm font-semibold leading-snug line-clamp-2"
           style={{ color: colors.primaryText }}
@@ -213,7 +187,6 @@ function ProductCard({ product, onAddToCart }) {
           {product.name}
         </h3>
 
-        {/* Description */}
         <p
           className="text-xs leading-relaxed line-clamp-2"
           style={{ color: colors.secondaryText }}
@@ -221,7 +194,6 @@ function ProductCard({ product, onAddToCart }) {
           {product.description}
         </p>
 
-        {/* Size + Colors row */}
         <div className="flex items-center justify-between">
           <div
             className="px-2.5 py-1 rounded-lg text-xs font-semibold"
@@ -233,14 +205,10 @@ function ProductCard({ product, onAddToCart }) {
           >
             {product.size}
           </div>
-
           <div className="flex items-center gap-1">
             <div
               className="w-4 h-4 rounded-full border"
-              style={{
-                background: product.colorAvailable[0],
-                borderColor: 'rgba(255,255,255,0.2)',
-              }}
+              style={{ background: product.colorAvailable[0], borderColor: 'rgba(255,255,255,0.2)' }}
             />
             {extraColors > 0 && (
               <span className="text-xs font-medium" style={{ color: colors.secondaryText }}>
@@ -250,13 +218,9 @@ function ProductCard({ product, onAddToCart }) {
           </div>
         </div>
 
-        {/* Price + Cart — always at bottom */}
         <div className="flex items-end justify-between mt-auto pt-2">
           <div className="flex flex-col gap-0.5">
-            <span
-              className="text-sm sm:text-base font-black tracking-tight"
-              style={{ color: colors.accent }}
-            >
+            <span className="text-sm sm:text-base font-black tracking-tight" style={{ color: colors.accent }}>
               {cheddarCoin} CHD
             </span>
             <div className="flex items-center gap-1.5 flex-wrap">
@@ -271,7 +235,6 @@ function ProductCard({ product, onAddToCart }) {
             </div>
           </div>
 
-          {/* Add to cart — stop propagation so click doesn't navigate */}
           <button
             className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center flex-shrink-0 hover:scale-110 active:scale-95 transition-transform duration-200"
             style={{
@@ -282,65 +245,127 @@ function ProductCard({ product, onAddToCart }) {
             aria-label="Add to cart"
             onClick={(e) => {
               e.stopPropagation()
-              onAddToCart(product)
+              addToCart(product)
             }}
           >
             <i className="fas fa-shopping-cart text-sm" />
           </button>
         </div>
       </div>
-
     </div>
   )
 }
 
-export function ProductList() {
-  const { addToCart } = useCart()
-
-  return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 p-3 sm:p-4 md:p-6">
-      {products.map((product) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          onAddToCart={addToCart}
-        />
-      ))}
-    </div>
-  )
-}
-
-export default function Products() {
+export default function Browse() {
   const { colors } = useTheme()
+  const [search, setSearch] = useState('')
+  const [activeCategory, setActiveCategory] = useState('All')
+  const [searchFocused, setSearchFocused] = useState(false)
 
   return (
-    <div className="p-2 w-full">
+    <div className="min-h-screen w-full" style={{ background: colors.background }}>
 
+      {/* Page Header */}
       <div
-        className="w-full flex items-center gap-2 overflow-hidden px-2"
-        style={{ background: colors.background }}
+        className="w-full px-4 md:px-10 lg:px-16 pt-10 pb-8 flex flex-col gap-2"
+        style={{ borderBottom: `1px solid ${colors.border}` }}
       >
-        <h3 className="text-sm font-semibold flex-shrink-0" style={{ color: colors.text }}>
-          <i className="fas fa-sliders" />
-        </h3>
+        <p
+          className="text-xs font-semibold tracking-[0.25em] uppercase"
+          style={{ color: colors.accent }}
+        >
+          — Shop
+        </p>
+        <h1
+          className="text-2xl md:text-4xl font-black leading-tight"
+          style={{ color: colors.primaryText, letterSpacing: '-0.01em' }}
+        >
+          Browse Collection
+        </h1>
+        <p className="text-sm font-light" style={{ color: colors.secondaryText }}>
+          {products.length} pieces available
+        </p>
+      </div>
 
-        <div className="flex min-w-0 items-center gap-2 overflow-x-auto scrollbar-hide">
-          {["All", "Hoodie", "Trousers", "Up & Down", "Polo", "Tee"].map((label) => (
+      <div className="w-full px-4 md:px-10 lg:px-16 py-6 flex flex-col gap-6">
+
+        {/* Search + count */}
+        <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+          <div className="relative flex-1">
+            <i
+              className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
+              style={{ color: searchFocused ? colors.accent : colors.secondaryText }}
+            />
+            <input
+              type="text"
+              placeholder="Search for a piece..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+              className="w-full pl-10 pr-10 py-3 rounded-xl text-sm placeholder:opacity-40"
+              style={{
+                background: searchFocused ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.03)',
+                border: `1.5px solid ${searchFocused ? colors.accent : colors.border}`,
+                color: colors.primaryText,
+                outline: 'none',
+                transition: 'all 0.2s ease',
+                boxShadow: searchFocused ? `0 0 0 3px rgba(193,154,107,0.08)` : 'none',
+                caretColor: colors.accent,
+              }}
+            />
+            {search && (
+              <button
+                className="absolute right-4 top-1/2 -translate-y-1/2"
+                onClick={() => setSearch('')}
+                style={{ color: colors.secondaryText }}
+              >
+                <i className="fas fa-times text-xs" />
+              </button>
+            )}
+          </div>
+
+          <div
+            className="hidden sm:flex items-center gap-2 px-4 py-3 rounded-xl flex-shrink-0"
+            style={{
+              background: 'rgba(255,255,255,0.03)',
+              border: `1px solid ${colors.border}`,
+            }}
+          >
+            <i className="fas fa-box-open text-xs" style={{ color: colors.accent }} />
+            <span className="text-xs font-medium" style={{ color: colors.secondaryText }}>
+              {products.length} items
+            </span>
+          </div>
+        </div>
+
+        {/* Category pills */}
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1">
+          {categories.map((cat) => (
             <button
-              key={label}
-              className="px-4 h-7 rounded-lg outline-none text-xs font-semibold flex items-center text-white flex-shrink-0 hover:opacity-80 transition-all"
-              style={{ background: colors.accent }}
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className="px-4 py-2 rounded-xl text-xs font-semibold flex-shrink-0 transition-all duration-200"
+              style={{
+                background: activeCategory === cat ? colors.accent : 'rgba(255,255,255,0.04)',
+                color: activeCategory === cat ? '#1A1A1A' : colors.secondaryText,
+                border: `1px solid ${activeCategory === cat ? colors.accent : colors.border}`,
+              }}
             >
-              {label}
+              {cat}
             </button>
           ))}
         </div>
-      </div>
 
-      <div className="mt-5">
-        <ProductList />
-      </div>
+        {/* Grid */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
 
+      </div>
+       <NavBottom />
     </div>
   )
 }
