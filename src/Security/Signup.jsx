@@ -80,7 +80,7 @@ export default function Signup() {
         );
         alert("Account created succefully");
         Clear();
-        navigate("/login");
+        navigate("/");
       } catch (error) {
         console.log(error);
         alert(error.message);

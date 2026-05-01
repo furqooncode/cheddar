@@ -62,7 +62,7 @@ export default function Login() {
         await login(formData.email, formData.password);
         alert("LoggedIn successfully");
         Clear();
-        navigate("/Wallet");
+        navigate("/");
       } catch (error) {
         alert(error.message);
       }

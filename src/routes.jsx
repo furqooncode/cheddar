@@ -25,7 +25,7 @@ export default function AppRoutes() {
   return (
     <Routes>
       {/* No nav */}
-      <Route path="/login" element={<Login />} />
+      <Route path="/Login" element={<Login />} />
       <Route path="/Signup" element={<Signup />} />
       <Route path="/Welcome" element={<Welcome />} />
       <Route path="/DropCountdown" element={<DropCountdown />} />
@@ -39,7 +39,7 @@ export default function AppRoutes() {
             <Nav />
             <main className="mt-[60px] lg:mt-0 lg:ml-[240px]">
               <Routes>
-                <Route path="/Home" element={
+                <Route path="/" element={
             <ProtectedRoute>
                 <Home />
             </ProtectedRoute>
@@ -51,7 +51,7 @@ export default function AppRoutes() {
        </ProtectedRoute>
        } />
        
-       <Route path="/" element={
+       <Route path="/Receipt" element={
        <ProtectedRoute>
            <Receipt />
        </ProtectedRoute>
