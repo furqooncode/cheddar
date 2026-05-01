@@ -1,5 +1,5 @@
 import { useState } from "react";
-import useTheme from '../Client/Toggletheme.jsx'
+import useTheme from "../Client/Toggletheme.jsx";
 
 import { useQuery } from "@tanstack/react-query";
 import supabase from "../lib/util.jsx";
