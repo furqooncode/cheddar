@@ -1,6 +1,8 @@
-import colors from './color.jsx'
+import useTheme from './Client/Toggletheme.jsx'
+
 
 export default function Footer() {
+  const { colors } = useTheme();
   return (
     <footer style={{ background: colors.container, borderTop: `1px solid ${colors.border}` }}
       className="w-full px-6 py-14 lg:ml-0">

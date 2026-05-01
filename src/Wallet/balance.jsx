@@ -1,9 +1,11 @@
 import { useState } from "react";
-import colors from "../color.jsx";
+import useTheme from '../Client/Toggletheme.jsx'
+
 import { useQuery } from "@tanstack/react-query";
 import supabase from "../lib/util.jsx";
 
 export default function Balance() {
+  const { colors } = useTheme();
   const [copied, setCopied] = useState(false);
   const [spinning, setSpinning] = useState(false);
 

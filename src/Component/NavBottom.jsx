@@ -1,7 +1,9 @@
-import colors from '../color.jsx';
+import useTheme from '../Client/Toggletheme.jsx'
+
 import { useNavigate } from 'react-router-dom'
 export default function NavBottom() {
   const navigate = useNavigate()
+  const { colors } = useTheme();
   return (
     <nav
       className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50"

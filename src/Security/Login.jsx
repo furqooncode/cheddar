@@ -1,11 +1,13 @@
 import { useState } from "react";
-import colors from "../color.jsx";
+import useTheme from '../Client/Toggletheme.jsx'
+
 import { useNavigate, Link } from "react-router-dom";
 import useAuth from "../Client/Auth.jsx";
 
 export default function Login() {
+  const { colors } = useTheme();
   const navigate = useNavigate();
-  const { login, loading } = useAuth();
+  const { login, loading, GoogleAuth } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -67,17 +69,13 @@ export default function Login() {
     }
   }
 
-  const handleGoogleLogin = () => {
-    //supabase google auth
-    console.log("Google login initiated");
-    alert("Google login triggered (demo)");
-  };
-
-  const handleAppleLogin = () => {
-    //supabase ios auth
-    console.log("Apple Sign in initiated");
-    alert("Sign in with Apple triggered (demo)");
-  };
+async function Oauth(){
+    try{
+  await GoogleAuth()
+  }catch(error){
+    alert(error.message)
+  }
+}
 
   return (
     <div
@@ -233,7 +231,7 @@ export default function Login() {
           {/* Google Login */}
           <button
             type="button"
-            onClick={handleGoogleLogin}
+            onClick={Oauth}
             className="w-full flex items-center justify-center gap-3 py-4 border rounded-xl font-medium text-lg transition-all hover:bg-gray-50 active:scale-[0.98]"
             style={{
               borderColor: colors.border,
@@ -248,19 +246,7 @@ export default function Login() {
             Continue with Google
           </button>
 
-          {/* Apple Login (Sign in with Apple) */}
-          <button
-            type="button"
-            onClick={handleAppleLogin}
-            className="w-full flex items-center justify-center gap-3 py-4 border rounded-xl font-medium text-lg transition-all hover:bg-gray-900/90 active:scale-[0.98] text-white"
-            style={{
-              backgroundColor: "#000000",
-              borderColor: "#000000",
-            }}
-          >
-            <i className="fab fa-apple text-2xl"></i>
-            Sign in with Apple
-          </button>
+      
         </div>
       </div>
     </div>
