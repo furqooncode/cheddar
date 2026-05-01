@@ -1,17 +1,14 @@
-import Balance from './balance.jsx'
-import History from './history.jsx';
-import NavBottom from '../Component/NavBottom.jsx'
-import { useQuery } from '@tanstack/react-query';
-import supabase from '../lib/util.jsx';
+import Balance from "./Balance.jsx";
+import History from "./history.jsx";
+import NavBottom from "../Component/NavBottom.jsx";
 
 
-export default function Transaction(){
-  return(
+export default function Transaction() {
+  return (
     <>
-       <Balance />
+      <Balance />
       <History />
       <NavBottom />
     </>
-   
-    )
+  );
 }

@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 export default function DropCountdown() {
-  const dropDate = new Date("2026-04-01T18:00:00").getTime();
+  const dropDate = new Date("2026-05-15T18:00:00").getTime();
 
   const [timeLeft, setTimeLeft] = useState(calculateTime());
 

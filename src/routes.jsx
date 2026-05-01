@@ -8,6 +8,7 @@ import Signup from "./Security/Signup.jsx";
 import Transaction from "./Wallet/Transaction.jsx";
 import Welcome from "./Landing/welcome.jsx";
 import DropCountdown from "./Landing/DropCountdown.jsx";
+import Products from "./Component/Products.jsx";
 
 export default function AppRoutes() {
   return (
@@ -17,6 +18,7 @@ export default function AppRoutes() {
       <Route path="/Signup" element={<Signup />} />
       <Route path="/" element={<Welcome />} />
       <Route path="/DropCountdown" element={<DropCountdown />} />
+      <Route path="/Products" element={<Products />} />
 
       {/* With nav */}
       <Route
