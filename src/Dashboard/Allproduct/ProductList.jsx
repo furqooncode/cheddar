@@ -1,32 +1,33 @@
-import { useState } from "react";
-import { products as initialProducts } from "../data/products";
 
+import { useQuery } from "@tanstack/react-query";
+import supabase from "../../lib/util.jsx";
+import { useProduct } from "../../Client/productData.jsx";
 export default function ProductList() {
-  const [products, setProducts] = useState(initialProducts);
-  const [selected, setSelected] = useState([]);
 
-  const allSelected = selected.length === products.length && products.length > 0;
+const { allSelected, selected, deleteOne, deleteSelected, toggleAll, toggleOne} = useProduct()
+  const {data: products, isPending , isError, error} = useQuery({
+     queryKey: ['product'],
+     queryFn: async() => {
+      const {data, error} = await supabase.from('product').select('*')
+      if(error) throw Error
+      return data
+     }
+  })
 
-  const toggleAll = () => {
-    setSelected(allSelected ? [] : products.map((p) => p.id));
-  };
+  console.log(products);
+  if(isError){
+    return(
+      <div>
+        <p>{error.message}</p>
+      </div>
+    )
+  }
 
-  const toggleOne = (id) => {
-    setSelected((prev) =>
-      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
-    );
-  };
-
-  const deleteSelected = () => {
-    setProducts((prev) => prev.filter((p) => !selected.includes(p.id)));
-    setSelected([]);
-  };
-
-  const deleteOne = (id) => {
-    setProducts((prev) => prev.filter((p) => p.id !== id));
-    setSelected((prev) => prev.filter((i) => i !== id));
-  };
-
+  if(isPending){
+    return(
+      <p>loading....</p>
+    )
+  }
   return (
     <div className="space-y-5">
       {/* Header */}

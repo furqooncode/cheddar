@@ -190,7 +190,7 @@ export default function OrderHistory() {
 
       {/* Header */}
       <div
-        className="w-full px-4 md:px-10 py-5 flex items-center justify-between"
+        className="w-full px-4 py-5 flex items-center justify-between"
         style={{ borderBottom: `1px solid ${colors.border}` }}
       >
         <button

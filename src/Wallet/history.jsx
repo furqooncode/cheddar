@@ -146,7 +146,7 @@ export default function History() {
         className="w-full min-h-screen flex items-center justify-center px-4 py-6"
         style={{ background: colors.background }}
       >
-        <div className="w-full max-w-sm sm:max-w-2xl flex flex-col gap-4">
+        <div className="w-full sm:max-w-2xl flex flex-col gap-4">
           {/* Header */}
           <div className="flex items-center justify-between mb-2">
             <div>

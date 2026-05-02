@@ -6,7 +6,7 @@ export default function NavBottom() {
   const { colors } = useTheme();
   return (
     <nav
-      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50"
+      className="lg:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-50"
       style={{ width: 'min(90%, 420px)' }}
     >
       <div

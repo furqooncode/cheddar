@@ -11,6 +11,7 @@ import Details from "./Component/Details.jsx";
 import OrderDetail from "./Component/Orderdetails.jsx";
 import Browse from "./Component/Browse.jsx";
 import Login from "./Security/Login.jsx";
+import Settings from "./Component/Settings.jsx";
 import Signup from "./Security/Signup.jsx";
 import Transaction from "./Wallet/Transaction.jsx";
 import Welcome from "./Landing/welcome.jsx";
@@ -28,7 +29,7 @@ export default function AppRoutes() {
   return (
     <Routes>
       {/* Default redirect */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+    {/* <Route path="/" element={<Navigate to="/dashboard" replace />} />*/}
 
       {/* No nav routes */}
       <Route path="/Login" element={<Login />} />
@@ -61,8 +62,9 @@ export default function AppRoutes() {
             <Nav />
             <main className="mt-[60px] lg:mt-0 lg:ml-[240px]">
               <Routes>
-                <Route path="/Home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
                 <Route path="/Cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+                <Route path="/Settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
                 <Route path="/Receipt" element={<ProtectedRoute><Receipt /></ProtectedRoute>} />
                 <Route path="/OrderHistory" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
                 <Route path="/Order" element={<ProtectedRoute><Orders /></ProtectedRoute>} />

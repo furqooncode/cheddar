@@ -17,10 +17,34 @@ export default function DesktopSidebar() {
       {/* Links */}
       <nav className="flex flex-col gap-2 flex-1">
         {[
-       { label: 'Home', path: '/' },
-      { label: 'Browse', path: '/Browse' },
-      { label: 'Cart', path: '/Cart' },
-       { label: 'Wallet', path: '/Wallet' },
+       { label: 'Home', 
+        path: '/' 
+      },
+      { 
+        label: 'Browse',
+         path: '/Browse'
+         },
+      {
+         label: 'Cart', 
+         path: '/Cart' 
+        },
+       { 
+        label: 'Wallet', 
+        path: '/Wallet'
+       },
+       { 
+        label: 'Order', 
+        path: '/Order'
+       },
+       { 
+        label: 'History', 
+        path: '/OrderHistory'
+       },
+       { 
+        label: 'Settings', 
+        path: '/Settings'
+       },
+
         ].map(({ label, path }) => (
           <NavLink key={path} to={path}
             className={({ isActive }) =>
