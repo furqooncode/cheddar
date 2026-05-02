@@ -15,23 +15,45 @@ import Signup from "./Security/Signup.jsx";
 import Transaction from "./Wallet/Transaction.jsx";
 import Welcome from "./Landing/welcome.jsx";
 import DropCountdown from "./Landing/DropCountdown.jsx";
-<<<<<<< HEAD
 import Products from "./Component/Products.jsx";
-=======
-import ProtectedRoute from './lib/Protectedroutes.jsx'
->>>>>>> f35ffac9dc359233288c408a563054e92886268f
+import ProtectedRoute from "./lib/Protectedroutes.jsx";
+import DashboardApp from "./Dashboard/DashboardApp";
+import Overview from "./Dashboard/Alloverview/Overview.jsx";
+import DashOrders from "./Dashboard/Allorder/Orders.jsx";
+import ProductList from "./Dashboard/Allproduct/ProductList.jsx";
+import AddProduct from "./Dashboard/Allproduct/Addproduct.jsx";
+import { Navigate } from "react-router-dom";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* No nav */}
+      {/* Default redirect */}
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+
+      {/* No nav routes */}
       <Route path="/Login" element={<Login />} />
       <Route path="/Signup" element={<Signup />} />
       <Route path="/Welcome" element={<Welcome />} />
       <Route path="/DropCountdown" element={<DropCountdown />} />
       <Route path="/Products" element={<Products />} />
 
-      {/* With nav */}
+      {/* Dashboard routes — own layout, no Nav/Footer */}
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardApp />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<Navigate to="overview" replace />} />
+        <Route path="overview" element={<Overview />} />
+        <Route path="orders" element={<DashOrders />} />
+        <Route path="products" element={<ProductList />} />
+        <Route path="addproduct" element={<AddProduct />} />
+      </Route>
+
+      {/* Main app routes — with Nav/Footer */}
       <Route
         path="/*"
         element={
@@ -39,66 +61,16 @@ export default function AppRoutes() {
             <Nav />
             <main className="mt-[60px] lg:mt-0 lg:ml-[240px]">
               <Routes>
-                <Route path="/" element={
-            <ProtectedRoute>
-                <Home />
-            </ProtectedRoute>
-                } />
-                
-       <Route path="/Cart" element={
-       <ProtectedRoute>
-           <Cart />
-       </ProtectedRoute>
-       } />
-       
-       <Route path="/Receipt" element={
-       <ProtectedRoute>
-           <Receipt />
-       </ProtectedRoute>
-       } />
-       
-       <Route path="/OrderHistory" element={
-       <ProtectedRoute>
-           <OrderHistory />
-       </ProtectedRoute>
-       } />
-       
-       <Route path="/Order" element={
-       <ProtectedRoute>
-           <Orders />
-       </ProtectedRoute>
-       } />
-       
-       <Route path="/OrderDetail" element={
-       <ProtectedRoute>
-           <OrderDetail />
-       </ProtectedRoute>
-       } />
-       
-       <Route path="/Browse" element={
-       <ProtectedRoute>
-           <Browse />
-       </ProtectedRoute>
-       } />
-       
-       <Route path="/Details" element={
-       <ProtectedRoute>
-           <Details />
-       </ProtectedRoute>
-       } />
-       
-       
-       <Route path="/Checkout" element={
-       <ProtectedRoute>
-           <Checkout />
-       </ProtectedRoute>
-       } />
-
-      <Route path="/Wallet" element={
-      <ProtectedRoute>
-        <Transaction />
-      </ProtectedRoute>
-      } />
+                <Route path="/Home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                <Route path="/Cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
+                <Route path="/Receipt" element={<ProtectedRoute><Receipt /></ProtectedRoute>} />
+                <Route path="/OrderHistory" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
+                <Route path="/Order" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+                <Route path="/OrderDetail" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
+                <Route path="/Browse" element={<ProtectedRoute><Browse /></ProtectedRoute>} />
+                <Route path="/Details" element={<ProtectedRoute><Details /></ProtectedRoute>} />
+                <Route path="/Checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+                <Route path="/Wallet" element={<ProtectedRoute><Transaction /></ProtectedRoute>} />
               </Routes>
               <Footer />
             </main>

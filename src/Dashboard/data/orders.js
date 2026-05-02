@@ -1,20 +1,4 @@
-export type OrderStatus = 'paid' | 'pending' | 'delivered' | 'cancelled'
-
-export interface Order {
-  id: string
-  name: string
-  price: number
-  size: 'M' | 'L' | 'XL' | '2XL'
-  state: string
-  city: string
-  country: string
-  color: string
-  quantity: number
-  createdAt: string
-  status: OrderStatus
-}
-
-export const initialOrders: Order[] = [
+export const initialOrders= [
   {
     id: 'ORD-001',
     name: 'Cheddar Signature Hoodie',

@@ -4,8 +4,7 @@ import { Link } from 'react-router-dom'
 const dropDate = new Date("2026-04-01T18:00:00").getTime();
 import colors from '../color.jsx'
 
-<<<<<<< HEAD
-export default function DropCountdown() {
+{/*export default function DropCountdown() {
   const dropDate = new Date("2026-05-15T18:00:00").getTime();
 
   const [timeLeft, setTimeLeft] = useState(calculateTime());
@@ -49,8 +48,10 @@ function calculateTime() {
     minutes: Math.floor((difference / 1000 / 60) % 60),
     seconds: Math.floor((difference / 1000) % 60),
   };
-}
->>>>>>> f35ffac9dc359233288c408a563054e92886268f
+} 
+
+*/}
+
 
 // ── Large white rocket SVG pointing up ──
 function RocketSVG() {
@@ -220,7 +221,7 @@ export default function DropCountdown() {
 
   useEffect(() => {
     const timer = setInterval(() => setTimeLeft(calculateTime()), 1000);
-    return () => clearInterval(timer);
+  return () => clearInterval(timer);
   }, []);
 
   return (

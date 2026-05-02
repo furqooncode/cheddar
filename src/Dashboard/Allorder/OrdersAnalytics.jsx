@@ -1,10 +1,9 @@
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, Tooltip } from "recharts";
-import { Order } from "../../data/orders";
 
 const GOLD = "#d4a373";
 const GRAY = "#3f3f3f";
 
-export default function OrdersAnalytics({ orders }: { orders: Order[] }) {
+export default function OrdersAnalytics({ orders }) {
   const paid = orders.filter((o) => o.status === "paid").length;
   const pending = orders.filter((o) => o.status === "pending").length;
 

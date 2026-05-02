@@ -1,12 +1,5 @@
-import { Order } from "../../data/orders";
 
-interface Props {
-  orders: Order[];
-  onCancel: (id: string) => void;
-  onDelete: (id: string) => void;
-}
-
-export default function OrdersTable({ orders, onCancel, onDelete }: Props) {
+export default function OrdersTable({ orders, onCancel, onDelete }) {
   return (
     <div className="glass rounded-xl p-6">
       <table className="w-full text-sm">

@@ -294,7 +294,7 @@ function ProductCard({ product, onAddToCart }) {
   )
 }
 
-export function ProductList() {
+export function Fetchedproduct() {
   const { addToCart } = useCart()
 
   return (
@@ -338,7 +338,7 @@ export default function Products() {
       </div>
 
       <div className="mt-5">
-        <ProductList />
+        <Fetchedproduct />
       </div>
 
     </div>
