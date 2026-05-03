@@ -37,8 +37,8 @@ export default function AppRoutes() {
       <Route path="/Welcome" element={<Welcome />} />
       <Route path="/DropCountdown" element={<DropCountdown />} />
       <Route path="/Products" element={<Products />} />
-    <Route path="/Setting" element={<ProtectedRoute><Settings
-    /></ProtectedRoute>} />
+   
+    
       {/* Dashboard routes — own layout, no Nav/Footer */}
       <Route
         path="/dashboard"
@@ -74,6 +74,8 @@ export default function AppRoutes() {
                 <Route path="/Details" element={<ProtectedRoute><Details /></ProtectedRoute>} />
                 <Route path="/Checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
                 <Route path="/Wallet" element={<ProtectedRoute><Transaction /></ProtectedRoute>} />
+     <Route path="/Setting" element={<ProtectedRoute><Settings
+    /></ProtectedRoute>} />
               </Routes>
               <Footer />
             </main>

@@ -6,8 +6,11 @@ import useTheme from '../Client/Toggletheme.jsx'
 export default function DesktopSidebar() {
   const { colors } = useTheme();
   return (
-    <aside className="hidden lg:flex flex-col fixed top-0 left-0 h-screen w-[240px] p-4 gap-6 bg-black/80 backdrop-blur-md"
-      style={{ borderRight: `1px solid ${colors.border}` }}>
+    <aside className="hidden lg:flex flex-col fixed top-0 left-0 h-screen w-[240px] p-4 gap-6  backdrop-blur-md"
+      style={{ 
+      borderRight: `1px solid ${colors.border}`,
+        background: colors.background,
+      }}>
       
       {/* Logo */}
       <div className="w-[150px] h-[55px]">
@@ -42,7 +45,7 @@ export default function DesktopSidebar() {
        },
        { 
         label: 'Settings', 
-        path: '/Settings'
+        path: '/Setting'
        },
 
         ].map(({ label, path }) => (

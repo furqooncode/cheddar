@@ -139,7 +139,8 @@ function ProductCard({ product }) {
 
         <div
           className="absolute inset-0"
-          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 55%)' }}
+          style={{
+          background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 55%)' }}
         />
 
         {hasDiscount && (
@@ -179,7 +180,10 @@ function ProductCard({ product }) {
       </div>
 
       {/* Info */}
-      <div className="p-3 sm:p-4 flex flex-col gap-2 flex-1">
+      <div className="p-3 sm:p-4 flex flex-col gap-2 flex-1"
+      style={{
+        background: colors.container,
+      }}>
         <h3
           className="text-xs sm:text-sm font-semibold leading-snug line-clamp-2"
           style={{ color: colors.primaryText }}

@@ -40,8 +40,8 @@ export default function AddProduct() {
 
   const [mainImage, setMainImage] = useState("");
   const [otherImages, setOtherImages] = useState(["", ""]);
-  const [colors, setColors] = useState([]); // [{ name, hex }]
-  const [sizes, setSizes] = useState([]);
+  const [colorAvailable, setColorAvailable] = useState([]);
+  const [size, setSize] = useState("");
   const [tagInput, setTagInput] = useState("");
   const [customColor, setCustomColor] = useState("#d4a373");
 
@@ -65,42 +65,37 @@ export default function AddProduct() {
     setForm((prev) => ({ ...prev, tags: prev.tags.filter((t) => t !== tag) }));
   };
 
-  // Colors — { name, hex } objects
+  // Colors
   const toggleColor = (color) => {
-    setColors((prev) =>
+    setColorAvailable((prev) =>
       prev.find((c) => c.hex === color.hex)
         ? prev.filter((c) => c.hex !== color.hex)
         : [...prev, color]
     );
   };
 
-  // Sizes — multi toggle
-  const toggleSize = (size) => {
-    setSizes((prev) =>
-      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
-    );
-  };
+  // Size — single select
+  const selectSize = (s) => setSize((prev) => (prev === s ? "" : s));
 
   // Other images
   const addImageSlot = () => {
-    if (otherImages.length < 3) setOtherImages((prev) => [...prev, null]);
+    if (otherImages.length < 3) setOtherImages((prev) => [...prev, ""]);
   };
   const updateOtherImage = (index, file) => {
-    const url = file ? URL.createObjectURL(file) : null;
+    const url = file ? URL.createObjectURL(file) : "";
     setOtherImages((prev) => prev.map((img, i) => (i === index ? url : img)));
   };
 
   const handleSubmit = () => {
     const product = {
-      id: `PRD-${String(Math.floor(Math.random() * 999) + 1).padStart(3, "0")}`,
       ...form,
       price: Number(form.price),
       discount: Number(form.discount),
       rating: Number(form.rating),
-      sizes,
-      colors,
+      size,
+      colorAvailable,
       image: mainImage,
-      otherImages: otherImages.filter(Boolean),
+      images: otherImages.filter(Boolean),
       reviewCount: 0,
       createdAt: new Date().toISOString().split("T")[0],
     };
@@ -115,7 +110,7 @@ export default function AddProduct() {
         <p className="text-gray-500 text-sm mt-1">Fill in the details to list a new product</p>
       </div>
 
-      {/* Image Upload Section */}
+      {/* Images */}
       <div className="space-y-3">
         <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
           Product Images
@@ -124,7 +119,11 @@ export default function AddProduct() {
         {/* Main image */}
         <label
           className="w-full h-64 rounded-xl bg-white/5 border border-white/10 overflow-hidden relative flex items-center justify-center cursor-pointer group"
-          style={mainImage ? { backgroundImage: `url(${mainImage})`, backgroundSize: "cover", backgroundPosition: "center" } : {}}
+          style={
+            mainImage
+              ? { backgroundImage: `url(${mainImage})`, backgroundSize: "cover", backgroundPosition: "center" }
+              : {}
+          }
         >
           {!mainImage && (
             <div className="text-center pointer-events-none">
@@ -134,7 +133,9 @@ export default function AddProduct() {
           )}
           {mainImage && (
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-              <span className="text-white text-sm"><i className="fas fa-redo mr-2" />Change Image</span>
+              <span className="text-white text-sm">
+                <i className="fas fa-redo mr-2" />Change Image
+              </span>
             </div>
           )}
           <input
@@ -148,13 +149,17 @@ export default function AddProduct() {
           />
         </label>
 
-        {/* Other images row */}
+        {/* Other images */}
         <div className="flex gap-3">
           {otherImages.map((img, i) => (
             <label
               key={i}
               className="flex-1 h-24 rounded-xl bg-white/5 border border-white/10 overflow-hidden relative flex items-center justify-center cursor-pointer group"
-              style={img ? { backgroundImage: `url(${img})`, backgroundSize: "cover", backgroundPosition: "center" } : {}}
+              style={
+                img
+                  ? { backgroundImage: `url(${img})`, backgroundSize: "cover", backgroundPosition: "center" }
+                  : {}
+              }
             >
               {!img && <i className="fas fa-image text-gray-600 text-lg pointer-events-none" />}
               {img && (
@@ -174,7 +179,6 @@ export default function AddProduct() {
             </label>
           ))}
 
-          {/* Add slot button */}
           {otherImages.length < 3 && (
             <button
               onClick={addImageSlot}
@@ -244,14 +248,14 @@ export default function AddProduct() {
           </select>
         </Field>
 
-        <Field label="Sizes">
+        <Field label="Size (pick one)">
           <div className="flex flex-wrap gap-2">
-            {["XS", "S", "M", "L", "XL", "XXL"].map((s) => (
+            {SIZES.map((s) => (
               <button
                 key={s}
-                onClick={() => toggleSize(s)}
+                onClick={() => selectSize(s)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  sizes.includes(s)
+                  size === s
                     ? "bg-[#d4a373] text-black"
                     : "bg-white/5 border border-white/10 text-gray-300 hover:border-[#d4a373]"
                 }`}
@@ -293,14 +297,16 @@ export default function AddProduct() {
                 border: ["#ffffff", "#F9A8D4", "#86EFAC", "#67E8F9", "#FBBF24"].includes(color.hex)
                   ? "1px solid rgba(255,255,255,0.15)"
                   : "none",
-                outline: colors.find((c) => c.hex === color.hex) ? "2px solid #d4a373" : "2px solid transparent",
+                outline: colorAvailable.find((c) => c.hex === color.hex)
+                  ? "2px solid #d4a373"
+                  : "2px solid transparent",
                 outlineOffset: "2px",
               }}
               title={color.name}
             />
           ))}
 
-          {/* Custom color picker circle */}
+          {/* Custom color picker */}
           <label
             className="w-8 h-8 rounded-full flex items-center justify-center border border-dashed border-white/30 hover:border-[#d4a373] transition-colors cursor-pointer flex-shrink-0 relative overflow-hidden"
             title="Pick custom color"
@@ -311,8 +317,8 @@ export default function AddProduct() {
               value={customColor}
               onChange={(e) => setCustomColor(e.target.value)}
               onBlur={() => {
-                if (!colors.find((c) => c.hex === customColor)) {
-                  setColors((prev) => [...prev, { name: customColor, hex: customColor }]);
+                if (!colorAvailable.find((c) => c.hex === customColor)) {
+                  setColorAvailable((prev) => [...prev, { name: customColor, hex: customColor }]);
                 }
               }}
               className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
@@ -320,11 +326,10 @@ export default function AddProduct() {
           </label>
         </div>
 
-        {/* Selected colors preview */}
-        {colors.length > 0 && (
+        {colorAvailable.length > 0 && (
           <div className="flex gap-2 flex-wrap items-center">
-            <span className="text-xs text-gray-500">{colors.length} selected:</span>
-            {colors.map((color) => (
+            <span className="text-xs text-gray-500">{colorAvailable.length} selected:</span>
+            {colorAvailable.map((color) => (
               <button
                 key={color.hex}
                 onClick={() => toggleColor(color)}
@@ -332,7 +337,9 @@ export default function AddProduct() {
                 style={{ backgroundColor: color.hex }}
                 title={`Remove ${color.name}`}
               >
-                <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/50 rounded-full text-[8px] text-white">✕</span>
+                <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/50 rounded-full text-[8px] text-white">
+                  ✕
+                </span>
               </button>
             ))}
           </div>
@@ -369,18 +376,8 @@ export default function AddProduct() {
 
       {/* Toggles */}
       <div className="flex gap-6 flex-wrap">
-        <Toggle
-          label="Featured Product"
-          name="isFeatured"
-          checked={form.isFeatured}
-          onChange={handleChange}
-        />
-        <Toggle
-          label="New Arrival"
-          name="isNewArrival"
-          checked={form.isNewArrival}
-          onChange={handleChange}
-        />
+        <Toggle label="Featured Product" name="isFeatured" checked={form.isFeatured} onChange={handleChange} />
+        <Toggle label="New Arrival" name="isNewArrival" checked={form.isNewArrival} onChange={handleChange} />
       </div>
 
       {/* Submit */}
@@ -394,40 +391,22 @@ export default function AddProduct() {
   );
 }
 
-// Reusable field wrapper
 function Field({ label, children }) {
   return (
     <div className="space-y-2">
-      <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
-        {label}
-      </label>
+      <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest">{label}</label>
       {children}
     </div>
   );
 }
 
-// Reusable toggle
 function Toggle({ label, name, checked, onChange }) {
   return (
     <label className="flex items-center gap-3 cursor-pointer">
       <div className="relative">
-        <input
-          type="checkbox"
-          name={name}
-          checked={checked}
-          onChange={onChange}
-          className="sr-only"
-        />
-        <div
-          className={`w-11 h-6 rounded-full transition-colors ${
-            checked ? "bg-[#d4a373]" : "bg-white/10"
-          }`}
-        />
-        <div
-          className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${
-            checked ? "translate-x-6" : "translate-x-1"
-          }`}
-        />
+        <input type="checkbox" name={name} checked={checked} onChange={onChange} className="sr-only" />
+        <div className={`w-11 h-6 rounded-full transition-colors ${checked ? "bg-[#d4a373]" : "bg-white/10"}`} />
+        <div className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${checked ? "translate-x-6" : "translate-x-1"}`} />
       </div>
       <span className="text-sm text-gray-300">{label}</span>
     </label>

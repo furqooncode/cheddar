@@ -66,11 +66,11 @@ export default function Settings() {
     >
       {/* Header */}
       <div
-        className="sticky top-0 z-10 px-5 pt-12 pb-4 border-b"
+        className=" z-10 px-5 pt-12 pb-4 border-b"
         style={{ backgroundColor: colors.background, borderColor: colors.border }}
       >
         <h1 className="text-2xl font-bold tracking-tight" style={{ color: colors.primaryText }}>
-          Settings
+          User Control
         </h1>
         <p className="text-sm mt-0.5" style={{ color: colors.secondaryText }}>
           Manage your account & preferences

@@ -38,7 +38,7 @@ const { colors } = useTheme();
               key={item.id}
               className="w-full rounded-2xl overflow-hidden border"
               style={{
-                background: `linear-gradient(145deg, ${colors.container} 0%, #222222 100%)`,
+                background: colors.container,
                 borderColor: colors.border,
               }}
             >
@@ -83,25 +83,25 @@ const { colors } = useTheme();
                     </p>
 
                     {/* Price + CHD */}
-                    <div className="flex items-baseline gap-2 mt-1 flex-wrap">
-                      <span className="text-sm font-light tracking-tight" style={{ color: colors.text }}>
-                        ₦{discountedPrice.toLocaleString()}
+      <div className="flex items-baseline gap-2 mt-1 flex-wrap">
+      <span className="text-sm font-light tracking-tight" style={{ color: colors.text }}>
+      ₦{discountedPrice.toLocaleString()}
                       </span>
-                      {item.discount > 0 && (
-                        <span className="text-xs line-through opacity-50" style={{ color: colors.secondaryText }}>
+       {item.discount > 0 && (
+          <span className="text-xs line-through opacity-50" style={{ color: colors.secondaryText }}>
                           ₦{item.price.toLocaleString()}
                         </span>
                       )}
-                      <span className="text-base font-black tracking-tight" style={{ color: colors.accent }}>
-                        {chd} CHD
+     <span className="text-base font-black tracking-tight" style={{ color: colors.accent }}>
+            {chd} CHD
                       </span>
-                    </div>
+           </div>
 
-                    {/* Color selector */}
-                    {item.colorAvailable && item.colorAvailable.length > 0 && (
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs" style={{ color: colors.secondaryText }}>Color:</span>
-                        <div className="flex items-center gap-1.5">
+      {/* Color selector */}
+   {item.colorAvailable && item.colorAvailable.length > 0 && (
+    <div className="flex items-center gap-2 mt-1">
+       <span className="text-xs" style={{ color: colors.secondaryText }}>Color:</span>
+         <div className="flex items-center gap-1.5">
                           {item.colorAvailable.map((c, i) => (
                             <button
                               key={i}
@@ -194,7 +194,7 @@ const navigate = useNavigate();
     <div
       className="w-full rounded-2xl border mt-2"
       style={{
-        background: `linear-gradient(145deg, ${colors.container} 0%, #222 100%)`,
+        background: colors.container,
         borderColor: colors.border,
       }}
     >

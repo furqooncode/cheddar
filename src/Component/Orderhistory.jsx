@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import colors from '../color.jsx';
+import useTheme from '../Client/Toggletheme.jsx'
 import NavBottom from './NavBottom.jsx'
 
 // Demo delivered orders
@@ -68,12 +68,12 @@ function formatDate(iso) {
 
 function ReceiptCard({ order }) {
   const totalItems = order.items.reduce((acc, i) => acc + i.quantity, 0)
-
+const { colors } = useTheme();
   return (
     <div
       className="w-full rounded-2xl overflow-hidden"
       style={{
-        background: `linear-gradient(145deg, ${colors.container} 0%, #1e1e1e 100%)`,
+        background: colors.container,
         border: `1px solid ${colors.border}`,
       }}
     >
@@ -185,7 +185,7 @@ function ReceiptCard({ order }) {
 
 export default function OrderHistory() {
   const navigate = useNavigate()
-
+const { colors } = useTheme();
   return (
     <div className="min-h-screen w-full" style={{ background: colors.background }}>
 

@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import NavBottom from './NavBottom.jsx'
-import colors from '../color.jsx'
+import useTheme from '../Client/Toggletheme.jsx'
 
 const steps = ['Placed', 'Confirmed', 'Shipped', 'Delivered']
 
@@ -27,7 +27,7 @@ function formatTime(iso) {
 export default function OrderDetail() {
   const { state: order } = useLocation()
   const navigate = useNavigate()
-
+const { colors } = useTheme();
   if (!order) {
     return (
       <div className="min-h-screen flex items-center" style={{ background: colors.background }}>
@@ -80,13 +80,15 @@ export default function OrderDetail() {
         <div
           className="w-full rounded-2xl overflow-hidden"
           style={{
-            background: `linear-gradient(145deg, ${colors.container} 0%, #1e1e1e 100%)`,
+            background:  colors.container,
             border: `1px solid ${colors.border}`,
           }}
         >
           <div
             className="h-0.5 w-full"
-            style={{ background: `linear-gradient(90deg, ${colors.warmNeutral}, ${colors.accent}, #e8c98a, ${colors.accent}, ${colors.warmNeutral})` }}
+            style={{
+           background:  colors.container,
+            }}
           />
 
           <div className="p-5 flex flex-col gap-4">
@@ -115,18 +117,18 @@ export default function OrderDetail() {
                         {/* Circle */}
                         <div
                           className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300"
-                          style={{
-                            background: isDone ? colors.accent : 'rgba(255,255,255,0.06)',
-                            border: `2px solid ${isDone ? colors.accent : colors.border}`,
-                            boxShadow: isActive ? `0 0 12px rgba(193,154,107,0.4)` : 'none',
+           style={{
+         background: isDone ? colors.accent : 'rgba(255,255,255,0.06)',
+       border: `2px solid ${isDone ? colors.accent : colors.border}`,
+       boxShadow: isActive ? `0 0 12px rgba(193,154,107,0.4)` : 'none',
                           }}
                         >
-                          {isDone ? (
-                            <i className="fas fa-check text-xs" style={{ color: '#1A1A1A' }} />
+      {isDone ? (
+      <i className="fas fa-check text-xs" style={{ color: '#1A1A1A' }} />
                           ) : (
-                            <span className="text-xs font-bold" style={{ color: colors.secondaryText }}>
-                              {i + 1}
-                            </span>
+    <span className="text-xs font-bold" style={{ color: colors.secondaryText }}>
+                    {i + 1}
+            </span>
                           )}
                         </div>
                         {/* Label */}
@@ -164,7 +166,7 @@ export default function OrderDetail() {
         <div
           className="w-full rounded-2xl overflow-hidden"
           style={{
-            background: `linear-gradient(145deg, ${colors.container} 0%, #1e1e1e 100%)`,
+          background:  colors.container,
             border: `1px solid ${colors.border}`,
           }}
         >
@@ -233,7 +235,7 @@ export default function OrderDetail() {
         <div
           className="w-full rounded-2xl overflow-hidden"
           style={{
-            background: `linear-gradient(145deg, ${colors.container} 0%, #1e1e1e 100%)`,
+           background:colors.container,
             border: `1px solid ${colors.border}`,
           }}
         >
@@ -298,7 +300,7 @@ export default function OrderDetail() {
         <div
           className="w-full rounded-2xl overflow-hidden"
           style={{
-            background: `linear-gradient(145deg, ${colors.container} 0%, #1e1e1e 100%)`,
+            background: colors.container,
             border: `1px solid ${colors.border}`,
           }}
         >

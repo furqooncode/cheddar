@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import colors from '../color.jsx'
+import useTheme from '../Client/Toggletheme.jsx'
 import NavBottom from './NavBottom.jsx'
 
 // Demo orders data
@@ -90,12 +90,12 @@ function OrderCard({ order }) {
   const navigate = useNavigate()
   const status = statusConfig[order.status] || statusConfig.Pending
   const totalItems = order.items.reduce((acc, i) => acc + i.quantity, 0)
-
+const { colors } = useTheme();
   return (
     <div
       className="w-full rounded-2xl overflow-hidden cursor-pointer group transition-all duration-200"
       style={{
-        background: `linear-gradient(145deg, ${colors.container} 0%, #1e1e1e 100%)`,
+        background:  colors.container,
         border: `1px solid ${colors.border}`,
       }}
       onClick={() => navigate('/OrderDetail', { state: order })}
@@ -211,7 +211,7 @@ function OrderCard({ order }) {
 
 export default function Orders() {
   const navigate = useNavigate()
-
+const { colors } = useTheme();
   return (
     <div className="min-h-screen w-full" style={{ background: colors.background }}>
 

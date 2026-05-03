@@ -1,7 +1,6 @@
 import { useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import colors from '../color.jsx'
-
+import useTheme from '../Client/Toggletheme.jsx'
 // Demo order — replace with real data from useLocation state
 const demoOrder = {
   id: "CHD-00123",
@@ -74,6 +73,7 @@ export default function Receipt() {
   const navigate = useNavigate()
   const receiptRef = useRef(null)
   const order = state || demoOrder
+const { colors } = useTheme();
 
   const handleDownload = async () => {
     // Install html2canvas: npm install html2canvas

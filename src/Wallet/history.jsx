@@ -144,7 +144,7 @@ export default function History() {
   return (
     <>
       <div
-        className="w-full min-h-screen flex items-center px-4 py-6"
+        className="w-full min-h-screen flex items-center px-4 pb-6 mt-[-30px]"
         style={{ background: colors.background }}
       >
         <div className="w-full flex flex-col gap-4">

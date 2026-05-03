@@ -44,7 +44,7 @@ const { colors } = useTheme();
         <motion.div
           className="relative w-full md:w-auto md:min-w-[400px] md:max-w-md rounded-t-3xl md:rounded-3xl overflow-hidden z-10"
           style={{
-            background: `linear-gradient(160deg, ${colors.container} 0%, #1a1a1a 100%)`,
+        background:  colors.container,
             border: `1px solid ${colors.border}`,
             boxShadow: '0 -8px 40px rgba(0,0,0,0.5)',
           }}
@@ -255,11 +255,13 @@ export default function Checkout() {
         <div className="w-full lg:w-3/5 flex flex-col gap-6">
 
           {/* Contact */}
-          <div
+       <div
             className="w-full rounded-2xl overflow-hidden"
-            style={{ background: `linear-gradient(145deg, ${colors.container} 0%, #1e1e1e 100%)`, border: `1px solid ${colors.border}` }}
+            style={{
+            background:  colors.container,
+            border: `1px solid ${colors.border}` }}
           >
-            <div className="h-0.5 w-full" style={{ background: `linear-gradient(90deg, ${colors.warmNeutral}, ${colors.accent}, #e8c98a, ${colors.accent}, ${colors.warmNeutral})` }} />
+        <div className="h-0.5 w-full" style={{ background: `linear-gradient(90deg, ${colors.warmNeutral}, ${colors.accent}, #e8c98a, ${colors.accent}, ${colors.warmNeutral})` }} />
             <div className="p-5 flex flex-col gap-4">
               <p className="text-xs font-semibold tracking-widest uppercase" style={{ color: colors.accent }}>
                 Contact Information
@@ -305,7 +307,8 @@ export default function Checkout() {
           {/* Delivery */}
           <div
             className="w-full rounded-2xl overflow-hidden"
-            style={{ background: `linear-gradient(145deg, ${colors.container} 0%, #1e1e1e 100%)`, border: `1px solid ${colors.border}` }}
+            style={{
+            background:colors.container, border: `1px solid ${colors.border}` }}
           >
             <div className="h-0.5 w-full" style={{ background: `linear-gradient(90deg, ${colors.warmNeutral}, ${colors.accent}, #e8c98a, ${colors.accent}, ${colors.warmNeutral})` }} />
             <div className="p-5 flex flex-col gap-4">
@@ -363,7 +366,8 @@ export default function Checkout() {
           {/* Coupon */}
           <div
             className="w-full rounded-2xl overflow-hidden"
-            style={{ background: `linear-gradient(145deg, ${colors.container} 0%, #1e1e1e 100%)`, border: `1px solid ${colors.border}` }}
+            style={{ background: colors.container,
+            border: `1px solid ${colors.border}` }}
           >
             <div className="p-5 flex flex-col gap-3">
               <p className="text-xs font-semibold tracking-widest uppercase" style={{ color: colors.accent }}>
@@ -397,7 +401,8 @@ export default function Checkout() {
         <div className="w-full lg:w-2/5 lg:sticky lg:top-8 flex flex-col gap-4">
           <div
             className="w-full rounded-2xl overflow-hidden"
-            style={{ background: `linear-gradient(145deg, ${colors.container} 0%, #1e1e1e 100%)`, border: `1px solid ${colors.border}` }}
+            style={{ 
+            background: colors.container, border: `1px solid ${colors.border}` }}
           >
             <div className="h-0.5 w-full" style={{ background: `linear-gradient(90deg, ${colors.warmNeutral}, ${colors.accent}, #e8c98a, ${colors.accent}, ${colors.warmNeutral})` }} />
 

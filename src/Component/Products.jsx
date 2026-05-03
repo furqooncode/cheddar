@@ -203,7 +203,10 @@ function ProductCard({ product, onAddToCart }) {
       </div>
 
       {/* ── Info ── */}
-      <div className="p-3 sm:p-4 flex flex-col gap-2 flex-1">
+      <div className="p-3 sm:p-4 flex flex-col gap-2 flex-1"
+      style={{
+        background:  colors.container,
+      }}>
 
         {/* Name */}
         <h3

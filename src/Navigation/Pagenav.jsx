@@ -12,6 +12,7 @@ function getPageTitle(pathname) {
    '/Order' : 'Orders List',
    '/OrderDetail' : 'Track Order',
    '/OrderHistory' : 'Order History',
+   '/Setting' : 'Settings'
   }
   return titles[pathname] || 'Page'
 }
