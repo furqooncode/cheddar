@@ -12,7 +12,7 @@ const { colors } = useTheme();
   return (
     <>
       {!cartItems || cartItems.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-4">
+        <div className="flex flex-col items-center py-20 gap-4">
           <div
             className="w-16 h-16 rounded-2xl flex items-center justify-center"
             style={{ background: 'rgba(255,255,255,0.04)', border: `1px solid ${colors.border}` }}
@@ -257,7 +257,7 @@ const { colors } = useTheme();
       className="w-full min-h-screen px-4 py-6"
       style={{ background: colors.background }}
     >
-      <div className="w-full lg:max-w-lg md:max-w-md mx-auto flex flex-col gap-4">
+      <div className="w-full flex flex-col gap-4">
 
         {/* Header */}
         <div className="flex items-center justify-between mb-1">

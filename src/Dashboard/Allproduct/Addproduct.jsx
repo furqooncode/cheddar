@@ -246,9 +246,9 @@ export default function AddProduct() {
 
         <Field label="Sizes">
           <div className="flex flex-wrap gap-2">
-            {["XS", "S", "M", "L", "XL", "XXL"].map((s, index) => (
+            {["XS", "S", "M", "L", "XL", "XXL"].map((s) => (
               <button
-                key={index}
+                key={s}
                 onClick={() => toggleSize(s)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                   sizes.includes(s)
@@ -283,19 +283,20 @@ export default function AddProduct() {
           Available Colors
         </label>
         <div className="flex gap-3 flex-wrap items-center">
-          {PRESET_COLORS.map((color, index) => (
+          {PRESET_COLORS.map((color) => (
             <button
-              key={index}
+              key={color.hex}
               onClick={() => toggleColor(color)}
               className="w-8 h-8 rounded-full transition-transform hover:scale-110 flex-shrink-0"
               style={{
-                backgroundColor: color,
-                border: color === "#ffffff" || color === "#F9A8D4" || color === "#86EFAC" || color === "#67E8F9" || color === "#FBBF24"
+                backgroundColor: color.hex,
+                border: ["#ffffff", "#F9A8D4", "#86EFAC", "#67E8F9", "#FBBF24"].includes(color.hex)
                   ? "1px solid rgba(255,255,255,0.15)"
                   : "none",
-                outline: colors.includes(color) ? "2px solid #d4a373" : "2px solid transparent",
+                outline: colors.find((c) => c.hex === color.hex) ? "2px solid #d4a373" : "2px solid transparent",
                 outlineOffset: "2px",
               }}
+              title={color.name}
             />
           ))}
 
@@ -310,8 +311,8 @@ export default function AddProduct() {
               value={customColor}
               onChange={(e) => setCustomColor(e.target.value)}
               onBlur={() => {
-                if (!colors.includes(customColor)) {
-                  setColors((prev) => [...prev, customColor]);
+                if (!colors.find((c) => c.hex === customColor)) {
+                  setColors((prev) => [...prev, { name: customColor, hex: customColor }]);
                 }
               }}
               className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
@@ -323,13 +324,13 @@ export default function AddProduct() {
         {colors.length > 0 && (
           <div className="flex gap-2 flex-wrap items-center">
             <span className="text-xs text-gray-500">{colors.length} selected:</span>
-            {colors.map((color, index) => (
+            {colors.map((color) => (
               <button
-                key={index}
+                key={color.hex}
                 onClick={() => toggleColor(color)}
                 className="w-5 h-5 rounded-full border border-white/20 hover:scale-110 transition-transform relative group"
-                style={{ backgroundColor: color }}
-                title={`Remove ${color}`}
+                style={{ backgroundColor: color.hex }}
+                title={`Remove ${color.name}`}
               >
                 <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/50 rounded-full text-[8px] text-white">✕</span>
               </button>

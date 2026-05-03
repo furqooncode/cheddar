@@ -5,8 +5,13 @@ import useTheme from '../Client/Toggletheme.jsx'
 function getPageTitle(pathname) {
   const titles = {
     '/Cart': 'My Cart',
+    '/Checkout' : 'CheckOut',
     '/Browse': 'Shop',
-    '/Wallet' : 'Wallet'
+    '/Wallet' : 'Wallet',
+   '/details' : 'Product Details',
+   '/Order' : 'Orders List',
+   '/OrderDetail' : 'Track Order',
+   '/OrderHistory' : 'Order History',
   }
   return titles[pathname] || 'Page'
 }
@@ -16,7 +21,8 @@ export default function PageNav() {
   const location = useLocation()
 const { colors } = useTheme();
   return (
-    <nav className="fixed top-0 left-0 flex items-center justify-start p-2 h-[60px] w-full"
+    <nav className="fixed top-0 left-0 flex items-center justify-start p-2
+    h-[60px] w-full z-1000"
       style={{ 
       border: `1px solid ${colors.border}`,
       background: colors.background,

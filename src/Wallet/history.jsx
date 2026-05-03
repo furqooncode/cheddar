@@ -57,7 +57,8 @@ function TransactionRow({ tx }) {
 
   return (
     <div
-      className="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-200 cursor-pointer"
+      className="flex items-center gap-4 px-4 py-4 rounded-2xl transition-all
+      duration-200 cursor-pointer"
       style={{
         background: "rgba(255,255,255,0.02)",
         border: "1px solid rgba(255,255,255,0.04)",
@@ -143,10 +144,10 @@ export default function History() {
   return (
     <>
       <div
-        className="w-full min-h-screen flex items-center justify-center px-4 py-6"
+        className="w-full min-h-screen flex items-center px-4 py-6"
         style={{ background: colors.background }}
       >
-        <div className="w-full sm:max-w-2xl flex flex-col gap-4">
+        <div className="w-full flex flex-col gap-4">
           {/* Header */}
           <div className="flex items-center justify-between mb-2">
             <div>

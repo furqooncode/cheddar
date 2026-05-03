@@ -1,6 +1,6 @@
 const lightColors = {
   background: "#FDFBF7",
-  container: "#F8F5F0",
+  container: "#FFFFFF",
   primaryText: "#1A1A1A",
   secondaryText: "#5C5C5C",
   accent: "#C19A6B",

@@ -1,4 +1,5 @@
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom';
+import NavBottom from './NavBottom.jsx'
 import colors from '../color.jsx'
 
 const steps = ['Placed', 'Confirmed', 'Shipped', 'Delivered']
@@ -29,7 +30,7 @@ export default function OrderDetail() {
 
   if (!order) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: colors.background }}>
+      <div className="min-h-screen flex items-center" style={{ background: colors.background }}>
         <div className="text-center flex flex-col gap-4">
           <p className="text-sm" style={{ color: colors.secondaryText }}>Order not found.</p>
           <button
@@ -73,7 +74,7 @@ export default function OrderDetail() {
         </button>
       </div>
 
-      <div className="w-full max-w-lg mx-auto px-4 py-6 flex flex-col gap-5">
+      <div className="w-full px-4 py-6 flex flex-col gap-5">
 
         {/* ── PROGRESS TIMELINE ── */}
         <div
@@ -374,6 +375,8 @@ export default function OrderDetail() {
         </div>
 
       </div>
+      
+    <NavBottom />
     </div>
   )
 }

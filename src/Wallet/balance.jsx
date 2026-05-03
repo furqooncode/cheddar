@@ -55,7 +55,7 @@ export default function Balance() {
       className="flex items-center justify-center px-4 py-8"
       style={{ background: colors.background }}
     >
-      <div className="w-full max-w-sm sm:max-w-2xl flex flex-col gap-3">
+      <div className="w-full max-w-full sm:max-w-2xl flex flex-col gap-3">
         {/* CARD */}
         <div
           className="w-full rounded-3xl border overflow-hidden"

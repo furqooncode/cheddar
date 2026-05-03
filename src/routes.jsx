@@ -29,7 +29,7 @@ export default function AppRoutes() {
   return (
     <Routes>
       {/* Default redirect */}
-    {/* <Route path="/" element={<Navigate to="/dashboard" replace />} />*/}
+    <Route path="/Admin" element={<Navigate to="/dashboard" replace />} />
 
       {/* No nav routes */}
       <Route path="/Login" element={<Login />} />
@@ -37,7 +37,8 @@ export default function AppRoutes() {
       <Route path="/Welcome" element={<Welcome />} />
       <Route path="/DropCountdown" element={<DropCountdown />} />
       <Route path="/Products" element={<Products />} />
-
+    <Route path="/Setting" element={<ProtectedRoute><Settings
+    /></ProtectedRoute>} />
       {/* Dashboard routes — own layout, no Nav/Footer */}
       <Route
         path="/dashboard"
@@ -64,7 +65,7 @@ export default function AppRoutes() {
               <Routes>
                 <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
                 <Route path="/Cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-                <Route path="/Settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+
                 <Route path="/Receipt" element={<ProtectedRoute><Receipt /></ProtectedRoute>} />
                 <Route path="/OrderHistory" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
                 <Route path="/Order" element={<ProtectedRoute><Orders /></ProtectedRoute>} />

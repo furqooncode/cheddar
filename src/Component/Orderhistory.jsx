@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
-import colors from '../color.jsx'
+import colors from '../color.jsx';
+import NavBottom from './NavBottom.jsx'
 
 // Demo delivered orders
 const history = [
@@ -193,15 +194,6 @@ export default function OrderHistory() {
         className="w-full px-4 py-5 flex items-center justify-between"
         style={{ borderBottom: `1px solid ${colors.border}` }}
       >
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-sm transition-all hover:gap-3"
-          style={{ color: colors.secondaryText }}
-        >
-          <i className="fas fa-arrow-left text-xs" />
-          Back
-        </button>
-
         <div className="flex flex-col items-center gap-0.5">
           <h1 className="text-base font-black" style={{ color: colors.primaryText }}>
             Order History
@@ -214,7 +206,7 @@ export default function OrderHistory() {
         <div style={{ width: 40 }} />
       </div>
 
-      <div className="w-full max-w-lg mx-auto px-4 py-6 flex flex-col gap-4">
+      <div className="w-full max-w-full px-4 py-6 flex flex-col gap-4">
 
         {/* Empty state */}
         {history.length === 0 ? (
@@ -241,6 +233,7 @@ export default function OrderHistory() {
         )}
 
       </div>
+      <NavBottom />
     </div>
   )
 }
