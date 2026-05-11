@@ -1,112 +1,13 @@
-
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useQuery } from "@tanstack/react-query";
+import supabase from "../lib/util.jsx";
+import { useState, useMemo, useEffect } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom'
 import useTheme from '../Client/Toggletheme.jsx'
 import useCart from '../Client/CartStorage.jsx';
 import NavBottom from './NavBottom.jsx'
+import BrowseSkeleton from '../Skeleton/BrowseSkeleton.jsx'
 
-const products = [
-  {
-    id: 1,
-    name: "Oversized Black Essential Hoodie",
-    description: "Heavyweight cotton fleece with dropped shoulders and ribbed cuffs for ultimate street-ready comfort.",
-    price: 45000,
-    discount: 23,
-    category: "Hoodie",
-    image: "https://static.independent.co.uk/2025/01/15/13/MS-best-mens-hoodies-indybest.jpg",
-    images: ["url1", "url2", "url3"],
-    size: "XL",
-    colorAvailable: ["#000000", "#1a3a6b", "#8B2F2F"],
-    rating: 4.5,
-    reviewCount: 128,
-  },
-  {
-    id: 2,
-    name: "Graphic Print All-Over Hoodie",
-    description: "Bold urban print on premium cotton blend, relaxed fit with kangaroo pocket and adjustable hood.",
-    price: 38000,
-    discount: 0,
-    category: "Hoodie",
-    image: "https://modaknits.com/wp-content/uploads/2023/09/ericwen_340_The_image_showcases_a_young_man_wearing_a_stylish_a_22587368-1202-4fd9-b734-5b9df8c74282.png",
-    images: ["url1", "url2"],
-    size: "L",
-    colorAvailable: ["#ffffff", "#2d2d2d"],
-    rating: 4.2,
-    reviewCount: 64,
-  },
-  {
-    id: 3,
-    name: "Slim Fit Chino Trousers",
-    description: "Tailored stretch cotton chinos in neutral tones with clean lines, perfect for smart-casual versatility.",
-    price: 28500,
-    discount: 21,
-    category: "Trousers",
-    image: "https://i.ebayimg.com/images/g/CHMAAOSwoAFjCBNV/s-l1200.jpg",
-    images: ["url1"],
-    size: "M",
-    colorAvailable: ["#c2b280", "#2d2d2d", "#3d5a80"],
-    rating: 4.0,
-    reviewCount: 42,
-  },
-  {
-    id: 4,
-    name: "Navy Embroidered Polo Shirt",
-    description: "Breathable piqué cotton polo with subtle chest embroidery and classic three-button placket.",
-    price: 18000,
-    discount: 0,
-    category: "Polo",
-    image: "https://m.media-amazon.com/images/I/51a6wffhW0L.jpg_BO30,255,255,255_UF750,750_SR1910,1000,0,C_QL100_.jpg",
-    images: ["url1", "url2"],
-    size: "L",
-    colorAvailable: ["#1a3a6b", "#ffffff", "#000000"],
-    rating: 4.7,
-    reviewCount: 95,
-  },
-  {
-    id: 5,
-    name: "Luxury Zip-Track Tracksuit Set",
-    description: "Modern slim-fit tracksuit in premium cotton blend with contrast stripes, ideal for casual or active wear.",
-    price: 65000,
-    discount: 24,
-    category: "Up & Down",
-    image: "https://m.media-amazon.com/images/S/aplus-media-library-service-media/7f800c31-a04a-4979-ad49-e73697212f03.__CR0,0,970,600_PT0_SX970_V1___.jpg",
-    images: ["url1", "url2", "url3"],
-    size: "XL",
-    colorAvailable: ["#2d2d2d", "#8B2F2F"],
-    rating: 4.8,
-    reviewCount: 210,
-  },
-  {
-    id: 6,
-    name: "Relaxed Cargo Utility Pants",
-    description: "Lightweight cotton cargo pants with multiple pockets, drawstring waist, and tapered leg for everyday utility.",
-    price: 32000,
-    discount: 0,
-    category: "Trousers",
-    image: "https://m.media-amazon.com/images/I/61tiHVAEEfL.jpg_BO30,255,255,255_UF750,750_SR1910,1000,0,C_QL100_.jpg",
-    images: ["url1"],
-    size: "M",
-    colorAvailable: ["#4a3728", "#2d2d2d", "#c2b280", "#1a3a6b"],
-    rating: 4.3,
-    reviewCount: 77,
-  },
-  {
-    id: 7,
-    name: "Vintage Oversized Acid Wash Tee",
-    description: "Heavyweight cotton oversized tee in acid-wash finish for a timeless streetwear edge.",
-    price: 15000,
-    discount: 23,
-    category: "Tee",
-    image: "https://m.media-amazon.com/images/I/71tRcJFCmnL._AC_UY1000_.jpg",
-    images: ["url1", "url2"],
-    size: "XXL",
-    colorAvailable: ["#9e9e9e", "#000000"],
-    rating: 4.1,
-    reviewCount: 33,
-  },
-]
-
-const categories = ["All", "Hoodie", "Trousers", "Up & Down", "Polo", "Tee"]
+const ITEMS_PER_PAGE = 20
 
 function ProductCard({ product }) {
   const { colors } = useTheme()
@@ -118,7 +19,8 @@ function ProductCard({ product }) {
     ? product.price - (product.price * product.discount / 100)
     : product.price
   const cheddarCoin = (discountedPrice / 1500).toFixed(2)
-  const extraColors = product.colorAvailable.length - 1
+  const colorList = product.colorAvailable || []
+  const extraColors = colorList.length - 1
 
   return (
     <div
@@ -127,7 +29,7 @@ function ProductCard({ product }) {
         background: `linear-gradient(145deg, ${colors.container} 0%, #1e1e1e 100%)`,
         border: `1px solid ${colors.border}`,
       }}
-      onClick={() => navigate('/details', { state: product })}
+      onClick={() => navigate(`/productdetails/${product.id}`, { state: product })}
     >
       {/* Image */}
       <div className="relative aspect-[3/4] overflow-hidden flex-shrink-0">
@@ -136,12 +38,7 @@ function ProductCard({ product }) {
           alt={product.name}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
-
-        <div
-          className="absolute inset-0"
-          style={{
-          background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 55%)' }}
-        />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 55%)' }} />
 
         {hasDiscount && (
           <div
@@ -180,44 +77,30 @@ function ProductCard({ product }) {
       </div>
 
       {/* Info */}
-      <div className="p-3 sm:p-4 flex flex-col gap-2 flex-1"
-      style={{
-        background: colors.container,
-      }}>
-        <h3
-          className="text-xs sm:text-sm font-semibold leading-snug line-clamp-2"
-          style={{ color: colors.primaryText }}
-        >
+      <div className="p-3 sm:p-4 flex flex-col gap-2 flex-1" style={{ background: colors.container }}>
+        <h3 className="text-xs sm:text-sm font-semibold leading-snug line-clamp-2" style={{ color: colors.primaryText }}>
           {product.name}
         </h3>
-
-        <p
-          className="text-xs leading-relaxed line-clamp-2"
-          style={{ color: colors.secondaryText }}
-        >
+        <p className="text-xs leading-relaxed line-clamp-2" style={{ color: colors.secondaryText }}>
           {product.description}
         </p>
 
         <div className="flex items-center justify-between">
           <div
             className="px-2.5 py-1 rounded-lg text-xs font-semibold"
-            style={{
-              background: 'rgba(255,255,255,0.05)',
-              border: `1px solid ${colors.border}`,
-              color: colors.secondaryText,
-            }}
+            style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${colors.border}`, color: colors.secondaryText }}
           >
             {product.size}
           </div>
           <div className="flex items-center gap-1">
-            <div
-              className="w-4 h-4 rounded-full border"
-              style={{ background: product.colorAvailable[0], borderColor: 'rgba(255,255,255,0.2)' }}
-            />
+            {colorList[0] && (
+              <div
+                className="w-4 h-4 rounded-full border"
+                style={{ background: colorList[0]?.hex || colorList[0], borderColor: 'rgba(255,255,255,0.2)' }}
+              />
+            )}
             {extraColors > 0 && (
-              <span className="text-xs font-medium" style={{ color: colors.secondaryText }}>
-                +{extraColors}
-              </span>
+              <span className="text-xs font-medium" style={{ color: colors.secondaryText }}>+{extraColors}</span>
             )}
           </div>
         </div>
@@ -228,9 +111,7 @@ function ProductCard({ product }) {
               {cheddarCoin} CHD
             </span>
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-xs font-medium" style={{ color: colors.text }}>
-                ₦{discountedPrice.toLocaleString()}
-              </span>
+              <span className="text-xs font-medium" style={{ color: colors.text }}>₦{discountedPrice.toLocaleString()}</span>
               {hasDiscount && (
                 <span className="text-xs line-through opacity-50" style={{ color: colors.secondaryText }}>
                   ₦{product.price.toLocaleString()}
@@ -241,16 +122,9 @@ function ProductCard({ product }) {
 
           <button
             className="w-10 h-10 sm:w-11 sm:h-11 rounded-full flex items-center justify-center flex-shrink-0 hover:scale-110 active:scale-95 transition-transform duration-200"
-            style={{
-              background: colors.accent,
-              color: '#1A1A1A',
-              boxShadow: `0 4px 14px rgba(193,154,107,0.35)`,
-            }}
+            style={{ background: colors.accent, color: '#1A1A1A', boxShadow: `0 4px 14px rgba(193,154,107,0.35)` }}
             aria-label="Add to cart"
-            onClick={(e) => {
-              e.stopPropagation()
-              addToCart(product)
-            }}
+            onClick={(e) => { e.stopPropagation(); addToCart(product) }}
           >
             <i className="fas fa-shopping-cart text-sm" />
           </button>
@@ -260,24 +134,112 @@ function ProductCard({ product }) {
   )
 }
 
+// Mini skeleton for pagination loading
+function MiniSkeleton({ colors }) {
+  return (
+    <>
+      {[1, 2].map((i) => (
+        <div
+          key={i}
+          className="rounded-2xl overflow-hidden"
+          style={{ border: `1px solid ${colors.border}`, backgroundColor: colors.container }}
+        >
+          <div
+            className="w-full"
+            style={{
+              aspectRatio: '3/4',
+              background: 'linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 100%)',
+              backgroundSize: '200% 100%',
+              animation: 'shimmer 1.6s infinite',
+            }}
+          />
+          <div className="p-3 flex flex-col gap-2" style={{ backgroundColor: colors.container }}>
+            <div className="h-3 w-4/5 rounded-xl" style={{ background: colors.border }} />
+            <div className="h-3 w-3/5 rounded-xl" style={{ background: colors.border }} />
+          </div>
+        </div>
+      ))}
+    </>
+  )
+}
+
 export default function Browse() {
   const { colors } = useTheme()
+  const location = useLocation()
+  const cameFromHome = location.state?.from === 'home'
+
   const [search, setSearch] = useState('')
-  const [activeCategory, setActiveCategory] = useState('All')
   const [searchFocused, setSearchFocused] = useState(false)
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE)
+  const [loadingMore, setLoadingMore] = useState(false)
+
+  const { data: products, isPending, isError, error } = useQuery({
+    queryKey: ['Userproducts'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('products').select('*')
+      if (error) throw error
+      return data
+    },
+    staleTime: 1000 * 60 * 5, // cache for 5 mins
+  })
+
+  // Show skeleton only on direct navigation, not from home
+  if (isPending && !cameFromHome) return <BrowseSkeleton />
+  if (isError) return <p className="text-white p-8">{error.message}</p>
+
+  // Build filters from categories + tags
+  const filters = [
+    "All",
+    ...new Set([
+      ...products.map((p) => p.category),
+      ...products.flatMap((p) => p.tags || []),
+    ]),
+  ]
+
+  // Filter + search logic — client side
+  const filtered = useMemo(() => {
+    const term = search.trim().toLowerCase()
+    if (!term) return products
+    return products.filter((p) => {
+      const inName = p.name?.toLowerCase().includes(term)
+      const inCategory = p.category?.toLowerCase().includes(term)
+      const inTags = (p.tags || []).some((t) => t.toLowerCase().includes(term))
+      return inName || inCategory || inTags
+    })
+  }, [search, products])
+
+  // Paginated slice
+  const visible = filtered.slice(0, visibleCount)
+  const hasMore = visibleCount < filtered.length
+
+  const loadMore = () => {
+    setLoadingMore(true)
+    setTimeout(() => {
+      setVisibleCount((prev) => prev + ITEMS_PER_PAGE)
+      setLoadingMore(false)
+    }, 600)
+  }
+
+  const handleFilterClick = (filter) => {
+    setSearch(filter === 'All' ? '' : filter)
+    setVisibleCount(ITEMS_PER_PAGE)
+  }
+
+  const handleSearchChange = (e) => {
+    setSearch(e.target.value)
+    setVisibleCount(ITEMS_PER_PAGE)
+  }
 
   return (
     <div className="min-h-screen w-full" style={{ background: colors.background }}>
+      <style>{`@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
 
       {/* Page Header */}
       <div
         className="w-full px-4 md:px-10 lg:px-16 pt-10 pb-8 flex flex-col gap-2"
         style={{ borderBottom: `1px solid ${colors.border}` }}
       >
-        <p
-          className="text-xs font-semibold tracking-[0.25em] uppercase"
-          style={{ color: colors.accent }}
-        >
+        <p className="text-xs font-semibold tracking-[0.25em] uppercase" style={{ color: colors.accent }}>
           — Shop
         </p>
         <h1
@@ -287,13 +249,13 @@ export default function Browse() {
           Browse Collection
         </h1>
         <p className="text-sm font-light" style={{ color: colors.secondaryText }}>
-          {products.length} pieces available
+          {filtered.length} {filtered.length === 1 ? 'piece' : 'pieces'} available
         </p>
       </div>
 
       <div className="w-full px-4 md:px-10 lg:px-16 py-6 flex flex-col gap-6">
 
-        {/* Search + count */}
+        {/* Search */}
         <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
           <div className="relative flex-1">
             <i
@@ -302,9 +264,9 @@ export default function Browse() {
             />
             <input
               type="text"
-              placeholder="Search for a piece..."
+              placeholder="Search by name, category or tag..."
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={handleSearchChange}
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
               className="w-full pl-10 pr-10 py-3 rounded-xl text-sm placeholder:opacity-40"
@@ -321,7 +283,7 @@ export default function Browse() {
             {search && (
               <button
                 className="absolute right-4 top-1/2 -translate-y-1/2"
-                onClick={() => setSearch('')}
+                onClick={() => { setSearch(''); setVisibleCount(ITEMS_PER_PAGE) }}
                 style={{ color: colors.secondaryText }}
               >
                 <i className="fas fa-times text-xs" />
@@ -331,45 +293,95 @@ export default function Browse() {
 
           <div
             className="hidden sm:flex items-center gap-2 px-4 py-3 rounded-xl flex-shrink-0"
-            style={{
-              background: 'rgba(255,255,255,0.03)',
-              border: `1px solid ${colors.border}`,
-            }}
+            style={{ background: 'rgba(255,255,255,0.03)', border: `1px solid ${colors.border}` }}
           >
             <i className="fas fa-box-open text-xs" style={{ color: colors.accent }} />
             <span className="text-xs font-medium" style={{ color: colors.secondaryText }}>
-              {products.length} items
+              {filtered.length} items
             </span>
           </div>
         </div>
 
-        {/* Category pills */}
+        {/* Filter pills */}
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className="px-4 py-2 rounded-xl text-xs font-semibold flex-shrink-0 transition-all duration-200"
-              style={{
-                background: activeCategory === cat ? colors.accent : 'rgba(255,255,255,0.04)',
-                color: activeCategory === cat ? '#1A1A1A' : colors.secondaryText,
-                border: `1px solid ${activeCategory === cat ? colors.accent : colors.border}`,
-              }}
-            >
-              {cat}
-            </button>
-          ))}
+          {filters.map((filter) => {
+            const isActive = search.toLowerCase() === filter.toLowerCase() || (filter === 'All' && !search)
+            return (
+              <button
+                key={filter}
+                onClick={() => handleFilterClick(filter)}
+                className="px-4 py-2 rounded-xl text-xs font-semibold flex-shrink-0 transition-all duration-200"
+                style={{
+                  background: isActive ? colors.accent : 'rgba(255,255,255,0.04)',
+                  color: isActive ? '#1A1A1A' : colors.secondaryText,
+                  border: `1px solid ${isActive ? colors.accent : colors.border}`,
+                }}
+              >
+                {filter}
+              </button>
+            )
+          })}
         </div>
+
+        {/* Empty state */}
+        {filtered.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-20 gap-4">
+            <i className="fas fa-box-open text-4xl" style={{ color: colors.border }} />
+            <p className="text-sm font-semibold" style={{ color: colors.primaryText }}>
+              No products found
+            </p>
+            <p className="text-xs text-center" style={{ color: colors.secondaryText }}>
+              {search
+                ? `No results for "${search}". Try a different search or filter.`
+                : 'No products available yet.'}
+            </p>
+            {search && (
+              <button
+                onClick={() => setSearch('')}
+                className="px-5 py-2 rounded-xl text-xs font-semibold"
+                style={{ background: colors.accent, color: '#1A1A1A' }}
+              >
+                Clear Search
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {filtered.length > 0 && (
+          <>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+              {visible.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+              {loadingMore && <MiniSkeleton colors={colors} />}
+            </div>
+
+            {/* Load more */}
+            {hasMore && !loadingMore && (
+              <button
+                onClick={loadMore}
+                className="w-full py-4 rounded-2xl text-sm font-semibold transition-all"
+                style={{
+                  background: 'rgba(255,255,255,0.04)',
+                  border: `1px solid ${colors.border}`,
+                  color: colors.secondaryText,
+                }}
+              >
+                Load More <i className="fas fa-chevron-down ml-2 text-xs" />
+              </button>
+            )}
+
+            {!hasMore && filtered.length > ITEMS_PER_PAGE && (
+              <p className="text-center text-xs" style={{ color: colors.border }}>
+                You've seen all {filtered.length} products
+              </p>
+            )}
+          </>
+        )}
 
       </div>
-       <NavBottom />
+      <NavBottom />
     </div>
   )
 }

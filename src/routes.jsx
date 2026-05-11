@@ -16,7 +16,7 @@ import Signup from "./Security/Signup.jsx";
 import Transaction from "./Wallet/Transaction.jsx";
 import Welcome from "./Landing/welcome.jsx";
 import DropCountdown from "./Landing/DropCountdown.jsx";
-import Products from "./Component/Products.jsx";
+
 import ProtectedRoute from "./lib/Protectedroutes.jsx";
 import DashboardApp from "./Dashboard/DashboardApp";
 import Overview from "./Dashboard/Alloverview/Overview.jsx";
@@ -29,15 +29,13 @@ export default function AppRoutes() {
   return (
     <Routes>
       {/* Default redirect */}
-    <Route path="/Admin" element={<Navigate to="/dashboard" replace />} />
+    <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
       {/* No nav routes */}
       <Route path="/Login" element={<Login />} />
       <Route path="/Signup" element={<Signup />} />
       <Route path="/Welcome" element={<Welcome />} />
       <Route path="/DropCountdown" element={<DropCountdown />} />
-      <Route path="/Products" element={<Products />} />
-   
     
       {/* Dashboard routes — own layout, no Nav/Footer */}
       <Route
@@ -63,7 +61,7 @@ export default function AppRoutes() {
             <Nav />
             <main className="mt-[60px] lg:mt-0 lg:ml-[240px]">
               <Routes>
-                <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                <Route path="/Home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
                 <Route path="/Cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
 
                 <Route path="/Receipt" element={<ProtectedRoute><Receipt /></ProtectedRoute>} />
@@ -71,7 +69,7 @@ export default function AppRoutes() {
                 <Route path="/Order" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
                 <Route path="/OrderDetail" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
                 <Route path="/Browse" element={<ProtectedRoute><Browse /></ProtectedRoute>} />
-                <Route path="/Details" element={<ProtectedRoute><Details /></ProtectedRoute>} />
+      <Route path="/productdetails/:productId?" element={<ProtectedRoute><Details /></ProtectedRoute>} />
                 <Route path="/Checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
                 <Route path="/Wallet" element={<ProtectedRoute><Transaction /></ProtectedRoute>} />
      <Route path="/Setting" element={<ProtectedRoute><Settings

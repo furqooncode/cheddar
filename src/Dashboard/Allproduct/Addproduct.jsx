@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useProduct } from "../../Client/productData.jsx";
+import supabase from "../../lib/util.jsx";
 
-const CATEGORIES = ["Hoodie", "Premium", "Accessories"];
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 const PRESET_COLORS = [
   { name: "Black", hex: "#000000" },
@@ -26,88 +27,120 @@ const PRESET_COLORS = [
 ];
 
 export default function AddProduct() {
-  const [form, setForm] = useState({
-    name: "",
-    description: "",
-    price: "",
-    discount: "",
-    category: "",
-    rating: "",
-    isFeatured: false,
-    isNewArrival: false,
-    tags: [],
-  });
+  const navigate = useNavigate();
+  const {
+    MainImagePreview, OtherImagePreview,
+    MainImageFile, OtherImageFile,
+    UploadMain, UploadOthers,
+    otherSlots, addImageSlot,
+    name, description, price, discount, category,
+    rating, isFeatured, isNewArrival, tags,
+    tagInput, colorAvailable, customColor, size,
+    handleChange, setSize, toggleColor,
+    addCustomColor, setCustomColor,
+    setTagInput, addTag, removeTag,
+    loading, setLoading, reset,
+    isEditing, editingId,
+  } = useProduct();
 
-  const [mainImage, setMainImage] = useState("");
-  const [otherImages, setOtherImages] = useState(["", ""]);
-  const [colorAvailable, setColorAvailable] = useState([]);
-  const [size, setSize] = useState("");
-  const [tagInput, setTagInput] = useState("");
-  const [customColor, setCustomColor] = useState("#d4a373");
+  const handleSubmit = async () => {
+    setLoading(true);
+    try {
+      let mainUrl = MainImagePreview; // reuse existing if editing and no new file
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
-  };
-
-  // Tags
-  const addTag = (e) => {
-    if (e.key === "Enter" && tagInput.trim()) {
-      e.preventDefault();
-      const tag = tagInput.trim().toLowerCase();
-      if (!form.tags.includes(tag)) {
-        setForm((prev) => ({ ...prev, tags: [...prev.tags, tag] }));
+      // Upload main image if new file selected
+      if (MainImageFile) {
+        const mainFileName = `products/${Date.now()}-${MainImageFile.name}`;
+        const { error: mainUploadError } = await supabase.storage
+          .from("cheddar-storage")
+          .upload(mainFileName, MainImageFile);
+        if (mainUploadError) throw mainUploadError;
+        const { data: mainData } = supabase.storage
+          .from("cheddar-storage")
+          .getPublicUrl(mainFileName);
+        mainUrl = mainData.publicUrl;
       }
-      setTagInput("");
+
+      // Upload other images — skip slots that have no new file
+      const otherUrls = await Promise.all(
+        OtherImageFile.map(async (file, i) => {
+          if (file) {
+            const fileName = `products/${Date.now()}-${file.name}`;
+            const { error } = await supabase.storage
+              .from("cheddar-storage")
+              .upload(fileName, file);
+            if (error) throw error;
+            const { data } = supabase.storage
+              .from("cheddar-storage")
+              .getPublicUrl(fileName);
+            return data.publicUrl;
+          }
+          // Reuse existing preview URL if no new file
+          return OtherImagePreview[i] || null;
+        })
+      );
+
+      const payload = {
+        name,
+        description,
+        price: Number(price),
+        discount: Number(discount),
+        category,
+        rating: Number(rating),
+        isFeatured,
+        isNewArrival,
+        tags,
+        colorAvailable,
+        size,
+        image: mainUrl,
+        images: otherUrls.filter(Boolean),
+        reviewCount: 0,
+      };
+
+      if (isEditing) {
+        const { error } = await supabase
+          .from("products")
+          .update(payload)
+          .eq("id", editingId);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("products").insert(payload);
+        if (error) throw error;
+      }
+
+      reset();
+      navigate("/dashboard/products");
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong");
+    } finally {
+      setLoading(false);
     }
-  };
-  const removeTag = (tag) => {
-    setForm((prev) => ({ ...prev, tags: prev.tags.filter((t) => t !== tag) }));
-  };
-
-  // Colors
-  const toggleColor = (color) => {
-    setColorAvailable((prev) =>
-      prev.find((c) => c.hex === color.hex)
-        ? prev.filter((c) => c.hex !== color.hex)
-        : [...prev, color]
-    );
-  };
-
-  // Size — single select
-  const selectSize = (s) => setSize((prev) => (prev === s ? "" : s));
-
-  // Other images
-  const addImageSlot = () => {
-    if (otherImages.length < 3) setOtherImages((prev) => [...prev, ""]);
-  };
-  const updateOtherImage = (index, file) => {
-    const url = file ? URL.createObjectURL(file) : "";
-    setOtherImages((prev) => prev.map((img, i) => (i === index ? url : img)));
-  };
-
-  const handleSubmit = () => {
-    const product = {
-      ...form,
-      price: Number(form.price),
-      discount: Number(form.discount),
-      rating: Number(form.rating),
-      size,
-      colorAvailable,
-      image: mainImage,
-      images: otherImages.filter(Boolean),
-      reviewCount: 0,
-      createdAt: new Date().toISOString().split("T")[0],
-    };
-    console.log("Product payload:", product);
-    alert("Product added! Check console for payload.");
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 pb-16">
+    <div className="max-w-4xl mx-auto space-y-8 pb-16 relative">
+
+      {/* Full page loading overlay */}
+      {loading && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4"
+          style={{ backgroundColor: "rgba(0,0,0,0.75)", backdropFilter: "blur(4px)" }}
+        >
+          <div className="w-14 h-14 rounded-full border-4 border-white/10 border-t-[#d4a373] animate-spin" />
+          <p className="text-white text-sm font-semibold tracking-wide">
+            {isEditing ? "Saving changes..." : "Uploading product..."}
+          </p>
+          <p className="text-gray-400 text-xs">Please don't close this page</p>
+        </div>
+      )}
+
       <div>
-        <h2 className="text-2xl font-bold text-white tracking-tight">Add Product</h2>
-        <p className="text-gray-500 text-sm mt-1">Fill in the details to list a new product</p>
+        <h2 className="text-2xl font-bold text-white tracking-tight">
+          {isEditing ? "Edit Product" : "Add Product"}
+        </h2>
+        <p className="text-gray-500 text-sm mt-1">
+          {isEditing ? "Update the product details below" : "Fill in the details to list a new product"}
+        </p>
       </div>
 
       {/* Images */}
@@ -120,66 +153,57 @@ export default function AddProduct() {
         <label
           className="w-full h-64 rounded-xl bg-white/5 border border-white/10 overflow-hidden relative flex items-center justify-center cursor-pointer group"
           style={
-            mainImage
-              ? { backgroundImage: `url(${mainImage})`, backgroundSize: "cover", backgroundPosition: "center" }
+            MainImagePreview
+              ? { backgroundImage: `url(${MainImagePreview})`, backgroundSize: "cover", backgroundPosition: "center" }
               : {}
           }
         >
-          {!mainImage && (
+          {MainImagePreview && (
+            <div className="absolute top-3 right-3 w-7 h-7 rounded-full bg-[#d4a373] flex items-center justify-center z-10">
+              <i className="fas fa-check text-black text-xs" />
+            </div>
+          )}
+          {!MainImagePreview && (
             <div className="text-center pointer-events-none">
               <i className="fas fa-cloud-upload-alt text-3xl text-gray-600 mb-2 block" />
               <span className="text-gray-500 text-sm">Click to upload main image</span>
             </div>
           )}
-          {mainImage && (
+          {MainImagePreview && (
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-              <span className="text-white text-sm">
-                <i className="fas fa-redo mr-2" />Change Image
-              </span>
+              <span className="text-white text-sm"><i className="fas fa-redo mr-2" />Change Image</span>
             </div>
           )}
-          <input
-            type="file"
-            accept="image/*"
-            className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-            onChange={(e) => {
-              const file = e.target.files[0];
-              if (file) setMainImage(URL.createObjectURL(file));
-            }}
-          />
+          <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onChange={UploadMain} />
         </label>
 
         {/* Other images */}
         <div className="flex gap-3">
-          {otherImages.map((img, i) => (
-            <label
-              key={i}
-              className="flex-1 h-24 rounded-xl bg-white/5 border border-white/10 overflow-hidden relative flex items-center justify-center cursor-pointer group"
-              style={
-                img
-                  ? { backgroundImage: `url(${img})`, backgroundSize: "cover", backgroundPosition: "center" }
-                  : {}
-              }
-            >
-              {!img && <i className="fas fa-image text-gray-600 text-lg pointer-events-none" />}
-              {img && (
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                  <i className="fas fa-redo text-white text-sm" />
-                </div>
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                onChange={(e) => {
-                  const file = e.target.files[0];
-                  if (file) updateOtherImage(i, file);
-                }}
-              />
-            </label>
-          ))}
+          {otherSlots.map((_, i) => {
+            const preview = OtherImagePreview[i];
+            return (
+              <label
+                key={i}
+                className="flex-1 h-24 rounded-xl bg-white/5 border border-white/10 overflow-hidden relative flex items-center justify-center cursor-pointer group"
+                style={preview ? { backgroundImage: `url(${preview})`, backgroundSize: "cover", backgroundPosition: "center" } : {}}
+              >
+                {preview && (
+                  <div className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full bg-[#d4a373] flex items-center justify-center z-10">
+                    <i className="fas fa-check text-black text-[8px]" />
+                  </div>
+                )}
+                {!preview && <i className="fas fa-image text-gray-600 text-lg pointer-events-none" />}
+                {preview && (
+                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                    <i className="fas fa-redo text-white text-sm" />
+                  </div>
+                )}
+                <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer w-full h-full" onChange={(e) => UploadOthers(e, i)} />
+              </label>
+            );
+          })}
 
-          {otherImages.length < 3 && (
+          {otherSlots.length < 3 && (
             <button
               onClick={addImageSlot}
               className="h-24 w-24 flex-shrink-0 rounded-xl border border-dashed border-white/20 flex items-center justify-center text-gray-500 hover:border-[#d4a373] hover:text-[#d4a373] transition-colors"
@@ -194,58 +218,26 @@ export default function AddProduct() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="md:col-span-2">
           <Field label="Product Name">
-            <input
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              placeholder="e.g. Oversized Black Essential Hoodie"
-              className={inputCls}
-            />
+            <input name="name" value={name} onChange={handleChange} placeholder="e.g. Oversized Black Essential Hoodie" className={inputCls} />
           </Field>
         </div>
 
         <div className="md:col-span-2">
           <Field label="Description">
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              rows={3}
-              placeholder="Describe the product..."
-              className={inputCls + " resize-none"}
-            />
+            <textarea name="description" value={description} onChange={handleChange} rows={3} placeholder="Describe the product..." className={inputCls + " resize-none"} />
           </Field>
         </div>
 
         <Field label="Price (₦)">
-          <input
-            name="price"
-            type="number"
-            value={form.price}
-            onChange={handleChange}
-            placeholder="45000"
-            className={inputCls}
-          />
+          <input name="price" type="number" value={price} onChange={handleChange} placeholder="45000" className={inputCls} />
         </Field>
 
         <Field label="Discount (%)">
-          <input
-            name="discount"
-            type="number"
-            value={form.discount}
-            onChange={handleChange}
-            placeholder="23"
-            className={inputCls}
-          />
+          <input name="discount" type="number" value={discount} onChange={handleChange} placeholder="23" className={inputCls} />
         </Field>
 
         <Field label="Category">
-          <select name="category" value={form.category} onChange={handleChange} className={inputCls}>
-            <option value="">Select category</option>
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
+          <input name="category" value={category} onChange={handleChange} placeholder="e.g. Hoodie, Trousers, Polo..." className={inputCls} />
         </Field>
 
         <Field label="Size (pick one)">
@@ -253,11 +245,9 @@ export default function AddProduct() {
             {SIZES.map((s) => (
               <button
                 key={s}
-                onClick={() => selectSize(s)}
+                onClick={() => setSize(s)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  size === s
-                    ? "bg-[#d4a373] text-black"
-                    : "bg-white/5 border border-white/10 text-gray-300 hover:border-[#d4a373]"
+                  size === s ? "bg-[#d4a373] text-black" : "bg-white/5 border border-white/10 text-gray-300 hover:border-[#d4a373]"
                 }`}
               >
                 {s}
@@ -267,46 +257,35 @@ export default function AddProduct() {
         </Field>
 
         <Field label="Rating (1–5)">
-          <input
-            name="rating"
-            type="number"
-            min="1"
-            max="5"
-            step="0.1"
-            value={form.rating}
-            onChange={handleChange}
-            placeholder="4.5"
-            className={inputCls}
-          />
+          <input name="rating" type="number" min="1" max="5" step="0.1" value={rating} onChange={handleChange} placeholder="4.5" className={inputCls} />
         </Field>
       </div>
 
       {/* Colors */}
       <div className="space-y-3">
-        <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
-          Available Colors
-        </label>
+        <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Available Colors</label>
         <div className="flex gap-3 flex-wrap items-center">
           {PRESET_COLORS.map((color) => (
             <button
               key={color.hex}
               onClick={() => toggleColor(color)}
-              className="w-8 h-8 rounded-full transition-transform hover:scale-110 flex-shrink-0"
+              className="w-8 h-8 rounded-full transition-transform hover:scale-110 flex-shrink-0 relative"
               style={{
                 backgroundColor: color.hex,
-                border: ["#ffffff", "#F9A8D4", "#86EFAC", "#67E8F9", "#FBBF24"].includes(color.hex)
-                  ? "1px solid rgba(255,255,255,0.15)"
-                  : "none",
-                outline: colorAvailable.find((c) => c.hex === color.hex)
-                  ? "2px solid #d4a373"
-                  : "2px solid transparent",
+                border: ["#ffffff", "#F9A8D4", "#86EFAC", "#67E8F9", "#FBBF24"].includes(color.hex) ? "1px solid rgba(255,255,255,0.15)" : "none",
+                outline: colorAvailable.find((c) => c.hex === color.hex) ? "2px solid #d4a373" : "2px solid transparent",
                 outlineOffset: "2px",
               }}
               title={color.name}
-            />
+            >
+              {colorAvailable.find((c) => c.hex === color.hex) && (
+                <span className="absolute inset-0 flex items-center justify-center">
+                  <i className="fas fa-check text-[8px] text-white drop-shadow" />
+                </span>
+              )}
+            </button>
           ))}
 
-          {/* Custom color picker */}
           <label
             className="w-8 h-8 rounded-full flex items-center justify-center border border-dashed border-white/30 hover:border-[#d4a373] transition-colors cursor-pointer flex-shrink-0 relative overflow-hidden"
             title="Pick custom color"
@@ -316,11 +295,7 @@ export default function AddProduct() {
               type="color"
               value={customColor}
               onChange={(e) => setCustomColor(e.target.value)}
-              onBlur={() => {
-                if (!colorAvailable.find((c) => c.hex === customColor)) {
-                  setColorAvailable((prev) => [...prev, { name: customColor, hex: customColor }]);
-                }
-              }}
+              onBlur={() => addCustomColor(customColor)}
               className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
             />
           </label>
@@ -337,9 +312,7 @@ export default function AddProduct() {
                 style={{ backgroundColor: color.hex }}
                 title={`Remove ${color.name}`}
               >
-                <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/50 rounded-full text-[8px] text-white">
-                  ✕
-                </span>
+                <span className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/50 rounded-full text-[8px] text-white">✕</span>
               </button>
             ))}
           </div>
@@ -348,15 +321,10 @@ export default function AddProduct() {
 
       {/* Tags */}
       <div className="space-y-3">
-        <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest">
-          Tags
-        </label>
+        <label className="text-xs font-semibold text-gray-400 uppercase tracking-widest">Tags</label>
         <div className="flex flex-wrap gap-2 p-3 rounded-xl bg-white/5 border border-white/10 min-h-[48px]">
-          {form.tags.map((tag) => (
-            <span
-              key={tag}
-              className="flex items-center gap-1 px-3 py-1 bg-[#d4a373]/20 text-[#d4a373] text-xs rounded-full"
-            >
+          {tags.map((tag) => (
+            <span key={tag} className="flex items-center gap-1 px-3 py-1 bg-[#d4a373]/20 text-[#d4a373] text-xs rounded-full">
               #{tag}
               <button onClick={() => removeTag(tag)} className="ml-1 hover:text-white transition-colors">
                 <i className="fas fa-times text-[10px]" />
@@ -368,7 +336,7 @@ export default function AddProduct() {
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
             onKeyDown={addTag}
-            placeholder={form.tags.length === 0 ? 'Type a tag and press Enter e.g. "streetwear"' : "Add more..."}
+            placeholder={tags.length === 0 ? 'Type a tag and press Enter e.g. "streetwear"' : "Add more..."}
             className="bg-transparent text-white text-sm outline-none flex-1 min-w-[120px] placeholder-gray-600"
           />
         </div>
@@ -376,17 +344,28 @@ export default function AddProduct() {
 
       {/* Toggles */}
       <div className="flex gap-6 flex-wrap">
-        <Toggle label="Featured Product" name="isFeatured" checked={form.isFeatured} onChange={handleChange} />
-        <Toggle label="New Arrival" name="isNewArrival" checked={form.isNewArrival} onChange={handleChange} />
+        <Toggle label="Featured Product" name="isFeatured" checked={isFeatured} onChange={handleChange} />
+        <Toggle label="New Arrival" name="isNewArrival" checked={isNewArrival} onChange={handleChange} />
       </div>
 
-      {/* Submit */}
-      <button
-        onClick={handleSubmit}
-        className="w-full py-4 bg-[#d4a373] text-black font-bold rounded-xl hover:bg-[#c4935f] transition-colors text-sm tracking-wide"
-      >
-        ADD PRODUCT
-      </button>
+      {/* Actions */}
+      <div className="flex gap-3">
+        {isEditing && (
+          <button
+            onClick={() => { reset(); navigate("/dashboard/products"); }}
+            className="flex-1 py-4 bg-white/5 border border-white/10 text-gray-300 font-bold rounded-xl hover:bg-white/10 transition-colors text-sm tracking-wide"
+          >
+            Cancel
+          </button>
+        )}
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="flex-1 py-4 bg-[#d4a373] text-black font-bold rounded-xl hover:bg-[#c4935f] transition-colors text-sm tracking-wide disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {isEditing ? "SAVE CHANGES" : "ADD PRODUCT"}
+        </button>
+      </div>
     </div>
   );
 }
