@@ -92,12 +92,14 @@ const useAuth = create((set)=> ({
     }
   },
   
+  
   getUser: async()=>{
     const { data: { user } } = await supabase.auth.getUser();
     if(user){
       const isGoogle = user.app_metadata.provider === 'google';
       set({
         user:{
+          id: user.id,
           email: user.email,
           username: isGoogle ? user.user_metadata.full_name : user.user_metadata.username,
           avatar: isGoogle ? user.user_metadata.avatar_url : null,

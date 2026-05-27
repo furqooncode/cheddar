@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useProduct } from "../../Client/productData.jsx";
@@ -37,20 +37,21 @@ export default function ProductList() {
   };
 
   const handleDeleteOne = async (id) => {
-    if (!confirm("Delete this product?")) return;
-    setDeletingId(id);
-    try {
-      const { error } = await supabase.from("products").delete().eq("id", id);
-      if (error) throw error;
-      deleteOne(id);
-      queryClient.invalidateQueries(["adminProducts"]);
-    } catch (err) {
-      console.error(err);
-      alert("Delete failed");
-    } finally {
-      setDeletingId(null);
-    }
-  };
+  if (!confirm("Delete this product?")) return;
+  setDeletingId(id);
+  try {
+    const { data, error } = await supabase.from("products").delete().eq("id", id);
+    console.log("Delete response:", { data, error }); // ADD THIS
+    if (error) throw error;
+    console.log("Rows affected:", data); // ADD THIS
+    deleteOne(id);
+    queryClient.invalidateQueries(["adminProducts"]);
+  } catch (err) {
+    console.error("Delete error:", err);
+    alert("Delete failed: " + err.message);
+  }
+};
+
 
   const handleDeleteSelected = async () => {
     if (!confirm(`Delete ${selected.length} product(s)?`)) return;

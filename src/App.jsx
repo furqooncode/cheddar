@@ -8,8 +8,8 @@ const { getUser } = useAuth();
  const { colors } = useTheme();
  
  useEffect(()=>{
-  getUser();
-},[])
+  getUser().catch(err => console.error("Failed to get user:", err));
+},[getUser])
 
   useEffect(() => {
     import("vconsole").then(({ default: VConsole }) => {

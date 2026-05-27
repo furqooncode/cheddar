@@ -4,7 +4,7 @@ import { Navigate } from 'react-router-dom';
 export default function ProtectedRoute({children}){
   const { user } = useAuth();
   if(!user){
-    <Navigate to="/Welcome" />
+    return <Navigate to="/Welcome" />
   }
   return children
 }
