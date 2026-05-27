@@ -10,6 +10,7 @@ import Receipt from "./Component/Receipt.jsx";
 import Details from "./Component/Details.jsx";
 import OrderDetail from "./Component/Orderdetails.jsx";
 import Browse from "./Component/Browse.jsx";
+import EditProfile from "./Component/EditProfile.jsx";
 import Login from "./Security/Login.jsx";
 import Settings from "./Component/Settings.jsx";
 import Signup from "./Security/Signup.jsx";
@@ -21,6 +22,7 @@ import ProtectedRoute from "./lib/Protectedroutes.jsx";
 import DashboardApp from "./Dashboard/DashboardApp";
 import Overview from "./Dashboard/Alloverview/Overview.jsx";
 import DashOrders from "./Dashboard/Allorder/Orders.jsx";
+import DashOrderdetails from "./Dashboard/Allorder/Orderdetails.jsx";
 import ProductList from "./Dashboard/Allproduct/ProductList.jsx";
 import AddProduct from "./Dashboard/Allproduct/Addproduct.jsx";
 import { Navigate } from "react-router-dom";
@@ -49,6 +51,7 @@ export default function AppRoutes() {
         <Route index element={<Navigate to="overview" replace />} />
         <Route path="overview" element={<Overview />} />
         <Route path="orders" element={<DashOrders />} />
+        <Route path="orders/:id?" element={<DashOrderdetails />} />
         <Route path="products" element={<ProductList />} />
         <Route path="addproduct" element={<AddProduct />} />
       </Route>
@@ -64,16 +67,25 @@ export default function AppRoutes() {
                 <Route path="/Home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
                 <Route path="/Cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
 
-                <Route path="/Receipt" element={<ProtectedRoute><Receipt /></ProtectedRoute>} />
+                <Route path="/receipt" element={<ProtectedRoute><Receipt /></ProtectedRoute>} />
                 <Route path="/OrderHistory" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
                 <Route path="/Order" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
-                <Route path="/OrderDetail" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
+                <Route path="/orderdetail/:orderId?" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
                 <Route path="/Browse" element={<ProtectedRoute><Browse /></ProtectedRoute>} />
       <Route path="/productdetails/:productId?" element={<ProtectedRoute><Details /></ProtectedRoute>} />
-                <Route path="/Checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+        
+        <Route path="/Checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+        
                 <Route path="/Wallet" element={<ProtectedRoute><Transaction /></ProtectedRoute>} />
+                
      <Route path="/Setting" element={<ProtectedRoute><Settings
     /></ProtectedRoute>} />
+    
+    
+     <Route path="/editprofile" element={<ProtectedRoute><EditProfile
+    /></ProtectedRoute>} />
+    
+    
               </Routes>
               <Footer />
             </main>

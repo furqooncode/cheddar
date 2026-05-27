@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useTheme from '../Client/Toggletheme.jsx';
-import NavBottom from './NavBottom.jsx'
+import NavBottom from './NavBottom.jsx';
+import ConfirmationModal from './ConfirmationModal.jsx';  
 
 const SECTIONS = [
   {
@@ -46,17 +47,43 @@ const SECTIONS = [
     icon: "fas fa-sliders-h",
     items: [
       { id: "language", label: "Language", icon: "fas fa-globe", arrow: true, value: "English" },
-      { id: "theme", label: "Theme", icon: "fas fa-adjust", arrow: true, value: "Dark" },
+      { id: "theme", label: "Dark Mode", icon: "fas fa-adjust", toggle: true },
     ],
   },
 ];
 
 export default function Settings() {
-  const { colors } = useTheme();
+  const { colors, isDark, toggleTheme } = useTheme();
+
   const [toggles, setToggles] = useState({ push: true, email_notif: false, sms: false });
+
+  // Modal states
+  const [modal, setModal] = useState({
+    isOpen: false,
+    popmsg: "",
+    actionmsg: "",
+    action: () => {},
+  });
 
   const handleToggle = (id) => {
     setToggles((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  const handleThemeToggle = () => {
+    toggleTheme();
+  };
+
+  const openModal = (popmsg, actionmsg, actionFn) => {
+    setModal({
+      isOpen: true,
+      popmsg,
+      actionmsg,
+      action: actionFn,
+    });
+  };
+
+  const closeModal = () => {
+    setModal((prev) => ({ ...prev, isOpen: false }));
   };
 
   return (
@@ -66,7 +93,7 @@ export default function Settings() {
     >
       {/* Header */}
       <div
-        className=" z-10 px-5 pt-12 pb-4 border-b"
+        className="z-10 px-5 pt-12 pb-4 border-b"
         style={{ backgroundColor: colors.background, borderColor: colors.border }}
       >
         <h1 className="text-2xl font-bold tracking-tight" style={{ color: colors.primaryText }}>
@@ -78,14 +105,12 @@ export default function Settings() {
       </div>
 
       <div className="px-4 pt-5 space-y-6 w-full">
-
-        {/* Profile Card — redirect to edit profile */}
+        {/* Profile Card */}
         <div
           className="rounded-2xl p-4 flex items-center gap-4 border active:scale-[0.98] transition-transform cursor-pointer"
           style={{ backgroundColor: colors.container, borderColor: colors.border }}
           onClick={() => console.log("Navigate to profile")}
         >
-          {/* Avatar */}
           <div
             className="w-16 h-16 rounded-full flex items-center justify-center text-2xl flex-shrink-0"
             style={{ backgroundColor: colors.accent + "22" }}
@@ -99,10 +124,7 @@ export default function Settings() {
             <p className="text-sm truncate" style={{ color: colors.secondaryText }}>
               hamzat@example.com
             </p>
-            <p
-              className="text-xs font-medium mt-1"
-              style={{ color: colors.accent }}
-            >
+            <p className="text-xs font-medium mt-1" style={{ color: colors.accent }}>
               Edit Profile →
             </p>
           </div>
@@ -112,7 +134,6 @@ export default function Settings() {
         {/* Sections */}
         {SECTIONS.map((section) => (
           <div key={section.id}>
-            {/* Section Label */}
             <p
               className="text-xs font-semibold uppercase tracking-widest mb-2 px-1"
               style={{ color: colors.secondaryText }}
@@ -120,7 +141,6 @@ export default function Settings() {
               {section.label}
             </p>
 
-            {/* Section Items */}
             <div
               className="rounded-2xl border overflow-hidden"
               style={{ backgroundColor: colors.container, borderColor: colors.border }}
@@ -131,7 +151,6 @@ export default function Settings() {
                     className="flex items-center gap-4 px-4 py-3.5 active:opacity-70 transition-opacity cursor-pointer"
                     onClick={() => !item.toggle && console.log(`Navigate to ${item.id}`)}
                   >
-                    {/* Icon */}
                     <div
                       className="w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0"
                       style={{ backgroundColor: colors.accent + "18" }}
@@ -139,12 +158,10 @@ export default function Settings() {
                       <i className={`${item.icon} text-sm`} style={{ color: colors.accent }} />
                     </div>
 
-                    {/* Label */}
                     <span className="flex-1 text-sm font-medium" style={{ color: colors.text }}>
                       {item.label}
                     </span>
 
-                    {/* Value or Toggle or Arrow */}
                     {item.value && (
                       <span className="text-xs mr-1" style={{ color: colors.secondaryText }}>
                         {item.value}
@@ -152,25 +169,42 @@ export default function Settings() {
                     )}
 
                     {item.toggle ? (
-                      <div
-                        className="w-11 h-6 rounded-full relative transition-colors duration-200 flex-shrink-0"
-                        style={{ backgroundColor: toggles[item.id] ? colors.accent : colors.border }}
-                        onClick={() => handleToggle(item.id)}
-                      >
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs" style={{ color: colors.secondaryText }}>
+                          {item.id === "theme" ? (isDark ? "Dark" : "Light") : ""}
+                        </span>
+
                         <div
-                          className="absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"
-                          style={{ transform: toggles[item.id] ? "translateX(22px)" : "translateX(4px)" }}
-                        />
+                          className="w-11 h-6 rounded-full relative transition-colors duration-200 flex-shrink-0 cursor-pointer"
+                          style={{
+                            backgroundColor: item.id === "theme"
+                              ? (isDark ? colors.accent : colors.border)
+                              : (toggles[item.id] ? colors.accent : colors.border),
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (item.id === "theme") {
+                              handleThemeToggle();
+                            } else {
+                              handleToggle(item.id);
+                            }
+                          }}
+                        >
+                          <div
+                            className="absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-200"
+                            style={{
+                              transform: (item.id === "theme" ? isDark : toggles[item.id])
+                                ? "translateX(22px)"
+                                : "translateX(4px)",
+                            }}
+                          />
+                        </div>
                       </div>
                     ) : (
-                      <i
-                        className="fas fa-chevron-right text-xs"
-                        style={{ color: colors.border }}
-                      />
+                      <i className="fas fa-chevron-right text-xs" style={{ color: colors.border }} />
                     )}
                   </div>
 
-                  {/* Divider */}
                   {index < section.items.length - 1 && (
                     <div className="ml-16 h-px" style={{ backgroundColor: colors.border }} />
                   )}
@@ -182,10 +216,7 @@ export default function Settings() {
 
         {/* Account Actions */}
         <div>
-          <p
-            className="text-xs font-semibold uppercase tracking-widest mb-2 px-1"
-            style={{ color: colors.secondaryText }}
-          >
+          <p className="text-xs font-semibold uppercase tracking-widest mb-2 px-1" style={{ color: colors.secondaryText }}>
             Account Actions
           </p>
           <div
@@ -195,12 +226,15 @@ export default function Settings() {
             {/* Logout */}
             <div
               className="flex items-center gap-4 px-4 py-3.5 cursor-pointer active:opacity-70 transition-opacity"
-              onClick={() => console.log("Logout")}
+              onClick={() =>
+                openModal(
+                  "Are you sure you want to log out?",
+                  "Log Out",
+                  () => console.log("User logged out")
+                )
+              }
             >
-              <div
-                className="w-8 h-8 rounded-xl flex items-center justify-center"
-                style={{ backgroundColor: colors.deepAccent + "22" }}
-              >
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: colors.deepAccent + "22" }}>
                 <i className="fas fa-sign-out-alt text-sm" style={{ color: colors.deepAccent }} />
               </div>
               <span className="flex-1 text-sm font-medium" style={{ color: colors.text }}>
@@ -214,12 +248,15 @@ export default function Settings() {
             {/* Delete Account */}
             <div
               className="flex items-center gap-4 px-4 py-3.5 cursor-pointer active:opacity-70 transition-opacity"
-              onClick={() => console.log("Delete account")}
+              onClick={() =>
+                openModal(
+                  "This action cannot be undone. Delete your account permanently?",
+                  "Delete Account",
+                  () => console.log("Account deleted")
+                )
+              }
             >
-              <div
-                className="w-8 h-8 rounded-xl flex items-center justify-center"
-                style={{ backgroundColor: colors.error + "18" }}
-              >
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: colors.error + "18" }}>
                 <i className="fas fa-trash-alt text-sm" style={{ color: colors.error }} />
               </div>
               <span className="flex-1 text-sm font-medium" style={{ color: colors.error }}>
@@ -230,13 +267,21 @@ export default function Settings() {
           </div>
         </div>
 
-        {/* App version */}
         <p className="text-center text-xs pb-4" style={{ color: colors.border }}>
           Cheddar v1.0.0
         </p>
-
       </div>
-    <NavBottom />
+
+      <NavBottom />
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={modal.isOpen}
+        onClose={closeModal}
+        popmsg={modal.popmsg}
+        actionmsg={modal.actionmsg}
+        action={modal.action}
+      />
     </div>
   );
 }

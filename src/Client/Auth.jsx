@@ -113,7 +113,11 @@ const useAuth = create((set)=> ({
       user:null,
       loading:false
     })
-  }
+  },
+  
+  editUser : async()=> {
+    
+  },
   
 }))
 

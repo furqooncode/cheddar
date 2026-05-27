@@ -9,7 +9,7 @@ import BrowseSkeleton from '../Skeleton/BrowseSkeleton.jsx'
 
 const ITEMS_PER_PAGE = 20
 
-function ProductCard({ product }) {
+export function ProductCard({ product, handleMove }) {
   const { colors } = useTheme()
   const { addToCart } = useCart()
   const navigate = useNavigate()
@@ -18,7 +18,6 @@ function ProductCard({ product }) {
   const discountedPrice = hasDiscount
     ? product.price - (product.price * product.discount / 100)
     : product.price
-  const cheddarCoin = (discountedPrice / 1500).toFixed(2)
   const colorList = product.colorAvailable || []
   const extraColors = colorList.length - 1
 
@@ -29,7 +28,7 @@ function ProductCard({ product }) {
         background: `linear-gradient(145deg, ${colors.container} 0%, #1e1e1e 100%)`,
         border: `1px solid ${colors.border}`,
       }}
-      onClick={() => navigate(`/productdetails/${product.id}`, { state: product })}
+      onClick={handleMove}
     >
       {/* Image */}
       <div className="relative aspect-[3/4] overflow-hidden flex-shrink-0">
@@ -107,9 +106,7 @@ function ProductCard({ product }) {
 
         <div className="flex items-end justify-between mt-auto pt-2">
           <div className="flex flex-col gap-0.5">
-            <span className="text-sm sm:text-base font-black tracking-tight" style={{ color: colors.accent }}>
-              {cheddarCoin} CHD
-            </span>
+        
             <div className="flex items-center gap-1.5 flex-wrap">
               <span className="text-xs font-medium" style={{ color: colors.text }}>₦{discountedPrice.toLocaleString()}</span>
               {hasDiscount && (
@@ -133,6 +130,10 @@ function ProductCard({ product }) {
     </div>
   )
 }
+
+
+
+
 
 // Mini skeleton for pagination loading
 function MiniSkeleton({ colors }) {
@@ -166,6 +167,7 @@ function MiniSkeleton({ colors }) {
 export default function Browse() {
   const { colors } = useTheme()
   const location = useLocation()
+  const navigate = useNavigate();
   const cameFromHome = location.state?.from === 'home'
 
   const [search, setSearch] = useState('')
@@ -352,7 +354,11 @@ export default function Browse() {
           <>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
               {visible.map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard
+                key={product.id} 
+                product={product}
+                handleMove={()=> navigate(`/productdetails/${product.id}`, {
+                state: product })}/>
               ))}
               {loadingMore && <MiniSkeleton colors={colors} />}
             </div>

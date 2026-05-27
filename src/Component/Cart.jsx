@@ -31,8 +31,7 @@ const { colors } = useTheme();
           const discountedPrice = item.discount > 0
             ? item.price - (item.price * item.discount / 100)
             : item.price
-          const chd = (discountedPrice / 1500).toFixed(2)
-
+          
           return (
             <div
               key={item.id}
@@ -92,9 +91,7 @@ const { colors } = useTheme();
                           ₦{item.price.toLocaleString()}
                         </span>
                       )}
-     <span className="text-base font-black tracking-tight" style={{ color: colors.accent }}>
-            {chd} CHD
-                      </span>
+    
            </div>
 
       {/* Color selector */}
@@ -107,16 +104,16 @@ const { colors } = useTheme();
                               key={i}
                               onClick={() => updateItemColor(item.id, c)}
                               className="w-5 h-5 rounded-full transition-all duration-150"
-                              style={{
-                                background: c,
-                                border: item.selectedColor === c
-                                  ? `2px solid ${colors.accent}`
-                                  : '2px solid rgba(255,255,255,0.15)',
-                                transform: item.selectedColor === c ? 'scale(1.2)' : 'scale(1)',
-                              }}
-                              aria-label={`Select color ${c}`}
-                            />
-                          ))}
+                       style={{
+                  background: c.hex,
+      border: item.selectedColor === c
+         ? `2px solid ${colors.accent}`
+        : '2px solid rgba(255,255,255,0.15)',
+       transform: item.selectedColor === c ? 'scale(1.2)' : 'scale(1)',
+            }}
+          aria-label={`Select color ${c.name}`}
+                 />
+                    ))}
                         </div>
                       </div>
                     )}
@@ -188,8 +185,7 @@ const navigate = useNavigate();
     return acc + discountedPrice * item.quantity
   }, 0)
 
-  const totalCHD = (totalPrice / 1500).toFixed(2)
-
+  
   return (
     <div
       className="w-full rounded-2xl border mt-2"
@@ -222,13 +218,7 @@ const navigate = useNavigate();
           style={{ background: `linear-gradient(90deg, transparent, ${colors.border}, transparent)` }}
         />
 
-        <div className="flex items-center justify-between">
-          <span className="text-sm" style={{ color: colors.secondaryText }}>Total Cheddar Coin</span>
-          <span className="text-2xl font-black tracking-tight" style={{ color: colors.accent }}>
-            {totalCHD}{' '}
-            <span className="text-sm font-semibold">CHD</span>
-          </span>
-        </div>
+      
 
         <button
           className="w-full py-4 rounded-xl text-sm font-black tracking-widest uppercase transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 mt-1"
@@ -298,7 +288,8 @@ const { colors } = useTheme();
         </div>
 
         {/* Summary */}
-        <Summary />
+  {cartItems.length > 0 &&  <Summary />}
+       
         
         
       </div>

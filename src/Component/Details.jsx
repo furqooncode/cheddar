@@ -223,11 +223,6 @@ export default function Details() {
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-2">
-              <i className="fas fa-coins text-xs" style={{ color: colors.accent }} />
-              <span className="text-base font-black" style={{ color: colors.accent }}>{cheddarCoin} CHD</span>
-              <span className="text-xs" style={{ color: colors.secondaryText }}>equivalent</span>
-            </div>
           </div>
 
           <div className="w-full h-px" style={{ background: `linear-gradient(90deg, transparent, ${colors.border}, transparent)` }} />

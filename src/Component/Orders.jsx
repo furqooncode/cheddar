@@ -1,104 +1,78 @@
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../Client/Toggletheme.jsx'
 import NavBottom from './NavBottom.jsx'
-
-// Demo orders data
-const orders = [
-  {
-    id: "CHD-00123",
-    createdAt: "2026-03-15T10:42:00",
-    status: "Shipped",
-    items: [
-      {
-        id: 1,
-        name: "Oversized Black Essential Hoodie",
-        image: "https://static.independent.co.uk/2025/01/15/13/MS-best-mens-hoodies-indybest.jpg",
-        price: 45000,
-        discount: 23,
-        quantity: 2,
-        size: "XL",
-        selectedColor: "#000000",
-      },
-      {
-        id: 3,
-        name: "Slim Fit Chino Trousers",
-        image: "https://i.ebayimg.com/images/g/CHMAAOSwoAFjCBNV/s-l1200.jpg",
-        price: 28500,
-        discount: 21,
-        quantity: 1,
-        size: "M",
-        selectedColor: "#2d2d2d",
-      },
-    ],
-    delivery: {
-      name: "Hamzat Oladimeji",
-      address: "12 Bode Thomas Street",
-      city: "Surulere",
-      state: "Lagos",
-      phone: "+234 800 000 0000",
-    },
-    subtotal: 116500,
-    shipping: 0,
-    total: 116500,
-    totalCHD: 77.67,
-  },
-  {
-    id: "CHD-00118",
-    createdAt: "2026-03-10T08:15:00",
-    status: "Pending",
-    items: [
-      {
-        id: 5,
-        name: "Luxury Zip-Track Tracksuit Set",
-        image: "https://m.media-amazon.com/images/S/aplus-media-library-service-media/7f800c31-a04a-4979-ad49-e73697212f03.__CR0,0,970,600_PT0_SX970_V1___.jpg",
-        price: 65000,
-        discount: 24,
-        quantity: 1,
-        size: "XL",
-        selectedColor: "#2d2d2d",
-      },
-    ],
-    delivery: {
-      name: "Hamzat Oladimeji",
-      address: "12 Bode Thomas Street",
-      city: "Surulere",
-      state: "Lagos",
-      phone: "+234 800 000 0000",
-    },
-    subtotal: 65000,
-    shipping: 2500,
-    total: 67500,
-    totalCHD: 45.00,
-  },
-]
+import { useQuery } from "@tanstack/react-query"
+import supabase from "../lib/util.jsx"
 
 const statusConfig = {
-  Pending:    { color: '#C19A6B', bg: 'rgba(193,154,107,0.12)', border: 'rgba(193,154,107,0.25)', icon: 'fa-clock' },
-  Confirmed:  { color: '#3d5a80', bg: 'rgba(61,90,128,0.12)',   border: 'rgba(61,90,128,0.25)',   icon: 'fa-check-circle' },
-  Shipped:    { color: '#7c6fcd', bg: 'rgba(124,111,205,0.12)', border: 'rgba(124,111,205,0.25)', icon: 'fa-shipping-fast' },
-  Delivered:  { color: '#4A7043', bg: 'rgba(74,112,67,0.12)',   border: 'rgba(74,112,67,0.25)',   icon: 'fa-box-open' },
-  Cancelled:  { color: '#8B2F2F', bg: 'rgba(139,47,47,0.12)',   border: 'rgba(139,47,47,0.25)',   icon: 'fa-times-circle' },
+  pending:   { color: '#C19A6B', bg: 'rgba(193,154,107,0.12)', border: 'rgba(193,154,107,0.25)', icon: 'fa-clock' },
+  confirmed: { color: '#3d5a80', bg: 'rgba(61,90,128,0.12)',   border: 'rgba(61,90,128,0.25)',   icon: 'fa-check-circle' },
+  shipped:   { color: '#7c6fcd', bg: 'rgba(124,111,205,0.12)', border: 'rgba(124,111,205,0.25)', icon: 'fa-shipping-fast' },
+  delivered: { color: '#4A7043', bg: 'rgba(74,112,67,0.12)',   border: 'rgba(74,112,67,0.25)',   icon: 'fa-box-open' },
+  cancelled: { color: '#8B2F2F', bg: 'rgba(139,47,47,0.12)',   border: 'rgba(139,47,47,0.25)',   icon: 'fa-times-circle' },
 }
 
 function formatDate(iso) {
+  if (!iso) return ''
   return new Date(iso).toLocaleDateString('en-NG', {
     day: 'numeric', month: 'short', year: 'numeric',
   })
 }
 
+function getTotal(products) {
+  return (products || []).reduce((sum, p) => sum + (p.price || p.amount || 0) * (p.quantity || 1), 0)
+}
+
+// ── Skeleton ────────────────────────────────────────────────
+function OrderCardSkeleton({ colors }) {
+  const shimmer = {
+    background: 'linear-gradient(90deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.09) 50%, rgba(255,255,255,0.04) 100%)',
+    backgroundSize: '200% 100%',
+    animation: 'shimmer 1.6s infinite',
+  }
+  return (
+    <div className="w-full rounded-2xl overflow-hidden" style={{ background: colors.container, border: `1px solid ${colors.border}` }}>
+      <div className="h-0.5 w-full" style={{ background: colors.border }} />
+      <div className="p-4 flex flex-col gap-4">
+        <div className="flex items-start justify-between">
+          <div className="flex flex-col gap-1.5">
+            <div className="h-4 w-28 rounded-lg" style={shimmer} />
+            <div className="h-3 w-20 rounded-lg" style={shimmer} />
+          </div>
+          <div className="h-6 w-20 rounded-full" style={shimmer} />
+        </div>
+        <div className="flex items-center gap-3">
+          {[1,2,3].map((i) => (
+            <div key={i} className="w-12 h-12 rounded-xl" style={shimmer} />
+          ))}
+        </div>
+        <div className="h-px w-full" style={{ background: colors.border }} />
+        <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-1">
+            <div className="h-3 w-10 rounded" style={shimmer} />
+            <div className="h-5 w-24 rounded-lg" style={shimmer} />
+          </div>
+          <div className="h-8 w-28 rounded-xl" style={shimmer} />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ── Order Card ──────────────────────────────────────────────
 function OrderCard({ order }) {
   const navigate = useNavigate()
-  const status = statusConfig[order.status] || statusConfig.Pending
-  const totalItems = order.items.reduce((acc, i) => acc + i.quantity, 0)
-const { colors } = useTheme();
+  const { colors } = useTheme()
+  const status = statusConfig[order.status?.toLowerCase()] || statusConfig.pending
+  const products = order.products || []
+  const totalItems = products.reduce((acc, i) => acc + (i.quantity || 1), 0)
+  const total = getTotal(products)
+
   return (
     <div
       className="w-full rounded-2xl overflow-hidden cursor-pointer group transition-all duration-200"
-      style={{
-        background:  colors.container,
-        border: `1px solid ${colors.border}`,
-      }}
-      onClick={() => navigate('/OrderDetail', { state: order })}
+      style={{ background: colors.container, border: `1px solid ${colors.border}` }}
+      onClick={() => navigate(`/orderdetail/${order.orderId}`, { state: order })}
     >
       {/* Top accent bar */}
       <div
@@ -111,27 +85,21 @@ const { colors } = useTheme();
         {/* Header row */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex flex-col gap-0.5">
-            <p
-              className="text-sm font-black tracking-wide"
-              style={{ color: colors.primaryText }}
-            >
-              #{order.id}
+            <p className="text-sm font-black tracking-wide" style={{ color: colors.primaryText }}>
+              #{order.orderId}
             </p>
             <p className="text-xs" style={{ color: colors.secondaryText }}>
-              {formatDate(order.createdAt)}
+              {formatDate(order.created_at)}
             </p>
           </div>
 
           {/* Status badge */}
           <div
             className="flex items-center gap-1.5 px-3 py-1 rounded-full flex-shrink-0"
-            style={{
-              background: status.bg,
-              border: `1px solid ${status.border}`,
-            }}
+            style={{ background: status.bg, border: `1px solid ${status.border}` }}
           >
             <i className={`fas ${status.icon} text-xs`} style={{ color: status.color }} />
-            <span className="text-xs font-semibold" style={{ color: status.color }}>
+            <span className="text-xs font-semibold capitalize" style={{ color: status.color }}>
               {order.status}
             </span>
           </div>
@@ -140,29 +108,21 @@ const { colors } = useTheme();
         {/* Item thumbnails */}
         <div className="flex items-center gap-3">
           <div className="flex -space-x-3">
-            {order.items.slice(0, 3).map((item, i) => (
+            {products.slice(0, 3).map((item, i) => (
               <div
                 key={i}
                 className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0"
-                style={{
-                  border: `2px solid ${colors.background}`,
-                  zIndex: order.items.length - i,
-                }}
+                style={{ border: `2px solid ${colors.background}`, zIndex: products.length - i }}
               >
                 <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
               </div>
             ))}
-            {order.items.length > 3 && (
+            {products.length > 3 && (
               <div
                 className="w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 text-xs font-bold"
-                style={{
-                  background: colors.container,
-                  border: `2px solid ${colors.background}`,
-                  color: colors.secondaryText,
-                  zIndex: 0,
-                }}
+                style={{ background: colors.container, border: `2px solid ${colors.background}`, color: colors.secondaryText, zIndex: 0 }}
               >
-                +{order.items.length - 3}
+                +{products.length - 3}
               </div>
             )}
           </div>
@@ -171,7 +131,7 @@ const { colors } = useTheme();
               {totalItems} {totalItems === 1 ? 'item' : 'items'}
             </p>
             <p className="text-xs" style={{ color: colors.secondaryText }}>
-              {order.items.length} {order.items.length === 1 ? 'product' : 'products'}
+              {products.length} {products.length === 1 ? 'product' : 'products'}
             </p>
           </div>
         </div>
@@ -183,14 +143,9 @@ const { colors } = useTheme();
         <div className="flex items-center justify-between">
           <div className="flex flex-col gap-0.5">
             <span className="text-xs" style={{ color: colors.secondaryText }}>Total</span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-base font-black" style={{ color: colors.primaryText }}>
-                ₦{order.total.toLocaleString()}
-              </span>
-              <span className="text-xs font-bold" style={{ color: colors.accent }}>
-                {order.totalCHD} CHD
-              </span>
-            </div>
+            <span className="text-base font-black" style={{ color: colors.primaryText }}>
+              ₦{total.toLocaleString()}
+            </span>
           </div>
 
           <div
@@ -209,11 +164,31 @@ const { colors } = useTheme();
   )
 }
 
-export default function Orders() {
+// ── Main ────────────────────────────────────────────────────
+export default function UserOrders() {
   const navigate = useNavigate()
-const { colors } = useTheme();
+  const { colors } = useTheme()
+
+  const { data: orders = [], isPending, isError, error } = useQuery({
+    queryKey: ["userOrders"],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) throw new Error('Not authenticated')
+
+      const { data, error } = await supabase
+        .from("orders")
+        .select("*")
+        .eq("userId", user.id)
+        .order("created_at", { ascending: false })
+
+      if (error) throw new Error(error.message)
+      return data
+    }
+  })
+
   return (
     <div className="min-h-screen w-full" style={{ background: colors.background }}>
+      <style>{`@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }`}</style>
 
       {/* Header */}
       <div
@@ -221,25 +196,18 @@ const { colors } = useTheme();
         style={{ borderBottom: `1px solid ${colors.border}` }}
       >
         <div className="flex flex-col gap-0.5">
-          <h1
-            className="text-xl font-black tracking-tight"
-            style={{ color: colors.primaryText }}
-          >
+          <h1 className="text-xl font-black tracking-tight" style={{ color: colors.primaryText }}>
             My Orders
           </h1>
           <p className="text-xs" style={{ color: colors.secondaryText }}>
-            {orders.length} active {orders.length === 1 ? 'order' : 'orders'}
+            {isPending ? '...' : `${orders.length} ${orders.length === 1 ? 'order' : 'orders'}`}
           </p>
         </div>
 
-        {/* History icon */}
         <button
           onClick={() => navigate('/OrderHistory')}
           className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105"
-          style={{
-            background: 'rgba(193,154,107,0.08)',
-            border: `1px solid rgba(193,154,107,0.2)`,
-          }}
+          style={{ background: 'rgba(193,154,107,0.08)', border: `1px solid rgba(193,154,107,0.2)` }}
           aria-label="Order history"
         >
           <i className="fas fa-clock-rotate-left text-sm" style={{ color: colors.accent }} />
@@ -248,8 +216,24 @@ const { colors } = useTheme();
 
       <div className="w-full px-4 py-6 flex flex-col gap-4">
 
-        {/* Empty state */}
-        {orders.length === 0 ? (
+        {/* Loading */}
+        {isPending && (
+          <>
+            {[1,2,3].map((i) => <OrderCardSkeleton key={i} colors={colors} />)}
+          </>
+        )}
+
+        {/* Error */}
+        {isError && (
+          <div className="flex flex-col items-center justify-center py-24 gap-4">
+            <i className="fas fa-exclamation-circle text-3xl" style={{ color: colors.error }} />
+            <p className="text-sm font-semibold" style={{ color: colors.primaryText }}>Something went wrong</p>
+            <p className="text-xs text-center" style={{ color: colors.secondaryText }}>{error.message}</p>
+          </div>
+        )}
+
+        {/* Empty */}
+        {!isPending && !isError && orders.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 gap-5">
             <div
               className="w-20 h-20 rounded-3xl flex items-center justify-center"
@@ -258,11 +242,9 @@ const { colors } = useTheme();
               <i className="fas fa-box-open text-3xl" style={{ color: colors.secondaryText }} />
             </div>
             <div className="text-center flex flex-col gap-2">
-              <p className="text-base font-bold" style={{ color: colors.primaryText }}>
-                No orders placed yet
-              </p>
+              <p className="text-base font-bold" style={{ color: colors.primaryText }}>No orders placed yet</p>
               <p className="text-xs" style={{ color: colors.secondaryText }}>
-                Your active orders will appear here once you place one
+                Your orders will appear here once you place one
               </p>
             </div>
             <button
@@ -272,12 +254,15 @@ const { colors } = useTheme();
                 color: '#1A1A1A',
                 boxShadow: '0 4px 16px rgba(193,154,107,0.3)',
               }}
-              onClick={() => navigate('/browse')}
+              onClick={() => navigate('/Browse')}
             >
               Shop Now
             </button>
           </div>
-        ) : (
+        )}
+
+        {/* Orders list */}
+        {!isPending && !isError && orders.length > 0 && (
           orders.map((order) => (
             <OrderCard key={order.id} order={order} />
           ))

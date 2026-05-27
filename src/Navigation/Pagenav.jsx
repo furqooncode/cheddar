@@ -8,7 +8,7 @@ function getPageTitle(pathname) {
     '/Checkout' : 'CheckOut',
     '/Browse': 'Shop',
     '/Wallet' : 'Wallet',
-   '/details' : 'Product Details',
+   'productdetails/:productId?:' : 'Product Details',
    '/Order' : 'Orders List',
    '/OrderDetail' : 'Track Order',
    '/OrderHistory' : 'Order History',

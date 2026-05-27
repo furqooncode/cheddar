@@ -6,7 +6,7 @@ import supabase from "../lib/util.jsx";
 import { useNavigate } from 'react-router-dom';
 import HomeSkeleton from '../Skeleton/HomeSkeleton.jsx'
 import Announce from './Announce.jsx'
-import ProductCard from './ProductCard.jsx'
+import  ProductCard  from './ProductCard.jsx'
 import NavBottom from './NavBottom.jsx'
 export default function Home(){
   useEffect(() => {
@@ -88,6 +88,7 @@ const navigate = useNavigate()
       handleMove={()=> {
            navigate(`/productdetails/${product.id}`, { state: product })
           }}
+          
       />
     ))}
   </div>
