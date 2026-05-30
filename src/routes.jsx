@@ -1,6 +1,9 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Nav from "./Navigation/Nav.jsx";
 import Footer from "./Footer.jsx";
+import NavBottom from './Component/NavBottom.jsx';
+
 import Home from "./Component/Home.jsx";
 import Checkout from "./Component/Checkout.jsx";
 import Cart from "./Component/Cart.jsx";
@@ -11,35 +14,34 @@ import Details from "./Component/Details.jsx";
 import OrderDetail from "./Component/Orderdetails.jsx";
 import Browse from "./Component/Browse.jsx";
 import EditProfile from "./Component/EditProfile.jsx";
-import Login from "./Security/Login.jsx";
 import Settings from "./Component/Settings.jsx";
-import Signup from "./Security/Signup.jsx";
 import Transaction from "./Wallet/Transaction.jsx";
+
+import Login from "./Security/Login.jsx";
+import Signup from "./Security/Signup.jsx";
 import Welcome from "./Landing/welcome.jsx";
 import DropCountdown from "./Landing/DropCountdown.jsx";
 
 import ProtectedRoute from "./lib/Protectedroutes.jsx";
+
+// Dashboard
 import DashboardApp from "./Dashboard/DashboardApp";
 import Overview from "./Dashboard/Alloverview/Overview.jsx";
 import DashOrders from "./Dashboard/Allorder/Orders.jsx";
 import DashOrderdetails from "./Dashboard/Allorder/Orderdetails.jsx";
 import ProductList from "./Dashboard/Allproduct/ProductList.jsx";
 import AddProduct from "./Dashboard/Allproduct/Addproduct.jsx";
-import { Navigate } from "react-router-dom";
 
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* Default redirect */}
-    <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
-      {/* No nav routes */}
+      {/* Public Routes */}
       <Route path="/Login" element={<Login />} />
       <Route path="/Signup" element={<Signup />} />
       <Route path="/Welcome" element={<Welcome />} />
       <Route path="/DropCountdown" element={<DropCountdown />} />
-    
-      {/* Dashboard routes — own layout, no Nav/Footer */}
+
+      {/* Dashboard Routes (Separate Layout) */}
       <Route
         path="/dashboard"
         element={
@@ -48,7 +50,7 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       >
-        <Route index element={<Navigate to="overview" replace />} />
+      <Route index element={<Navigate to="overview" replace />} />
         <Route path="overview" element={<Overview />} />
         <Route path="orders" element={<DashOrders />} />
         <Route path="orders/:id?" element={<DashOrderdetails />} />
@@ -56,42 +58,46 @@ export default function AppRoutes() {
         <Route path="addproduct" element={<AddProduct />} />
       </Route>
 
-      {/* Main app routes — with Nav/Footer */}
+      {/* Main Protected App Routes with Layout */}
       <Route
         path="/*"
         element={
-          <div>
-            <Nav />
-            <main className="mt-[60px] lg:mt-0 lg:ml-[240px]">
-              <Routes>
-                <Route path="/Home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-                <Route path="/Cart" element={<ProtectedRoute><Cart /></ProtectedRoute>} />
-
-                <Route path="/receipt" element={<ProtectedRoute><Receipt /></ProtectedRoute>} />
-                <Route path="/OrderHistory" element={<ProtectedRoute><OrderHistory /></ProtectedRoute>} />
-                <Route path="/Order" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
-                <Route path="/orderdetail/:orderId?" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
-                <Route path="/Browse" element={<ProtectedRoute><Browse /></ProtectedRoute>} />
-      <Route path="/productdetails/:productId?" element={<ProtectedRoute><Details /></ProtectedRoute>} />
-        
-        <Route path="/Checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-        
-                <Route path="/Wallet" element={<ProtectedRoute><Transaction /></ProtectedRoute>} />
-                
-     <Route path="/Setting" element={<ProtectedRoute><Settings
-    /></ProtectedRoute>} />
-    
-    
-     <Route path="/editprofile" element={<ProtectedRoute><EditProfile
-    /></ProtectedRoute>} />
-    
-    
-              </Routes>
-              <Footer />
-            </main>
-          </div>
+          <ProtectedRoute>
+            <Layout />
+          </ProtectedRoute>
         }
-      />
+      >
+        <Route index element={<Home />} />
+        <Route path="Cart" element={<Cart />} />
+        <Route path="Checkout" element={<Checkout />} />
+        <Route path="receipt/:id" element={<Receipt />} />
+        <Route path="OrderHistory" element={<OrderHistory />} />
+        <Route path="Order" element={<Orders />} />
+        <Route path="orderdetail/:orderId?" element={<OrderDetail />} />
+        <Route path="Browse" element={<Browse />} />
+        <Route path="productdetails/:productId?" element={
+        <Details />} />
+        <Route path="Wallet" element={<Transaction />} />
+        <Route path="Setting" element={<Settings />} />
+        <Route path="editprofile" element={<EditProfile />} />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
     </Routes>
+  );
+}
+
+
+function Layout() {
+  return (
+    <div>
+      <Nav />
+      <main className="mt-[60px] lg:mt-0 lg:ml-[240px]">
+        <Outlet /> {/* ← this renders the matched child route */}
+        <NavBottom />
+        <Footer />
+      </main>
+    </div>
   );
 }

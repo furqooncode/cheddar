@@ -66,7 +66,7 @@ function OrderCard({ order }) {
   const status = statusConfig[order.status?.toLowerCase()] || statusConfig.pending
   const products = order.products || []
   const totalItems = products.reduce((acc, i) => acc + (i.quantity || 1), 0)
-  const total = getTotal(products)
+
 
   return (
     <div
@@ -144,7 +144,7 @@ function OrderCard({ order }) {
           <div className="flex flex-col gap-0.5">
             <span className="text-xs" style={{ color: colors.secondaryText }}>Total</span>
             <span className="text-base font-black" style={{ color: colors.primaryText }}>
-              ₦{total.toLocaleString()}
+         ₦{(order.amount).toLocaleString()}{' '}Paid
             </span>
           </div>
 
@@ -269,7 +269,7 @@ export default function UserOrders() {
         )}
 
       </div>
-      <NavBottom />
+  
     </div>
   )
 }

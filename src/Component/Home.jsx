@@ -95,7 +95,7 @@ const navigate = useNavigate()
       </div>
     </div>
     
-      <NavBottom />
+    
     </div>
     )
 }

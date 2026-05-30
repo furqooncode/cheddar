@@ -112,13 +112,6 @@ export default function EditProfile() {
         className="px-5 pt-12 pb-4 flex items-center gap-3 border-b"
         style={{ borderColor: colors.border }}
       >
-        <button
-          onClick={() => navigate(-1)}
-          className="w-9 h-9 rounded-full flex items-center justify-center"
-          style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${colors.border}` }}
-        >
-          <i className="fas fa-arrow-left text-xs" style={{ color: colors.secondaryText }} />
-        </button>
         <div>
           <h1 className="text-xl font-bold" style={{ color: colors.primaryText }}>Edit Profile</h1>
           <p className="text-xs mt-0.5" style={{ color: colors.secondaryText }}>Update your personal information</p>

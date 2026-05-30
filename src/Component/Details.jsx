@@ -331,7 +331,7 @@ export default function Details() {
 
         </div>
       </div>
-      <NavBottom />
+     
     </div>
   )
 }

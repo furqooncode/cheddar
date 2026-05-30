@@ -319,11 +319,14 @@ async function Oauth(){
 
           <button
             type="submit"
-            className="w-full py-4 rounded-xl font-semibold text-lg shadow-lg transition-all hover:opacity-90 active:scale-[0.98]"
+            className="w-full py-4 rounded-xl font-semibold text-lg shadow-lg
+            transition-all hover:opacity-90 active:scale-[0.98]
+            disabled:opacity-90"
             style={{
               backgroundColor: colors.accent,
               color: "#ffffff",
             }}
+            disabled={loading}
           >
             {loading ? "Creating user.." : "Create Account"}
           </button>

@@ -387,7 +387,7 @@ export default function Browse() {
         )}
 
       </div>
-      <NavBottom />
+   
     </div>
   )
 }

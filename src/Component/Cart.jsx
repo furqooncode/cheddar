@@ -293,7 +293,6 @@ const { colors } = useTheme();
         
         
       </div>
-       <NavBottom />
     </div>
   )
 }

@@ -1,15 +1,13 @@
 import AppRoutes from './routes.jsx'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import  useTheme  from './Client/Toggletheme.jsx';
 import  useAuth  from './Client/Auth.jsx';
 
 export default function App(){
-const { getUser } = useAuth();
+  
  const { colors } = useTheme();
  
- useEffect(()=>{
-  getUser().catch(err => console.error("Failed to get user:", err));
-},[getUser])
+ 
 
   useEffect(() => {
     import("vconsole").then(({ default: VConsole }) => {
@@ -17,6 +15,8 @@ const { getUser } = useAuth();
     });
     console.log("page mounted!!");
   }, []);
+  
+  
   return(
     <div style={{
       background: colors.background,

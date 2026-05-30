@@ -1,128 +1,117 @@
 import { create } from 'zustand';
-import  supabase  from '../lib/util.jsx'
+import supabase from '../lib/util.jsx';
 
+const useAuth = create((set) => ({
+  user: null,
+  loading: true,        // Start with true so we show loading on initial load
+  error: null,
 
-const useAuth = create((set)=> ({
-  user:null,
-  loading:false,
-  error:null,
-  
-  signup: async(email, password, username, fullName, phonenumber) => {
-    set({loading: true})
+  // ====================== AUTH ACTIONS ======================
+  signup: async (email, password, username, fullName, phonenumber) => {
+    set({ loading: true, error: null });
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-         options: {
-             data: {
-                 username,
-                 fullName,
-                 phonenumber,
-             }
-         }
+      options: {
+        data: { username, fullName, phonenumber },
+      },
     });
-    
-    if(error){
-      set({
-        loading:false,
-        user:null,
-        error:error.message,
-      })
-    throw new Error(error.message)
-    return;
+
+    if (error) {
+      set({ loading: false, user: null, error: error.message });
+      throw new Error(error.message);
     }
-    
-    const { error: fnError } = await supabase.functions.invoke("create-virtual-account", {
-      body: {
-        userId: data.user.id,
-        email: email,
-        fullName: fullName
+
+    set({ loading: false, user: data.user, error: null });
+  },
+
+  login: async (email, password) => {
+    set({ loading: true, error: null });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      set({ loading: false, user: null, error: error.message });
+      throw new Error(error.message);
+    }
+
+    set({ loading: false, user: data.user, error: null });
+  },
+
+  GoogleAuth: async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: 'http://localhost:5173/' },
+    });
+    if (error) throw new Error(error.message);
+  },
+
+  logout: async () => {
+    await supabase.auth.signOut();
+    set({ user: null, loading: false, error: null });
+  },
+
+  // ====================== GET USER ======================
+  getUser: async () => {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser();
+
+      if (error) {
+        console.warn("getUser error:", error.message);
+        set({ user: null, loading: false });
+        return;
       }
-    })
-    
-    if(fnError){
-      set({
-        loading:false,
-        user:null,
-        error:fnError.message,
-      })
-    throw new Error(fnError.message)
-    return
-    }
-    
-    set({
-      loading:false,
-      user:data.user,
-      error:null
-    })
-    
-  },
-  
-  login: async(email, password) => {
-    set({loading: true})
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    })
-    if(error){
-      set({
-        loading:false,
-        error:error.message,
-        user:null
-      })
-      throw new Error(error.message)
-    }else{
-      set({
-        loading:false,
-        error:null,
-        user: data.user,
-      })
-    }
-  
-  },
-  
-  GoogleAuth: async()=>{
-  const { data, error } = await supabase.auth.signInWithOAuth({
-      provider:'google',
-      options:{
-        redirectTo:'http://localhost:5173/DropCountdown'
+
+      if (user) {
+        const isGoogle = user.app_metadata?.provider === 'google';
+
+        set({
+          user: {
+            email: user.email,
+            username: isGoogle
+              ? (user.user_metadata?.full_name || user.user_metadata?.name)
+              : user.user_metadata?.username,
+            avatar: isGoogle ? user.user_metadata?.avatar_url : null,
+            phone: isGoogle ? null : user.user_metadata?.phonenumber,
+          },
+          loading: false,
+          error: null,
+        });
+      } else {
+        set({ user: null, loading: false });
       }
-    })
-    if(error){
-      throw new Error(error.message)
+    } catch (err) {
+      console.warn("getUser failed:", err.message);
+      set({ user: null, loading: false });
     }
   },
-  
-  
-  getUser: async()=>{
-    const { data: { user } } = await supabase.auth.getUser();
-    if(user){
-      const isGoogle = user.app_metadata.provider === 'google';
-      set({
-        user:{
-          id: user.id,
+}));
+
+// ====================== AUTH STATE LISTENER ======================
+// This runs once when the store is created
+supabase.auth.onAuthStateChange((event, session) => {
+  console.log("Auth state changed:", event);
+
+  if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+    if (session?.user) {
+      const user = session.user;
+      const isGoogle = user.app_metadata?.provider === 'google';
+
+      useAuth.setState({
+        user: {
           email: user.email,
-          username: isGoogle ? user.user_metadata.full_name : user.user_metadata.username,
-          avatar: isGoogle ? user.user_metadata.avatar_url : null,
-          phone: isGoogle ? null : user.user_metadata.phonenumber,
-        }
-      })
+          username: isGoogle
+            ? (user.user_metadata?.full_name || user.user_metadata?.name)
+            : user.user_metadata?.username,
+          avatar: isGoogle ? user.user_metadata?.avatar_url : null,
+          phone: isGoogle ? null : user.user_metadata?.phonenumber,
+        },
+        loading: false,
+        error: null,
+      });
     }
-  },
-  
-  logout: async()=>{
-    await supabase.auth.signOut()
-    set({
-      user:null,
-      loading:false
-    })
-  },
-  
-  editUser : async()=> {
-    
-  },
-  
-}))
+  } else if (event === 'SIGNED_OUT') {
+    useAuth.setState({ user: null, loading: false, error: null });
+  }
+});
 
-
-export default useAuth
-
+export default useAuth;

@@ -557,7 +557,7 @@ const total = subtotal + shipping - discount
         />
       )}
 
-      <NavBottom />
+    
     </div>
   )
 }

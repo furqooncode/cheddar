@@ -33,14 +33,7 @@ function getColorHex(color) {
   return color
 }
 
-function getTotal(products) {
-  return (products || []).reduce((sum, p) => {
-    const price = p.price || p.amount || 0
-    const discount = p.discount || 0
-    const discounted = discount > 0 ? price - (price * discount / 100) : price
-    return sum + discounted * (p.quantity || 1)
-  }, 0)
-}
+
 
 export default function OrderDetail() {
   const { state: order } = useLocation()
@@ -68,7 +61,7 @@ export default function OrderDetail() {
   const products = order.products || []
   const status = statusConfig[order.status?.toLowerCase()] || statusConfig.pending
   const activeStep = status.step
-  const total = getTotal(products)
+
 
   return (
     <div className="min-h-screen w-full" style={{ background: colors.background }}>
@@ -79,13 +72,6 @@ export default function OrderDetail() {
         style={{ borderBottom: `1px solid ${colors.border}` }}
       >
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => navigate(-1)}
-            className="w-9 h-9 rounded-full flex items-center justify-center"
-            style={{ background: 'rgba(255,255,255,0.05)', border: `1px solid ${colors.border}` }}
-          >
-            <i className="fas fa-arrow-left text-xs" style={{ color: colors.secondaryText }} />
-          </button>
           <p className="text-sm font-black" style={{ color: colors.primaryText }}>
             #{order.orderId}
           </p>
@@ -292,7 +278,7 @@ export default function OrderDetail() {
               <div>
                 <span className="text-xs uppercase tracking-widest" style={{ color: colors.secondaryText }}>Total Paid</span>
                 <p className="text-xl font-black" style={{ color: colors.primaryText }}>
-                  ₦{(order.amount || total).toLocaleString()}
+          ₦{(order.amount).toLocaleString()}
                 </p>
               </div>
             </div>
@@ -300,7 +286,7 @@ export default function OrderDetail() {
         </div>
 
       </div>
-      <NavBottom />
+    
     </div>
   )
 }
