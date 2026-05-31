@@ -1,5 +1,4 @@
 
-import { useState } from 'react'
 import useTheme from '../Client/Toggletheme.jsx';
 import NavBottom from './NavBottom.jsx';
 
@@ -229,7 +228,7 @@ const navigate = useNavigate();
             letterSpacing: '0.2em',
           }}
           onClick={()=>{
-            navigate("/Checkout")
+            navigate("/chd/home/Checkout")
           }}
         >
           Proceed to Checkout

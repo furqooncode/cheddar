@@ -78,7 +78,7 @@ function ReceiptCard({ order }) {
     <div
       className="w-full rounded-2xl overflow-hidden cursor-pointer active:scale-[0.98] transition-transform"
       style={{ background: colors.container, border: `1px solid ${colors.border}` }}
-      onClick={() => navigate(`/receipt/${order.id}`, { state: order })}
+      onClick={() => navigate(`/chd/receipt/${order.id}`, { state: order })}
     >
       {/* Green delivered bar */}
       <div className="h-0.5 w-full" style={{ background: colors.success }} />

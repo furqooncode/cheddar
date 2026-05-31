@@ -10,26 +10,17 @@ import  ProductCard  from './ProductCard.jsx'
 import NavBottom from './NavBottom.jsx'
 export default function Home(){
   useEffect(() => {
-  // 1. Define the async function (renamed to avoid conflict)
   const fetchUser = async () => {
-    // 2. Await the full response first
     const { data, error } = await supabase.auth.getUser();
-
     if (error) {
       console.error("Error fetching user:", error.message);
       return;
     }
-
-    // 3. Access email from user_metadata or the user object directly
     const email = data.user?.user_metadata?.email || data.user?.email;
     console.log("user email:", email);
   };
-
-  // 4. Call the function
   fetchUser();
 }, []);
-
-
 
   const { colors } = useTheme();
   const { addToCart } = useCart()
@@ -43,61 +34,89 @@ const navigate = useNavigate()
     }
   });
   
-
-
   if (isPending) return <HomeSkeleton />
 
-  if (isError) return <p className="text-white">{error.message}</p>
-  console.log(products)
+  if (isError) return (
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: colors.background }}>
+      <div className="text-center max-w-md">
+        <i className="fas fa-triangle-exclamation text-6xl mb-4" style={{ color: colors.accent }} />
+        <h2 className="text-2xl font-bold mb-2" style={{ color: colors.primaryText }}>Oops! Something went wrong</h2>
+        <p className="mb-6" style={{ color: colors.secondaryText }}>{error?.message || 'Failed to load products'}</p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="px-6 py-3 rounded-xl font-medium transition-all hover:opacity-90"
+          style={{ background: colors.accent, color: '#1A1A1A' }}>
+          Try Again
+        </button>
+      </div>
+    </div>
+  )
+
   return(
     <div style={{
       background:colors.background,
     }}>
       <Announce />
-    {/*labels*/}
-    
-     <div
-        className="w-full flex items-center gap-2 overflow-hidden px-2"
-        style={{ background: colors.background }}
-      >
-        <h3 className="text-sm font-semibold flex-shrink-0" style={{ color: colors.text }}>
-          <i className="fas fa-sliders" />
-        </h3>
-
-        <div className="flex min-w-0 items-center gap-2 overflow-x-auto scrollbar-hide">
-          {["All", "Hoodie", "Trousers", "Up & Down", "Polo", "Tee"].map((label) => (
-            <button
-              key={label}
-              className="px-4 h-7 rounded-lg outline-none text-xs font-semibold flex items-center text-white flex-shrink-0 hover:opacity-80 transition-all"
-              style={{ background: colors.accent }}
-            >
-              {label}
+      
+      {/* Empty State */}
+      {products?.length === 0 ? (
+        <div className="min-h-[60vh] flex items-center justify-center p-4">
+          <div className="text-center max-w-md">
+            <i className="fas fa-box-open text-6xl mb-4 opacity-50" style={{ color: colors.text }} />
+            <h2 className="text-2xl font-bold mb-2" style={{ color: colors.primaryText }}>No Products Available</h2>
+            <p className="mb-6" style={{ color: colors.secondaryText }}>Check back soon for new items!</p>
+            <button 
+              onClick={() => navigate('/chd/Browse')}
+              className="px-6 py-3 rounded-xl font-medium transition-all hover:opacity-90"
+              style={{ background: colors.accent, color: '#1A1A1A' }}>
+              Browse Collection
             </button>
-          ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        <>
+          {/* Labels */}
+          <div
+            className="w-full flex items-center gap-2 overflow-hidden px-2"
+            style={{ background: colors.background }}
+          >
+            <h3 className="text-sm font-semibold flex-shrink-0" style={{ color: colors.text }}>
+              <i className="fas fa-sliders" />
+            </h3>
 
- <div className="p-2 w-full">
-    <div className="mt-5">
-  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
-    {products.map((product) => (
-        <ProductCard 
-      key={product.id}
-      product={product}
-      onAddToCart={addToCart}
-      handleMove={()=> {
-           navigate(`/productdetails/${product.id}`, { state: product })
-          }}
-          
-      />
-    ))}
-  </div>
-      </div>
+            <div className="flex min-w-0 items-center gap-2 overflow-x-auto scrollbar-hide">
+              {["All", "Hoodie", "Trousers", "Up & Down", "Polo", "Tee"].map((label) => (
+                <button
+                  key={label}
+                  className="px-4 h-7 rounded-lg outline-none text-xs font-semibold flex items-center text-white flex-shrink-0 hover:opacity-80 transition-all"
+                  style={{ background: colors.accent }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="p-2 w-full">
+            <div className="mt-5">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
+                {products.map((product) => (
+                    <ProductCard 
+                  key={product.id}
+                  product={product}
+                  onAddToCart={addToCart}
+                  handleMove={()=> {
+                       navigate(`/chd/productdetails/${product.id}`, { state: product })
+                      }}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
-    
-    
-    </div>
-    )
+  )
 }
 
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useTheme from '../Client/Toggletheme.jsx'
+import supabase from '../lib/util.jsx'
 
 import { useNavigate, Link } from "react-router-dom";
 import useAuth from "../Client/Auth.jsx";
@@ -59,10 +60,25 @@ export default function Login() {
     setSubmitted(true);
     if (validateForm()) {
       try {
-        await login(formData.email, formData.password);
+        const user = await login(formData.email, formData.password);
         alert("LoggedIn successfully");
         Clear();
-        navigate("/");
+
+        const { data: roleData, error: roleError } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user?.id)
+          .single();
+
+        if (roleError) {
+          console.warn("Failed to fetch user role:", roleError.message);
+        }
+
+        if (roleData?.role === "admin") {
+          navigate("/dashboard/overview");
+        } else {
+          navigate("/chd");
+        }
       } catch (error) {
         alert(error.message);
       }

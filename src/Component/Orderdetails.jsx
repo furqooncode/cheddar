@@ -78,7 +78,7 @@ export default function OrderDetail() {
         </div>
 
         <button
-          onClick={() => navigate('/OrderHistory')}
+          onClick={() => navigate('/chd/OrderHistory')}
           className="w-9 h-9 rounded-full flex items-center justify-center"
           style={{ background: 'rgba(193,154,107,0.08)', border: `1px solid rgba(193,154,107,0.2)` }}
         >

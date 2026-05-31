@@ -187,7 +187,21 @@ export default function Browse() {
 
   // Show skeleton only on direct navigation, not from home
   if (isPending && !cameFromHome) return <BrowseSkeleton />
-  if (isError) return <p className="text-white p-8">{error.message}</p>
+  if (isError) return (
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: colors.background }}>
+      <div className="text-center max-w-md">
+        <i className="fas fa-triangle-exclamation text-6xl mb-4" style={{ color: colors.accent }} />
+        <h2 className="text-2xl font-bold mb-2" style={{ color: colors.primaryText }}>Oops! Something went wrong</h2>
+        <p className="mb-6" style={{ color: colors.secondaryText }}>{error?.message || 'Failed to load products'}</p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="px-6 py-3 rounded-xl font-medium transition-all hover:opacity-90"
+          style={{ background: colors.accent, color: '#1A1A1A' }}>
+          Try Again
+        </button>
+      </div>
+    </div>
+  )
 
   // Build filters from categories + tags
   const filters = [
@@ -357,7 +371,7 @@ export default function Browse() {
                 <ProductCard
                 key={product.id} 
                 product={product}
-                handleMove={()=> navigate(`/productdetails/${product.id}`, {
+                handleMove={()=> navigate(`/chd/productdetails/${product.id}`, {
                 state: product })}/>
               ))}
               {loadingMore && <MiniSkeleton colors={colors} />}

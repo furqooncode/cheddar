@@ -16,6 +16,7 @@ import Browse from "./Component/Browse.jsx";
 import EditProfile from "./Component/EditProfile.jsx";
 import Settings from "./Component/Settings.jsx";
 import Transaction from "./Wallet/Transaction.jsx";
+import NotFound from "./Component/NotFound.jsx";
 
 import Login from "./Security/Login.jsx";
 import Signup from "./Security/Signup.jsx";
@@ -35,7 +36,7 @@ import AddProduct from "./Dashboard/Allproduct/Addproduct.jsx";
 export default function AppRoutes() {
   return (
     <Routes>
-      {/* Public Routes */}
+      <Route path="/" element={<Navigate to="/Welcome" replace />} />
       <Route path="/Login" element={<Login />} />
       <Route path="/Signup" element={<Signup />} />
       <Route path="/Welcome" element={<Welcome />} />
@@ -43,7 +44,7 @@ export default function AppRoutes() {
 
       {/* Dashboard Routes (Separate Layout) */}
       <Route
-        path="/dashboard"
+        path="/dashboard/*"
         element={
           <ProtectedRoute>
             <DashboardApp />
@@ -56,11 +57,12 @@ export default function AppRoutes() {
         <Route path="orders/:id?" element={<DashOrderdetails />} />
         <Route path="products" element={<ProductList />} />
         <Route path="addproduct" element={<AddProduct />} />
+        <Route path="*" element={<NotFound />} />
       </Route>
 
       {/* Main Protected App Routes with Layout */}
       <Route
-        path="/*"
+        path="/chd/*"
         element={
           <ProtectedRoute>
             <Layout />
@@ -82,7 +84,8 @@ export default function AppRoutes() {
         <Route path="editprofile" element={<EditProfile />} />
 
         {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFound />} />
+
       </Route>
     </Routes>
   );

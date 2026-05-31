@@ -72,7 +72,7 @@ function OrderCard({ order }) {
     <div
       className="w-full rounded-2xl overflow-hidden cursor-pointer group transition-all duration-200"
       style={{ background: colors.container, border: `1px solid ${colors.border}` }}
-      onClick={() => navigate(`/orderdetail/${order.orderId}`, { state: order })}
+      onClick={() => navigate(`/chd/orderdetail/${order.orderId}`, { state: order })}
     >
       {/* Top accent bar */}
       <div
@@ -205,7 +205,7 @@ export default function UserOrders() {
         </div>
 
         <button
-          onClick={() => navigate('/OrderHistory')}
+          onClick={() => navigate('/chd/OrderHistory')}
           className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105"
           style={{ background: 'rgba(193,154,107,0.08)', border: `1px solid rgba(193,154,107,0.2)` }}
           aria-label="Order history"
@@ -254,7 +254,7 @@ export default function UserOrders() {
                 color: '#1A1A1A',
                 boxShadow: '0 4px 16px rgba(193,154,107,0.3)',
               }}
-              onClick={() => navigate('/Browse')}
+              onClick={() => navigate('/chd/Browse')}
             >
               Shop Now
             </button>

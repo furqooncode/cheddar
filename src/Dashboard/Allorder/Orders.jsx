@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import supabase from "../../lib/util.jsx";
-import { useQuery } from "@tanstack/react-query";
 
 export const formatCreatedAt = (created_at) => {
   const d = new Date(created_at);
@@ -153,6 +153,7 @@ function StatCard({ label, value, color }) {
 
 export default function Orders() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [searchFocused, setSearchFocused] = useState(false);
@@ -188,10 +189,19 @@ export default function Orders() {
     cancelled: orders.filter((o) => o.status === "cancelled").length,
   }), [orders]);
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (!confirm("Delete this order?")) return;
     setDeletingId(id);
-    setTimeout(() => setDeletingId(null), 1000);
+    try {
+      const { error } = await supabase.from("orders").delete().eq("id", id);
+      if (error) throw error;
+      queryClient.invalidateQueries(["orders"]);
+    } catch (err) {
+      console.error("Delete order failed:", err);
+      alert("Delete failed: " + err.message);
+    } finally {
+      setDeletingId(null);
+    }
   };
 
   if (isPending) return <OrdersSkeleton />;

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom'
 export default function HomeNav() {
   const { colors } = useTheme();
   const { cartItems } = useCart();
+  const Notification = 0; 
   const [scrolled, setScrolled] = useState(false);
  const navigate = useNavigate()
   useEffect(() => {
@@ -20,7 +21,7 @@ export default function HomeNav() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed lg:hidden top-0 left-0 right-0 z-50 transition-all duration-300 ${
         scrolled ? 'shadow-md' : ''
       }`}
       style={{
@@ -53,7 +54,7 @@ export default function HomeNav() {
             <i className="fas fa-bell text-2xl"></i>
             {/* Badge example */}
             <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold shadow-sm">
-              2
+              {Notification === 0 ? '' : Notification}
             </span>
           </button>
 
@@ -66,14 +67,14 @@ export default function HomeNav() {
               color: colors.text,
             }}
             onClick={()=>{
-              navigate("/Cart")
+              navigate("/chd/Cart")
             }}
             aria-label="Shopping cart"
           >
             <i className="fas fa-shopping-cart text-2xl"></i>
             {/* Cart count badge */}
             <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-600 text-white text-xs font-bold shadow-sm">
-              {cartItems.length}
+              {cartItems.length === 0 ? '' : cartItems.length}
             </span>
           </button>
 

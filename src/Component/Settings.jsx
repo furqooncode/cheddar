@@ -98,7 +98,7 @@ export default function Settings() {
   // All account items navigate to /editprofile
   const handleItemClick = (item) => {
     if (item.toggle) return
-    navigate('/editprofile')
+    navigate('/chd/editprofile')
   }
 
   const handleLogout = async () => {
@@ -145,7 +145,7 @@ export default function Settings() {
           <div
             className="rounded-2xl p-4 flex items-center gap-4 border active:scale-[0.98] transition-transform cursor-pointer"
             style={{ backgroundColor: colors.container, borderColor: colors.border }}
-            onClick={() => navigate('/editprofile')}
+            onClick={() => navigate('/chd/editprofile')}
           >
             <div
               className="w-16 h-16 rounded-full flex items-center justify-center text-xl font-black flex-shrink-0"

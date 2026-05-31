@@ -23,6 +23,7 @@ const useAuth = create((set) => ({
     }
 
     set({ loading: false, user: data.user, error: null });
+    return data.user;
   },
 
   login: async (email, password) => {
@@ -35,6 +36,7 @@ const useAuth = create((set) => ({
     }
 
     set({ loading: false, user: data.user, error: null });
+    return data.user;
   },
 
   GoogleAuth: async () => {
@@ -66,6 +68,7 @@ const useAuth = create((set) => ({
 
         set({
           user: {
+            id: user.id,
             email: user.email,
             username: isGoogle
               ? (user.user_metadata?.full_name || user.user_metadata?.name)
@@ -98,6 +101,7 @@ supabase.auth.onAuthStateChange((event, session) => {
 
       useAuth.setState({
         user: {
+          id: user.id,
           email: user.email,
           username: isGoogle
             ? (user.user_metadata?.full_name || user.user_metadata?.name)

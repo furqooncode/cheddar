@@ -16,10 +16,10 @@ export default function NavBottom() {
           color:colors.text,
         }}
       >
-        {/* Home */}
+        {/** Home */}
         <button className="flex flex-col items-center gap-1 p-2 transition-transform active:scale-90" aria-label="Home"
         onClick={()=>{
-          navigate("/Home")
+          navigate("/chd")
         }}>
           <i className="fas fa-home text-xl"></i>
           <span className="text-xs font-medium">Home</span>
@@ -28,7 +28,7 @@ export default function NavBottom() {
         {/* Browse / Explore */}
         <button className="flex flex-col items-center gap-1 p-2 transition-transform active:scale-90" aria-label="Browse"
         onClick={()=>{
-          navigate("/Browse")
+          navigate("/chd/Browse")
         }}>
           <i className="fas fa-compass text-xl"></i> {/* or fa-layer-group */}
           <span className="text-xs font-medium">Browse</span>
@@ -43,13 +43,10 @@ export default function NavBottom() {
           }}
           aria-label="wallet"
           onClick={()=>{
-          navigate("/Wallet")
+          navigate("/chd/Wallet")
         }}
         >
           <i className="fas fa-wallet text-2xl"></i>
-          <span className="absolute -top-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-red-500  text-xs font-bold">
-            3
-          </span>
           <span className="text-xs font-semibold mt-1">wallet</span>
         </button>
 
@@ -58,14 +55,14 @@ export default function NavBottom() {
           <i className="fas fa-receipt text-xl"></i>
           <span className="text-xs font-medium"
           onClick={()=>{
-          navigate("/Order")
+          navigate("/chd/Order")
         }}>Orders</span>
         </button>
 
         {/* Settings */}
         <button className="flex flex-col items-center gap-1 p-2 transition-transform active:scale-90" aria-label="Settings"
         onClick={()=>{
-          navigate("/Setting")
+          navigate("/chd/Setting")
         }}>
           <i className="fas fa-cog text-xl"></i>
           <span className="text-xs font-medium">Settings</span>
