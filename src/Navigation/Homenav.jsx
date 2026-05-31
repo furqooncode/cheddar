@@ -53,9 +53,11 @@ export default function HomeNav() {
           >
             <i className="fas fa-bell text-2xl"></i>
             {/* Badge example */}
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold shadow-sm">
-              {Notification === 0 ? '' : Notification}
+           {Notification > 0 && (<span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white text-xs font-bold shadow-sm">
+            {Notification}
             </span>
+         )  }
+           
           </button>
 
           {/* Cart */}
@@ -73,9 +75,9 @@ export default function HomeNav() {
           >
             <i className="fas fa-shopping-cart text-2xl"></i>
             {/* Cart count badge */}
-            <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-600 text-white text-xs font-bold shadow-sm">
-              {cartItems.length === 0 ? '' : cartItems.length}
-            </span>
+           {cartItems.length > 0 &&  (<span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-600 text-white text-xs font-bold shadow-sm">
+              {cartItems.length}
+            </span> ) }
           </button>
 
         </div>

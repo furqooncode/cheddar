@@ -1,6 +1,6 @@
 import AppRoutes from './routes.jsx'
 import  useTheme  from './Client/Toggletheme.jsx';
-
+import { useEffect } from 'react'
 
 export default function App(){
   
@@ -8,12 +8,12 @@ export default function App(){
  
  
 
-  //useEffect(() => {
-    //import("vconsole").then(({ default: VConsole }) => {
-      //new VConsole();
-    //});
-    //console.log("page mounted!!");
-  //}, []);
+  useEffect(() => {
+    import("vconsole").then(({ default: VConsole }) => {
+      new VConsole();
+    });
+    console.log("page mounted!!");
+  }, []);
   
   
   return(
