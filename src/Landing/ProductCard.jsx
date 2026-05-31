@@ -1,4 +1,4 @@
-import { motion, useMotionValue, useTransform } from "framer-motion";
+import { useMotionValue, useTransform } from "framer-motion";
 
 export default function ProductCard({ product }) {
   const x = useMotionValue(0);
@@ -116,14 +116,6 @@ export default function ProductCard({ product }) {
 
         {/* Prices */}
         <div className="flex flex-col gap-0.5">
-          {/* CHD — bold gold */}
-          <span
-            className="text-sm sm:text-base font-black tracking-tight"
-            style={{ color: "#d4a373" }}
-          >
-            {product.cheddarCoin}
-          </span>
-
           {/* NGN price row */}
           <div className="flex items-center gap-2 flex-wrap">
             <span
