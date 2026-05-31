@@ -3,7 +3,9 @@ import supabase from '../lib/util.jsx';
 
 const useAuth = create((set) => ({
   user: null,
-  loading: true,        // Start with true so we show loading on initial load
+  loading: false,
+  sessionLoading: false,
+  sessionChecked: false,
   error: null,
 
   // ====================== AUTH ACTIONS ======================
@@ -42,24 +44,25 @@ const useAuth = create((set) => ({
   GoogleAuth: async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: 'http://localhost:5173/' },
+      options: { redirectTo: window.location.origin },
     });
     if (error) throw new Error(error.message);
   },
 
   logout: async () => {
     await supabase.auth.signOut();
-    set({ user: null, loading: false, error: null });
+    set({ user: null, loading: false, sessionLoading: false, error: null });
   },
 
   // ====================== GET USER ======================
   getUser: async () => {
     try {
+      set({ sessionLoading: true, sessionChecked: false, error: null });
       const { data: { user }, error } = await supabase.auth.getUser();
 
       if (error) {
         console.warn("getUser error:", error.message);
-        set({ user: null, loading: false });
+        set({ user: null, loading: false, sessionLoading: false, sessionChecked: true });
         return;
       }
 
@@ -77,14 +80,15 @@ const useAuth = create((set) => ({
             phone: isGoogle ? null : user.user_metadata?.phonenumber,
           },
           loading: false,
+          sessionLoading: false,
           error: null,
         });
       } else {
-        set({ user: null, loading: false });
+        set({ user: null, loading: false, sessionLoading: false, sessionChecked: true });
       }
     } catch (err) {
       console.warn("getUser failed:", err.message);
-      set({ user: null, loading: false });
+      set({ user: null, loading: false, sessionLoading: false, sessionChecked: true });
     }
   },
 }));
@@ -110,11 +114,13 @@ supabase.auth.onAuthStateChange((event, session) => {
           phone: isGoogle ? null : user.user_metadata?.phonenumber,
         },
         loading: false,
+        sessionLoading: false,
+        sessionChecked: true,
         error: null,
       });
     }
   } else if (event === 'SIGNED_OUT') {
-    useAuth.setState({ user: null, loading: false, error: null });
+    useAuth.setState({ user: null, loading: false, sessionLoading: false, sessionChecked: true, error: null });
   }
 });
 

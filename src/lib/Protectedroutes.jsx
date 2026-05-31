@@ -3,15 +3,15 @@ import { Navigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
 export default function ProtectedRoute({ children }) {
-  const { user, loading, getUser } = useAuth();
+  const { user, loading, sessionLoading, sessionChecked, getUser } = useAuth();
 
   useEffect(() => {
-    if (!user) {
+    if (!user && !sessionChecked) {
       getUser();
     }
-  }, [getUser, user]);
+  }, [getUser, user, sessionChecked]);
 
-  if (loading) {
+  if (loading || sessionLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center"
            style={{ backgroundColor: '#0a0a0a', color: '#fff' }}>
