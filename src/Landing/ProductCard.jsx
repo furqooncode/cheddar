@@ -1,4 +1,4 @@
-import { useMotionValue, useTransform } from "framer-motion";
+import {motion, useMotionValue, useTransform } from "framer-motion";
 
 export default function ProductCard({ product }) {
   const x = useMotionValue(0);
