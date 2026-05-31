@@ -1,6 +1,7 @@
 import { useState } from "react";
 import useTheme from '../Client/Toggletheme.jsx'
 import supabase from '../lib/util.jsx'
+import toast from '../toast.jsx'
 
 import { useNavigate, Link } from "react-router-dom";
 import useAuth from "../Client/Auth.jsx";
@@ -61,7 +62,7 @@ export default function Login() {
     if (validateForm()) {
       try {
         const user = await login(formData.email, formData.password);
-        alert("LoggedIn successfully");
+        toast.success("Logged in successfully");
         Clear();
 
         const { data: roleData, error: roleError } = await supabase
@@ -80,7 +81,7 @@ export default function Login() {
           navigate("/chd");
         }
       } catch (error) {
-        alert(error.message);
+        toast.error(error.message);
       }
     }
   }
@@ -89,7 +90,7 @@ async function Oauth(){
     try{
   await GoogleAuth()
   }catch(error){
-    alert(error.message)
+    toast.error(error.message)
   }
 }
 

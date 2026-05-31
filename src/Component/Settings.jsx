@@ -4,6 +4,7 @@ import useTheme from '../Client/Toggletheme.jsx';
 import NavBottom from './NavBottom.jsx';
 import ConfirmationModal from './ConfirmationModal.jsx';
 import supabase from '../lib/util.jsx';
+import toast from '../toast.jsx'
 
 const SECTIONS = [
   {
@@ -108,7 +109,7 @@ export default function Settings() {
 
   const handleDeleteAccount = async () => {
     // TODO: wire to backend for full account deletion
-    alert('Account deletion requires backend setup')
+    toast.info('Account deletion requires backend setup')
   }
 
   return (

@@ -5,6 +5,7 @@ import useTheme from '../Client/Toggletheme.jsx'
 import useCart from '../Client/CartStorage.jsx'
 import NavBottom from './NavBottom.jsx'
 import supabase from '../lib/util.jsx'
+import toast from '../toast.jsx'
 
 function StarRating({ rating }) {
   const { colors } = useTheme();
@@ -141,7 +142,7 @@ export default function Details() {
       })
     } else {
       navigator.clipboard.writeText(window.location.href)
-      alert('Link copied!')
+      toast.success('Link copied!')
     }
   }
 

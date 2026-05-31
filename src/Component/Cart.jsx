@@ -228,7 +228,7 @@ const navigate = useNavigate();
             letterSpacing: '0.2em',
           }}
           onClick={()=>{
-            navigate("/chd/home/Checkout")
+            navigate("/chd/Checkout")
           }}
         >
           Proceed to Checkout

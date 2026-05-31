@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useProduct } from "../../Client/productData.jsx";
 import supabase from "../../lib/util.jsx";
+import toast from '../../toast.jsx'
 
 export default function ProductList() {
   const navigate = useNavigate();
@@ -37,21 +38,22 @@ export default function ProductList() {
   };
 
   const handleDeleteOne = async (id) => {
-  if (!confirm("Delete this product?")) return;
-  setDeletingId(id);
-  try {
-    const { data, error } = await supabase.from("products").delete().eq("id", id);
-    console.log("Delete response:", { data, error }); // ADD THIS
-    if (error) throw error;
-    console.log("Rows affected:", data); // ADD THIS
-    deleteOne(id);
-    queryClient.invalidateQueries(["adminProducts"]);
-  } catch (err) {
-    console.error("Delete error:", err);
-    alert("Delete failed: " + err.message);
-  }
-};
-
+    if (!confirm("Delete this product?")) return;
+    setDeletingId(id);
+    try {
+      const { data, error } = await supabase.from("products").delete().eq("id", id);
+      console.log("Delete response:", { data, error });
+      if (error) throw error;
+      console.log("Rows affected:", data);
+      deleteOne(id);
+      queryClient.invalidateQueries(["adminProducts"]);
+    } catch (err) {
+      console.error("Delete error:", err);
+      toast.error("Delete failed: " + err.message);
+    } finally {
+      setDeletingId(null);
+    }
+  };
 
   const handleDeleteSelected = async () => {
     if (!confirm(`Delete ${selected.length} product(s)?`)) return;
@@ -63,7 +65,7 @@ export default function ProductList() {
       queryClient.invalidateQueries(["adminProducts"]);
     } catch (err) {
       console.error(err);
-      alert("Bulk delete failed");
+      toast.error("Bulk delete failed");
     } finally {
       setDeletingBulk(false);
     }

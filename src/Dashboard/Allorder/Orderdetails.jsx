@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { formatCreatedAt } from './Orders.jsx';
 import supabase from "../../lib/util.jsx";
+import toast from '../../toast.jsx'
 
 const STATUSES = [
   { value: "pending",   label: "Pending",   color: "#FBBF24", bg: "rgba(251,191,36,0.12)" },
@@ -200,11 +201,11 @@ export default function DashOrderdetails() {
       .select()
     setSavingStatus(false);
     if (error) {
-      alert("Failed to update status: " + error.message);
+      toast.error("Failed to update status: " + error.message);
     } else {
       queryClient.invalidateQueries(["orders"]);
       queryClient.invalidateQueries(["order", orderId]);
-      alert(`Status updated to: ${status}`);
+      toast.success(`Status updated to: ${status}`);
     }
   };
 
@@ -212,7 +213,7 @@ export default function DashOrderdetails() {
     if (!confirm("Delete this order permanently?")) return;
     const { error } = await supabase.from("orders").delete().eq("id", order.id);
     if (error) {
-      alert("Failed to delete: " + error.message);
+      toast.error("Failed to delete: " + error.message);
     } else {
       queryClient.invalidateQueries(["orders"]);
       navigate("/dashboard/orders");
@@ -355,11 +356,11 @@ export default function DashOrderdetails() {
       {/* Order actions */}
       <Section title="Order Actions">
         <div className="flex flex-wrap gap-2">
-          <ActionBtn icon="fa-location-arrow" label="Track Order"   variant="blue"  onClick={() => alert("Track")} />
+          <ActionBtn icon="fa-location-arrow" label="Track Order"   variant="blue"  onClick={() => toast.info("Track")} />
           <ActionBtn icon="fa-check-circle"   label="Confirm Order" variant="green" onClick={() => setStatus("confirmed")} />
         </div>
         <div className="flex flex-wrap gap-2">
-          <ActionBtn icon="fa-undo"  label="Refund"       variant="gold" onClick={() => alert("Refund")} />
+          <ActionBtn icon="fa-undo"  label="Refund"       variant="gold" onClick={() => toast.info("Refund")} />
           <ActionBtn icon="fa-trash" label="Delete Order" variant="red"  onClick={handleDeleteOrder} />
         </div>
       </Section>

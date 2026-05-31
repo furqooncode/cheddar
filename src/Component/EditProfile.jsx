@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import useTheme from '../Client/Toggletheme.jsx'
 import supabase from '../lib/util.jsx'
+import toast from '../toast.jsx'
 
 export default function EditProfile() {
   const { colors } = useTheme()
@@ -43,11 +44,11 @@ export default function EditProfile() {
 
   const handleUpdate = async () => {
     if (form.password && form.password !== form.confirmPassword) {
-      alert('Passwords do not match')
+      toast.error('Passwords do not match')
       return
     }
     if (form.password && form.password.length < 6) {
-      alert('Password must be at least 6 characters')
+      toast.error('Password must be at least 6 characters')
       return
     }
 
@@ -74,7 +75,7 @@ export default function EditProfile() {
       setForm((prev) => ({ ...prev, password: '', confirmPassword: '' }))
       setTimeout(() => setSuccess(false), 3000)
     } catch (err) {
-      alert('Update failed: ' + err.message)
+      toast.error('Update failed: ' + err.message)
     } finally {
       setLoading(false)
     }

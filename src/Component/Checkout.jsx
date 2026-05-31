@@ -1,9 +1,11 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import useTheme from '../Client/Toggletheme.jsx'
 import NavBottom from './NavBottom.jsx'
 import useCart from '../Client/CartStorage.jsx'
 import supabase from "../lib/util.jsx"
+import toast from '../toast.jsx'
 
 const states = ['Lagos', 'Ogun State', 'Ibadan']
 const steps = ['Bag', 'Details', 'Confirm']
@@ -139,6 +141,7 @@ function ConfirmOverlay({ onClose, onConfirm, total, loading }) {
 export default function Checkout() {
   const { cartItems, clearCart } = useCart()
   const { colors } = useTheme()
+  const navigate = useNavigate()
   const [focused, setFocused] = useState(null)
   const [showConfirm, setShowConfirm] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -166,7 +169,7 @@ const total = subtotal + shipping - discount
 
   function handleAct() {
     if (!form.fullName || !form.email || !form.phone || !form.address || !form.city || !form.state) {
-      alert('Please fill in all required fields')
+      toast.error('Please fill in all required fields')
       return
     }
     setShowConfirm(true)
@@ -239,21 +242,21 @@ const total = subtotal + shipping - discount
       email: form.email,
       amount: total * 100,
       
-      onSuccess: (transactionRef) => {          // ← Paystack passes reference here
-        console.log("Payment successful. Transaction Ref:", transactionRef);
+      callback: (response) => {
+        console.log("Payment successful. Transaction Ref:", response.reference);
         
         setShowConfirm(false);
-        alert("Payment Successful! Your order has been placed.");
+        toast.success("Payment Successful! Your order has been placed.");
         
         clearCart();
-        navigate('/receipt', { 
-          state: { orderId: supabaseId, reference: transactionRef } 
+        navigate('/chd/receipt', { 
+          state: { orderId: supabaseId, reference: response.reference } 
         });
       },
 
-      onCancel: () => {
+      onClose: () => {
         setShowConfirm(false);
-        alert('Payment was cancelled');
+        toast.info('Payment was cancelled');
       }
     });
 
@@ -261,7 +264,7 @@ const total = subtotal + shipping - discount
 
   } catch (err) {
     console.error(err);
-    alert('An error occurred: ' + err.message);
+    toast.error('An error occurred: ' + err.message);
   } finally {
     setLoading(false);
   }

@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import supabase from "../../lib/util.jsx";
+import toast from '../../toast.jsx'
 
 export const formatCreatedAt = (created_at) => {
   const d = new Date(created_at);
@@ -198,7 +199,7 @@ export default function Orders() {
       queryClient.invalidateQueries(["orders"]);
     } catch (err) {
       console.error("Delete order failed:", err);
-      alert("Delete failed: " + err.message);
+      toast.error("Delete failed: " + err.message);
     } finally {
       setDeletingId(null);
     }

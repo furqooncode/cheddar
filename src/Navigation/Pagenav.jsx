@@ -4,23 +4,44 @@ import useTheme from '../Client/Toggletheme.jsx'
 
 function getPageTitle(pathname) {
   const titles = {
+    '/chd': 'Home',
+    '/chd/': 'Home',
     '/chd/Cart': 'My Cart',
-    '/chd/Checkout' : 'CheckOut',
+    '/chd/Checkout': 'Checkout',
     '/chd/Browse': 'Shop',
-    '/chd/Wallet' : 'Wallet',
-   'productdetails/:productId?:' : 'Product Details',
-   '/chd/Order' : 'Orders List',
-   '/chd/OrderDetail' : 'Track Order',
-   '/chd/OrderHistory' : 'Order History',
-   '/chd/Setting' : 'Settings'
+    '/chd/Wallet': 'Wallet',
+    '/chd/Order': 'Orders List',
+    '/chd/OrderHistory': 'Order History',
+    '/chd/Setting': 'Settings',
+    '/chd/editprofile': 'Edit Profile',
+    '/chd/receipt': 'Order Receipt',
   }
-  return titles[pathname] || 'Page'
+  
+  // Check for exact matches first
+  if (titles[pathname]) {
+    return titles[pathname]
+  }
+  
+  // Check for dynamic routes
+  if (pathname.includes('productdetails')) {
+    return 'Product Details'
+  }
+  if (pathname.includes('orderdetail')) {
+    return 'Track Order'
+  }
+  if (pathname.includes('receipt')) {
+    return 'Order Receipt'
+  }
+  
+  // Fallback
+  return 'Page'
 }
 
 export default function PageNav() {
   const navigate = useNavigate()
   const location = useLocation()
-const { colors } = useTheme();
+  const { colors } = useTheme();
+  
   return (
     <nav className="fixed lg:hidden top-0 left-0 flex items-center justify-start p-2
     h-[60px] w-full z-1000"

@@ -3,6 +3,7 @@ import useTheme from '../Client/Toggletheme.jsx'
 import NavBottom from './NavBottom.jsx'
 import { useQuery } from "@tanstack/react-query"
 import supabase from "../lib/util.jsx"
+import { useState } from 'react'
 
 const statusConfig = {
   pending:   { color: '#C19A6B', bg: 'rgba(193,154,107,0.12)', border: 'rgba(193,154,107,0.25)', icon: 'fa-clock' },
@@ -168,22 +169,35 @@ function OrderCard({ order }) {
 export default function UserOrders() {
   const navigate = useNavigate()
   const { colors } = useTheme()
+  const [selectedStatus, setSelectedStatus] = useState('all')
+
+  const statuses = ['all', 'pending', 'confirmed', 'shipped']
 
   const { data: orders = [], isPending, isError, error } = useQuery({
-    queryKey: ["userOrders"],
+    queryKey: ["userOrders", selectedStatus],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) throw new Error('Not authenticated')
 
-      const { data, error } = await supabase
+      let query = supabase
         .from("orders")
         .select("*")
         .eq("userId", user.id)
         .order("created_at", { ascending: false })
 
+      if (selectedStatus && selectedStatus !== 'all') {
+        query = query.eq('status', selectedStatus)
+      } else {
+        // Exclude delivered orders from the main orders list (they belong in Order History)
+        query = query.neq('status', 'delivered')
+      }
+
+      const { data, error } = await query
+
       if (error) throw new Error(error.message)
       return data
-    }
+    },
+    keepPreviousData: true,
   })
 
   return (
@@ -203,15 +217,31 @@ export default function UserOrders() {
             {isPending ? '...' : `${orders.length} ${orders.length === 1 ? 'order' : 'orders'}`}
           </p>
         </div>
+        <div className="flex items-center gap-3">
+          {statuses.map((s) => (
+            <button
+              key={s}
+              onClick={() => setSelectedStatus(s)}
+              className={`px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-150 ${selectedStatus === s ? 'scale-105' : 'opacity-80 hover:opacity-100'}`}
+              style={{
+                background: selectedStatus === s ? colors.accent : 'transparent',
+                color: selectedStatus === s ? '#111' : colors.secondaryText,
+                border: `1px solid ${colors.border}`,
+              }}
+            >
+              {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
+            </button>
+          ))}
 
-        <button
-          onClick={() => navigate('/chd/OrderHistory')}
-          className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105"
-          style={{ background: 'rgba(193,154,107,0.08)', border: `1px solid rgba(193,154,107,0.2)` }}
-          aria-label="Order history"
-        >
-          <i className="fas fa-clock-rotate-left text-sm" style={{ color: colors.accent }} />
-        </button>
+          <button
+            onClick={() => navigate('/chd/OrderHistory')}
+            className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105"
+            style={{ background: 'rgba(193,154,107,0.08)', border: `1px solid rgba(193,154,107,0.2)` }}
+            aria-label="Order history"
+          >
+            <i className="fas fa-clock-rotate-left text-sm" style={{ color: colors.accent }} />
+          </button>
+        </div>
       </div>
 
       <div className="w-full px-4 py-6 flex flex-col gap-4">

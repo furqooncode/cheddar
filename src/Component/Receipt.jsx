@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import useTheme from '../Client/Toggletheme.jsx'
 import supabase from '../lib/util.jsx'
 import NavBottom from './NavBottom.jsx'
+import toast from '../toast.jsx'
 
 function formatDate(iso) {
   if (!iso) return ''
@@ -107,19 +108,56 @@ export default function Receipt() {
   const order = orderFromState || fetchedOrder
   const products = order?.products || []
   const total = order?.amount || getTotal(products)
+  const captureCanvas = async () => {
+    if (!receiptRef.current) throw new Error('No receipt element')
+    const html2canvas = (await import('html2canvas')).default
+    return await html2canvas(receiptRef.current, { backgroundColor: '#1a1a1a', scale: 2 })
+  }
 
-//  const handleDownload = async () => {
- //   try {
-    //  const html2canvas = (await import('html2canvas')).default
-      //const canvas = await html2canvas(receiptRef.current, { backgroundColor: '#1A1A1A', scale: 2 })
-      //const link = document.createElement('a')
-     // link.download = `Cheddar-Receipt-${order?.orderId || id}.png`
-   //link.href = canvas.toDataURL()
-    //  link.click()
-  //  } catch {
-   //   alert('Install html2canvas to enable download: npm install html2canvas')
-   // }
-//  }
+  const handleDownloadImage = async () => {
+    try {
+      const canvas = await captureCanvas()
+      if (canvas.toBlob) {
+        canvas.toBlob((blob) => {
+          const url = URL.createObjectURL(blob)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = `Cheddar-Receipt-${order?.orderId || id}.png`
+          document.body.appendChild(link)
+          link.click()
+          link.remove()
+          URL.revokeObjectURL(url)
+        }, 'image/png')
+      } else {
+        const link = document.createElement('a')
+        link.download = `Cheddar-Receipt-${order?.orderId || id}.png`
+        link.href = canvas.toDataURL('image/png')
+        document.body.appendChild(link)
+        link.click()
+        link.remove()
+      }
+    } catch (err) {
+      console.error(err)
+      toast.error('Install html2canvas to enable download: npm install html2canvas')
+    }
+  }
+
+  const handleDownloadPDF = async () => {
+    try {
+      const canvas = await captureCanvas()
+      const imgData = canvas.toDataURL('image/png')
+      const { jsPDF } = await import('jspdf')
+      const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' })
+      const pdfWidth = pdf.internal.pageSize.getWidth()
+      const imgProps = pdf.getImageProperties(imgData)
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight)
+      pdf.save(`Cheddar-Receipt-${order?.orderId || id}.pdf`)
+    } catch (err) {
+      console.error(err)
+      toast.error('Install html2canvas and jspdf to enable PDF download: npm install html2canvas jspdf')
+    }
+  }
 
   if (isPending && !orderFromState) {
     return (
@@ -301,19 +339,35 @@ export default function Receipt() {
         </div>
 
         {/* Download */}
-        <button
-          onClick={()=> alert("download")}
-          className="w-full py-4 rounded-2xl text-sm font-black tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
-          style={{
-            background: `linear-gradient(135deg, #e8c98a 0%, ${colors.accent} 50%, #a6804e 100%)`,
-            color: '#1A1A1A',
-            boxShadow: '0 6px 20px rgba(193,154,107,0.3)',
-            letterSpacing: '0.15em',
-          }}
-        >
-          <i className="fas fa-download text-xs" />
-          Download Receipt
-        </button>
+        <div className="flex flex-col gap-3">
+          <button
+            onClick={handleDownloadImage}
+            className="w-full py-4 rounded-2xl text-sm font-black tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+            style={{
+              background: `linear-gradient(135deg, #e8c98a 0%, ${colors.accent} 50%, #a6804e 100%)`,
+              color: '#1A1A1A',
+              boxShadow: '0 6px 20px rgba(193,154,107,0.3)',
+              letterSpacing: '0.15em',
+            }}
+          >
+            <i className="fas fa-download text-xs" />
+            Download PNG
+          </button>
+
+          <button
+            onClick={handleDownloadPDF}
+            className="w-full py-4 rounded-2xl text-sm font-black tracking-widest uppercase flex items-center justify-center gap-2 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0"
+            style={{
+              background: `linear-gradient(135deg, #d9534f 0%, #c0392b 50%, #a93226 100%)`,
+              color: '#fff',
+              boxShadow: '0 6px 20px rgba(0,0,0,0.25)',
+              letterSpacing: '0.15em',
+            }}
+          >
+            <i className="fas fa-file-pdf text-xs" />
+            Download PDF
+          </button>
+        </div>
 
         {/* Actions */}
         <div className="flex items-center justify-center gap-6">

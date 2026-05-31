@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useProduct } from "../../Client/productData.jsx";
 import supabase from "../../lib/util.jsx";
+import toast from '../../toast.jsx'
 
 const SIZES = ["XS", "S", "M", "L", "XL", "XXL"];
 const PRESET_COLORS = [
@@ -112,7 +113,7 @@ export default function AddProduct() {
       navigate("/dashboard/products");
     } catch (err) {
       console.error(err);
-      alert("Something went wrong");
+      toast.error("Something went wrong");
     } finally {
       setLoading(false);
     }

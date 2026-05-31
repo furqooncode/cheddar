@@ -12,7 +12,7 @@ export default function DashboardApp() {
   return (
     <div className="flex bg-[#0b0b0b] min-h-screen">
       <Sidebar />
-      <main className="flex-1 min-w-0 overflow-hidden p-8">
+      <main className="flex-1 min-w-0 overflow-y-auto ml-0 md:ml-64 p-8">
         <Topbar title={title} />
         <Outlet />
       </main>

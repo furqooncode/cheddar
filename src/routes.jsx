@@ -72,7 +72,7 @@ export default function AppRoutes() {
         <Route index element={<Home />} />
         <Route path="Cart" element={<Cart />} />
         <Route path="Checkout" element={<Checkout />} />
-        <Route path="receipt/:id" element={<Receipt />} />
+        <Route path="receipt/:id?" element={<Receipt />} />
         <Route path="OrderHistory" element={<OrderHistory />} />
         <Route path="Order" element={<Orders />} />
         <Route path="orderdetail/:orderId?" element={<OrderDetail />} />

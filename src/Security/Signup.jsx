@@ -1,5 +1,6 @@
 import { useState } from "react";
 import useTheme from '../Client/Toggletheme.jsx'
+import toast from '../toast.jsx'
 
 import { useNavigate, Link } from "react-router-dom";
 import useAuth from "../Client/Auth.jsx";
@@ -78,12 +79,12 @@ export default function Signup() {
           formData.fullName,
           formData.phone,
         );
-        alert("Account created succefully");
+        toast.success("Account created successfully");
         Clear();
         navigate("/");
       } catch (error) {
         console.log(error);
-        alert(error.message);
+        toast.error(error.message);
       }
     }
   }
@@ -92,7 +93,7 @@ async function Oauth(){
   try{
   await GoogleAuth()
   }catch(error){
-    alert(error.message)
+    toast.error(error.message)
   }
 }
 
