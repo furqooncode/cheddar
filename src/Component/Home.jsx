@@ -8,6 +8,9 @@ import HomeSkeleton from '../Skeleton/HomeSkeleton.jsx'
 import Announce from './Announce.jsx'
 import  ProductCard  from './ProductCard.jsx'
 import NavBottom from './NavBottom.jsx'
+
+const MAX_HOME_PRODUCTS = 20
+
 export default function Home(){
   useEffect(() => {
   const fetchUser = async () => {
@@ -24,8 +27,8 @@ export default function Home(){
 
   const { colors } = useTheme();
   const { addToCart } = useCart()
-const navigate = useNavigate()
-  const { data: products, isPending, isError, error } = useQuery({
+  const navigate = useNavigate()
+  const { data: products = [], isPending, isError, error } = useQuery({
     queryKey: ['Userproducts'],
     queryFn: async () => {
       const { data, error } = await supabase.from('products').select('*')
@@ -33,7 +36,7 @@ const navigate = useNavigate()
       return data
     }
   });
-  
+
   if (isPending) return <HomeSkeleton />
 
   if (isError) return (
@@ -51,6 +54,18 @@ const navigate = useNavigate()
       </div>
     </div>
   )
+
+  const filters = [
+    "All",
+    ...Array.from(
+      new Set([
+        ...(products?.map((p) => p.category).filter(Boolean) || []),
+        ...(products?.flatMap((p) => p.tags || []).filter(Boolean) || []),
+      ])
+    ),
+  ]
+
+  const visibleProducts = products?.slice(0, MAX_HOME_PRODUCTS) || []
 
   return(
     <div style={{
@@ -85,11 +100,18 @@ const navigate = useNavigate()
             </h3>
 
             <div className="flex min-w-0 items-center gap-2 overflow-x-auto scrollbar-hide">
-              {["All", "Hoodie", "Trousers", "Up & Down", "Polo", "Tee"].map((label) => (
+              {filters.map((label) => (
                 <button
                   key={label}
                   className="px-4 h-7 rounded-lg outline-none text-xs font-semibold flex items-center text-white flex-shrink-0 hover:opacity-80 transition-all"
                   style={{ background: colors.accent }}
+                  onClick={() => navigate('/chd/Browse', {
+                    state: {
+                      from: 'home',
+                      search: label === 'All' ? '' : label,
+                      focus: true,
+                    },
+                  })}
                 >
                   {label}
                 </button>
@@ -100,7 +122,7 @@ const navigate = useNavigate()
           <div className="p-2 w-full">
             <div className="mt-5">
               <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5">
-                {products.map((product) => (
+                {visibleProducts.map((product) => (
                     <ProductCard 
                   key={product.id}
                   product={product}
@@ -113,6 +135,19 @@ const navigate = useNavigate()
               </div>
             </div>
           </div>
+          {products?.length > MAX_HOME_PRODUCTS && (
+            <div className="flex justify-center px-2 pb-6">
+              <button
+                onClick={() => navigate('/chd/Browse', {
+                  state: { from: 'home', search: '', focus: true },
+                })}
+                className="px-6 py-3 rounded-2xl font-semibold transition-all hover:opacity-90"
+                style={{ background: colors.accent, color: '#1A1A1A' }}
+              >
+                See More
+              </button>
+            </div>
+          )}
         </>
       )}
     </div>

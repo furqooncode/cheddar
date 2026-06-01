@@ -169,13 +169,15 @@ export default function Browse() {
   const location = useLocation()
   const navigate = useNavigate();
   const cameFromHome = location.state?.from === 'home'
+  const initialSearch = location.state?.search || ''
+  const initialFocus = location.state?.focus === true
 
-  const [search, setSearch] = useState('')
-  const [searchFocused, setSearchFocused] = useState(false)
+  const [search, setSearch] = useState(initialSearch)
+  const [searchFocused, setSearchFocused] = useState(initialFocus)
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE)
   const [loadingMore, setLoadingMore] = useState(false)
 
-  const { data: products, isPending, isError, error } = useQuery({
+  const { data: products = [], isPending, isError, error } = useQuery({
     queryKey: ['Userproducts'],
     queryFn: async () => {
       const { data, error } = await supabase.from('products').select('*')

@@ -11,7 +11,7 @@ export default function ProtectedRoute({ children }) {
     }
   }, [getUser, user, sessionChecked]);
 
-  if (loading || sessionLoading) {
+  if (loading || sessionLoading || !sessionChecked) {
     return (
       <div className="min-h-screen flex items-center justify-center"
            style={{ backgroundColor: '#0a0a0a', color: '#fff' }}>
