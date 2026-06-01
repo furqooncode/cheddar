@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {  AnimatePresence } from 'framer-motion'
+import { motion,  AnimatePresence } from 'framer-motion'
 import useTheme from '../Client/Toggletheme.jsx'
 import NavBottom from './NavBottom.jsx'
 import useCart from '../Client/CartStorage.jsx'
