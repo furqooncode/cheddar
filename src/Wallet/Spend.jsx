@@ -4,21 +4,13 @@ import useTheme from "../Client/Toggletheme.jsx";
 // Replace with real user data from your auth/context
 const mockUser = {
   username: "furqncode",
-  userId: "USR-00142",
   totalSpent: 187000,
   cashback: 2340,
 };
 
-export default function Spend({ user = mockUser }) {
+export default function Transaction({ user = mockUser }) {
   const { colors } = useTheme();
-  const [copied, setCopied] = useState(false);
-
-  const copyUserId = () => {
-    navigator.clipboard.writeText(user.userId);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1800);
-  };
-
+  
   return (
     <div
       className="flex items-center justify-center px-4 pt-8"

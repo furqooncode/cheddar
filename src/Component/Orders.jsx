@@ -3,7 +3,7 @@ import useTheme from '../Client/Toggletheme.jsx'
 import NavBottom from './NavBottom.jsx'
 import { useQuery } from "@tanstack/react-query"
 import supabase from "../lib/util.jsx"
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 const statusConfig = {
   pending:   { color: '#C19A6B', bg: 'rgba(193,154,107,0.12)', border: 'rgba(193,154,107,0.25)', icon: 'fa-clock' },
@@ -60,6 +60,108 @@ function OrderCardSkeleton({ colors }) {
   )
 }
 
+// ── Filter Dropdown ─────────────────────────────────────────
+function FilterDropdown({ selected, onChange, colors }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef(null)
+
+  const statuses = ['all', 'pending', 'confirmed', 'shipped']
+
+  const labels = {
+    all: { label: 'All Orders', icon: 'fa-layer-group', color: colors.accent },
+    pending: { label: 'Pending', icon: statusConfig.pending.icon, color: statusConfig.pending.color },
+    confirmed: { label: 'Confirmed', icon: statusConfig.confirmed.icon, color: statusConfig.confirmed.color },
+    shipped: { label: 'Shipped', icon: statusConfig.shipped.icon, color: statusConfig.shipped.color },
+  }
+
+  // close on outside click
+  useEffect(() => {
+    function handle(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false)
+    }
+    document.addEventListener('mousedown', handle)
+    return () => document.removeEventListener('mousedown', handle)
+  }, [])
+
+  const active = labels[selected] || labels.all
+
+  return (
+    <div className="relative" ref={ref}>
+      {/* trigger button */}
+      <button
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-2 px-3 h-9 rounded-xl transition-all duration-200 hover:opacity-80"
+        style={{
+          background: open ? colors.accent + '22' : 'rgba(255,255,255,0.05)',
+          border: `1px solid ${open ? colors.accent + '55' : colors.border}`,
+          color: colors.accent,
+        }}
+      >
+        <i
+          className="fas fa-sliders text-sm transition-transform duration-300"
+          style={{ transform: open ? 'rotate(90deg)' : 'rotate(0deg)' }}
+        />
+        <span className="text-xs font-semibold" style={{ color: active.color }}>
+          {active.label}
+        </span>
+        <i
+          className="fas fa-chevron-down text-xs transition-transform duration-300"
+          style={{
+            color: colors.secondaryText,
+            transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
+          }}
+        />
+      </button>
+
+      {/* dropdown panel */}
+      <div
+        className="absolute right-0 top-11 z-50 flex flex-col overflow-hidden rounded-2xl"
+        style={{
+          background: colors.container,
+          border: `1px solid ${colors.border}`,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
+          minWidth: 160,
+          // animate via max-height + opacity
+          maxHeight: open ? 300 : 0,
+          opacity: open ? 1 : 0,
+          pointerEvents: open ? 'auto' : 'none',
+          transition: 'max-height 0.28s cubic-bezier(0.4,0,0.2,1), opacity 0.2s ease',
+        }}
+      >
+        {statuses.map((s, i) => {
+          const item = labels[s]
+          const isActive = selected === s
+          return (
+            <button
+              key={s}
+              onClick={() => { onChange(s); setOpen(false) }}
+              className="flex items-center gap-3 px-4 py-3 text-left transition-all duration-150 hover:opacity-80"
+              style={{
+                background: isActive ? item.color + '18' : 'transparent',
+                borderBottom: i < statuses.length - 1 ? `1px solid ${colors.border}` : 'none',
+              }}
+            >
+              <i
+                className={`fas ${item.icon} text-xs w-4 text-center`}
+                style={{ color: item.color }}
+              />
+              <span
+                className="text-xs font-semibold"
+                style={{ color: isActive ? item.color : colors.primaryText }}
+              >
+                {item.label}
+              </span>
+              {isActive && (
+                <i className="fas fa-check text-xs ml-auto" style={{ color: item.color }} />
+              )}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 // ── Order Card ──────────────────────────────────────────────
 function OrderCard({ order }) {
   const navigate = useNavigate()
@@ -67,7 +169,6 @@ function OrderCard({ order }) {
   const status = statusConfig[order.status?.toLowerCase()] || statusConfig.pending
   const products = order.products || []
   const totalItems = products.reduce((acc, i) => acc + (i.quantity || 1), 0)
-
 
   return (
     <div
@@ -145,7 +246,7 @@ function OrderCard({ order }) {
           <div className="flex flex-col gap-0.5">
             <span className="text-xs" style={{ color: colors.secondaryText }}>Total</span>
             <span className="text-base font-black" style={{ color: colors.primaryText }}>
-         ₦{(order.amount).toLocaleString()}{' '}Paid
+              ₦{(order.amount).toLocaleString()}{' '}Paid
             </span>
           </div>
 
@@ -171,8 +272,6 @@ export default function UserOrders() {
   const { colors } = useTheme()
   const [selectedStatus, setSelectedStatus] = useState('all')
 
-  const statuses = ['all', 'pending', 'confirmed', 'shipped']
-
   const { data: orders = [], isPending, isError, error } = useQuery({
     queryKey: ["userOrders", selectedStatus],
     queryFn: async () => {
@@ -188,12 +287,10 @@ export default function UserOrders() {
       if (selectedStatus && selectedStatus !== 'all') {
         query = query.eq('status', selectedStatus)
       } else {
-        // Exclude delivered orders from the main orders list (they belong in Order History)
         query = query.neq('status', 'delivered')
       }
 
       const { data, error } = await query
-
       if (error) throw new Error(error.message)
       return data
     },
@@ -217,25 +314,19 @@ export default function UserOrders() {
             {isPending ? '...' : `${orders.length} ${orders.length === 1 ? 'order' : 'orders'}`}
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          {statuses.map((s) => (
-            <button
-              key={s}
-              onClick={() => setSelectedStatus(s)}
-              className={`px-3 py-2 rounded-xl text-sm font-semibold transition-all duration-150 ${selectedStatus === s ? 'scale-105' : 'opacity-80 hover:opacity-100'}`}
-              style={{
-                background: selectedStatus === s ? colors.accent : 'transparent',
-                color: selectedStatus === s ? '#111' : colors.secondaryText,
-                border: `1px solid ${colors.border}`,
-              }}
-            >
-              {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1)}
-            </button>
-          ))}
 
+        <div className="flex items-center gap-2">
+          {/* Filter dropdown */}
+          <FilterDropdown
+            selected={selectedStatus}
+            onChange={setSelectedStatus}
+            colors={colors}
+          />
+
+          {/* Order history */}
           <button
             onClick={() => navigate('/chd/OrderHistory')}
-            className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-105"
+            className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-105"
             style={{ background: 'rgba(193,154,107,0.08)', border: `1px solid rgba(193,154,107,0.2)` }}
             aria-label="Order history"
           >
@@ -248,9 +339,7 @@ export default function UserOrders() {
 
         {/* Loading */}
         {isPending && (
-          <>
-            {[1,2,3].map((i) => <OrderCardSkeleton key={i} colors={colors} />)}
-          </>
+          <>{[1,2,3].map((i) => <OrderCardSkeleton key={i} colors={colors} />)}</>
         )}
 
         {/* Error */}
@@ -299,7 +388,6 @@ export default function UserOrders() {
         )}
 
       </div>
-  
     </div>
   )
 }

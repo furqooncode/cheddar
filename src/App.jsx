@@ -8,12 +8,12 @@ export default function App(){
  
  
 
-  useEffect(() => {
-    import("vconsole").then(({ default: VConsole }) => {
-      new VConsole();
-    });
-    console.log("page mounted!!");
-  }, []);
+  //useEffect(() => {
+    //import("vconsole").then(({ default: VConsole }) => {
+     // new VConsole();
+   // });
+    //console.log("page mounted!!");
+  //}, []);
   
   
   return(
