@@ -264,7 +264,8 @@ export default function OrderHistory() {
                 color: '#1A1A1A',
                 boxShadow: '0 4px 16px rgba(193,154,107,0.3)',
               }}
-              onClick={() => navigate('/Browse')}
+              onClick={() =>
+              navigate('/chd/Browse')}
             >
               Shop Now
             </button>

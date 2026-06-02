@@ -43,7 +43,8 @@ export default function HomeNav() {
         <div className="flex items-center gap-4">
           {/* Notification */}
           <button
-            className="relative w-11 h-11 rounded-full flex items-center justify-center transition-transform active:scale-95"
+            className="relative w-11 h-11 rounded-full flex items-center
+            justify-center transition-transform active:scale-95 hidden"
             style={{
               backgroundColor: 'transparent',
               border: `1px solid ${colors.border}`,
